@@ -5,11 +5,66 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#111f20">
   <title>Останній сигнал</title>
-  <script>
-    location.replace('./ostannii-syhnal(12).html');
-  </script>
+  <style>
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0b1416}
+    #game{display:block;width:100%;height:100dvh;border:0;background:#0b1416}
+  </style>
 </head>
-<body style="margin:0;background:#0b1416;color:#e7ede2;font-family:system-ui,sans-serif;display:grid;place-items:center;min-height:100dvh">
-  <p>Запускаю «Останній сигнал»…</p>
+<body>
+<iframe id="game" src="./ostannii-syhnal(12).html" title="Останній сигнал"></iframe>
+<script>
+const game=document.getElementById('game');
+game.addEventListener('load',()=>{
+  const doc=game.contentDocument;
+  if(!doc)return;
+  const style=doc.createElement('style');
+  style.textContent=`
+body:has(#search:not([hidden])){overflow:hidden}
+body:has(#search:not([hidden])) main{height:100dvh;max-height:100dvh;overflow:hidden;padding:max(8px,env(safe-area-inset-top)) 12px max(7px,env(safe-area-inset-bottom));display:flex;flex-direction:column}
+body:has(#search:not([hidden])) header{margin-bottom:4px;min-height:32px;flex:0 0 auto}
+body:has(#search:not([hidden])) header .eyebrow,body:has(#search:not([hidden])) header .sub{display:none}
+body:has(#search:not([hidden])) h1{font-size:20px;line-height:1.05;margin:0;letter-spacing:-.4px}
+body:has(#search:not([hidden])) button.quiet{padding:6px 8px;font-size:10px;border-radius:9px}
+body:has(#search:not([hidden])) nav{flex-wrap:nowrap;gap:2px;margin-bottom:4px;flex:0 0 auto}
+body:has(#search:not([hidden])) nav button{min-width:0!important;padding:6px 2px;font-size:10px}
+body:has(#search:not([hidden])) .stats{padding:6px 10px;margin:3px 0 4px;border-radius:10px;flex:0 0 auto}
+body:has(#search:not([hidden])) .stats span{font-size:8px;letter-spacing:.6px}
+body:has(#search:not([hidden])) .stats strong{font-size:15px}
+body:has(#search:not([hidden])) #search{display:flex;flex:1 1 auto;min-height:0;flex-direction:column}
+body:has(#search:not([hidden])) #search .location{margin:2px 0 4px;min-height:22px}
+body:has(#search:not([hidden])) #search .location b{font-size:14px}
+body:has(#search:not([hidden])) #locationHint{display:none}
+body:has(#search:not([hidden])) #field{width:min(100%,calc((100dvh - 350px)*1.22));min-width:230px;max-width:100%;margin:0 auto;border-radius:12px;flex:0 0 auto}
+body:has(#search:not([hidden])) .instrument{padding:7px 9px;margin:6px 0;border-radius:10px;flex:0 0 auto}
+body:has(#search:not([hidden])) .readout strong{font-size:20px}
+body:has(#search:not([hidden])) .instrument .eyebrow{font-size:8px;letter-spacing:1.6px}
+body:has(#search:not([hidden])) .instrument .sub{font-size:10px}
+body:has(#search:not([hidden])) .bars{height:10px;margin:5px 0;gap:3px}
+body:has(#search:not([hidden])) .hint{font-size:10px;line-height:1.2;min-height:24px}
+body:has(#search:not([hidden])) .actions .primary{padding:10px;border-radius:10px;font-size:12px}
+body:has(#search:not([hidden])) #search .actions+.sub{display:none}
+body:has(#search:not([hidden])) #fieldBag{font-size:9px;margin:3px 0;line-height:1.15;min-height:0}
+body:has(#search:not([hidden])) #fieldFood,body:has(#search:not([hidden])) #tripGate{display:none}
+body:has(#search:not([hidden])) #returnHome,body:has(#search:not([hidden])) #foodQuick,body:has(#search:not([hidden])) #finish{display:inline-block;width:32.4%!important;margin:3px 0 0!important;padding:7px 2px;font-size:9px;line-height:1.1;min-height:32px;vertical-align:top;border-radius:8px}
+body:has(#search:not([hidden])) #foodQuick,body:has(#search:not([hidden])) #finish{margin-left:1%!important}
+body:has(#search:not([hidden])) .log{font-size:10px;line-height:1.2;min-height:22px;max-height:26px;overflow:hidden;margin:4px 0 0}
+body:has(#search:not([hidden])) footer{display:none}
+@media(max-height:680px){
+ body:has(#search:not([hidden])) main{padding-top:max(5px,env(safe-area-inset-top));padding-bottom:max(4px,env(safe-area-inset-bottom))}
+ body:has(#search:not([hidden])) header{display:none}
+ body:has(#search:not([hidden])) .stats{padding:4px 8px;margin:2px 0 3px}
+ body:has(#search:not([hidden])) .stats span{display:none}
+ body:has(#search:not([hidden])) .stats strong{font-size:13px}
+ body:has(#search:not([hidden])) #field{width:min(100%,calc((100dvh - 270px)*1.22));min-width:200px}
+ body:has(#search:not([hidden])) .instrument{padding:5px 8px;margin:4px 0}
+ body:has(#search:not([hidden])) .hint{display:none}
+ body:has(#search:not([hidden])) .bars{height:8px;margin:4px 0}
+ body:has(#search:not([hidden])) #fieldBag{display:none}
+ body:has(#search:not([hidden])) .log{max-height:20px;min-height:18px;margin-top:2px}
+}
+`;
+  doc.head.appendChild(style);
+});
+</script>
 </body>
 </html>
