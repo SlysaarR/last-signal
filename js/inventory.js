@@ -12,13 +12,22 @@ export function itemLabel(item) {
   return types[item.type].name + ' · ' + (types[item.type].variant || '') + ' · ' + item.condition + '% · ' + priceFor(item.type, item.condition) + ' купонів';
 }
 export function itemRows(list, place) {
-  return list.map((item, i) => '<div class="card"><b>' + itemLabel(item) + '</b><p>' + (s.atCamp ? '<button class="secondary" data-itemaction="sell" data-place="' + place + '" data-index="' + i + '">Продати</button> <button class="secondary" data-itemaction="album" data-place="' + place + '" data-index="' + i + '" ' + (types[item.type].kind === 'trash' || s.best[item.type] !== undefined && s.best[item.type] >= item.condition ? 'disabled' : '') + '>До альбому</button> <button class="secondary" data-itemaction="move" data-place="' + place + '" data-index="' + i + '" ' + (place === 'stash' && bagUsed() >= bagCapacity() ? 'disabled' : '') + '>' + (place === 'bag' ? 'До сховища' : 'У рюкзак') + '</button>' : '<button class="secondary" data-itemaction="discard" data-place="bag" data-index="' + i + '">Викинути</button>') + '</p></div>').join('') || '<p class="sub">Порожньо.</p>';
+  return list.map((item, i) => {
+    const t = types[item.type], value = priceFor(item.type, item.condition);
+    const best = s.best[item.type], canAlbum = t.kind !== 'trash' && (best === undefined || best < item.condition);
+    const button = (action, label, disabled = false) => `<button class="secondary" data-itemaction="${action}" data-place="${place}" data-index="${i}" ${disabled ? 'disabled' : ''}>${label}</button>`;
+    const albumLabel = t.kind === 'trash' ? 'Не для альбому' : best === undefined ? 'До альбому' : canAlbum ? 'Покращити альбом' : 'В альбомі кращий або такий';
+    return `<article class="find-card"><div class="find-heading"><span class="item-symbol" aria-hidden="true">${t.icon}</span><div><h3>${t.name}</h3>${t.variant ? `<p class="find-variant">${t.variant}</p>` : ''}<small>${t.kind === 'trash' ? 'Металобрухт' : canAlbum ? (best === undefined ? 'Нова позиція для альбому' : 'Кращий стан для альбому') : 'Є в альбомі'}</small></div></div><div class="find-metrics"><div><span>СТАН</span><strong>${item.condition}<small> / 100</small></strong><progress aria-label="Стан предмета" value="${item.condition}" max="100"></progress></div><div><span>ОЦІНКА</span><strong>${value}<small> купонів</small></strong></div></div><div class="find-actions">${s.atCamp ? button('album', albumLabel, !canAlbum) + button('move', place === 'bag' ? 'До сховища' : 'У рюкзак', place === 'stash' && bagUsed() >= bagCapacity()) + button('sell', 'Продати · ' + value) : button('discard', 'Викинути')}</div></article>`;
+  }).join('') || `<div class="empty-state"><b>${place === 'bag' ? 'Місце для нових знахідок' : 'Сховище порожнє'}</b><p>${place === 'bag' ? 'Знахідки з виїзду з’являться тут. Їжа також займає місця в рюкзаку.' : 'Залишай тут предмети, які хочеш зберегти для наступних рішень.'}</p></div>`;
 }
 export function renderInventory() {
   const key = JSON.stringify([s.backpack, s.atCamp, s.energy, s.level, s.coins, s.bag, s.stash, s.food, s.pantry, s.best, s.lastTrip, !!s.pending]);
   if (key === inventoryRenderKey) return;
   inventoryRenderKey = key;
   $('bagStatus').textContent = bagUsed() + ' / ' + bagCapacity() + ' місць · рівень ' + s.backpack;
+  $('bagCapacity').value = bagUsed();
+  $('bagCapacity').max = bagCapacity();
+  $('unload').disabled = !s.bag.length && !s.food.some(Boolean);
   $('bagItems').innerHTML = itemRows(s.bag, 'bag');
   $('warehousePanel').hidden = !s.atCamp;
   $('warehouseItems').innerHTML = s.atCamp ? itemRows(s.stash, 'stash') : '';

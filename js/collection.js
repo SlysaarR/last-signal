@@ -49,9 +49,9 @@ export function renderCollection() {
     let heading = '';
     if (t.country && previous !== t.denom) {
       previous = t.denom;
-      heading = '<h3 class="album-heading">' + t.denom + '</h3>';
+      heading = '<h3 class="album-heading">' + t.denom + '<small>За роками випуску</small></h3>';
     }
-    return heading + '<button class="collect ' + (has ? '' : 'unfound') + '" data-item="' + t.id + '"><span>' + (has ? t.icon : '○') + '</span><b>' + t.name + '</b>' + (t.variant ? '<small>' + t.variant + '</small>' : '') + (t.issue === 'set' ? '<small>✦ Для колекційних наборів</small>' : '') + '<small style="color:' + r.color + '">' + r.name + ' · у грі</small><small>' + (has ? 'Стан ' + s.best[t.id] + '% · ' + priceFor(t.id, s.best[t.id]) + ' купонів' : 'Ще не знайдено') + '</small></button>';
+    return heading + `<button class="collect ${has ? 'owned' : 'unfound'}" data-item="${t.id}"><small class="ownership">${has ? '✓ В альбомі' : 'Не знайдено'}</small><span class="collection-symbol" aria-hidden="true">${has ? t.icon : '○'}</span><b>${t.country ? t.year + ' рік' : t.name}</b>${t.country ? '<small>' + t.denom + '</small>' : ''}${t.variant ? '<small class="coin-variant">' + t.variant + '</small>' : ''}${t.issue === 'set' ? '<small>Наборний випуск</small>' : ''}<small class="rarity" style="color:${r.color}">${r.name}</small><small class="collection-condition">${has ? 'Стан ' + s.best[t.id] + '/100' : 'Вільне місце в альбомі'}</small>${has ? '<small>' + priceFor(t.id, s.best[t.id]) + ' купонів</small>' : ''}</button>`;
   }).join('') || '<p class="sub">За цими фільтрами позицій немає.</p>';
 }
 export function showItem(id) {

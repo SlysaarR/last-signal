@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="./css/base.css">
     <link rel="stylesheet" href="./css/search.css">
     <link rel="stylesheet" href="./css/excavation.css">
+    <link rel="stylesheet" href="./css/inventory.css">
     <script type="module" src="./js/main.js">
     </script>
   </head>
@@ -99,9 +100,10 @@
         <h2>Рюкзак</h2>
         <p id="bagStatus">
         </p>
+        <progress id="bagCapacity" aria-label="Заповнення рюкзака" value="0" max="8"></progress>
         <div id="bagItems">
         </div>
-        <h2>Їжа</h2>
+        <h2>Провізія в рюкзаку</h2>
         <div id="bagFood">
         </div>
         <div id="warehousePanel">
@@ -166,7 +168,7 @@
         <div class="search-status">
           <p class="sub" id="fieldBag">
           </p>
-          <span class="build-tag">v0.14.1</span>
+          <span class="build-tag">v0.15.0</span>
         </div>
         <div class="log" id="log" aria-live="polite">Обстежуй ділянку — кількість сигналів невідома. Шукай найчіткіший сигнал.</div>
       </section>
@@ -242,7 +244,7 @@
           </div>
           <p class="sub" id="catalogNote">Натисни комірку, щоб прочитати опис і відкрити джерело. Рівні рідкості та ціни адаптовано для гри. Монети намальовані схематично.</p>
         </section>
-        <footer>ПРОТОТИП 0.14.1 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
+        <footer>ПРОТОТИП 0.15.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
       </main>
       <dialog id="tripMenu" aria-labelledby="tripMenuTitle">
         <div class="sheet-heading">

@@ -34,4 +34,18 @@ async function newRun(saved,fail){const e=env(saved,fail),modules=new Map();func
  mod('search').dig();assert(run.state().pending);assert.equal(run.elements.get('excavate').open,true);
  mod('excavation').collectPending();assert(run.state().pending.revealed);mod('packing').resolvePacking('take');assert.equal(run.state().bag.length,2);assert.equal(run.state().pending,null);assert.equal(run.state().energy,76.2);
  const reloaded=await newRun(run.store.get('last-signal-v1'));assert.deepEqual(reloaded.state(),run.state());console.log('PASS dig → reveal → take → reload');
+ const inv=await newRun(null); const ns=f=>inv.modules.get(root+'/js/'+f+'.js').namespace;
+ const state=ns('storage').s;
+ const coin=JSON.parse(inv.catalog()).findIndex(t=>t.country && t.kind==='coin');
+ state.bag=[{type:coin,condition:70}]; ns('inventory').inventoryAction('album','bag',0);
+ assert.equal(state.best[coin],70); assert.equal(state.bag.length,0);
+ state.bag=[{type:coin,condition:90}]; ns('inventory').inventoryAction('album','bag',0);
+ assert.equal(state.best[coin],90); assert.equal(state.stash[0].condition,70);
+ ns('inventory').inventoryAction('move','stash',0); assert.equal(state.bag[0].condition,70);
+ const before=state.coins; ns('inventory').inventoryAction('sell','bag',0); assert(state.coins>before); assert.equal(state.bag.length,0);
+ inv.elements.get('denomFilter').onchange({target:{value:JSON.parse(inv.catalog())[coin].denom}});
+ inv.elements.get('missingFilter').onchange({target:{checked:true}});
+ assert(!ns('collection').categoryItems().some(t=>t.id===coin));
+ assert(ns('collection').categoryItems().every(t=>t.denom===JSON.parse(inv.catalog())[coin].denom));
+ console.log('PASS album upgrade → stash → bag → sell; denomination and missing filters');
 })().catch(e=>{console.error(e);process.exit(1)});
