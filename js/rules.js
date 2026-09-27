@@ -1,7 +1,7 @@
 // rules responsibilities for Last Signal.
-import { foods, rarities } from '../data/balance.js?v=0.18.0';
-import { types } from '../data/items.js?v=0.18.0';
-import { s } from './storage.js?v=0.18.0';
+import { foods, rarities } from '../data/balance.js?v=0.19.0';
+import { types } from '../data/items.js?v=0.19.0';
+import { s } from './storage.js?v=0.19.0';
 export function rollCondition() {
   return Math.floor(Math.random() * 101);
 }
@@ -26,7 +26,7 @@ export function minDig() {
 }
 export function upgradeCost(kind) {
   const level = kind === 'detector' ? s.level : kind === 'backpack' ? s.backpack : s.shovel;
-  return Math.round(30 + level * (kind === 'detector' ? 4 : 3) + level * level * .025);
+  return Math.round(30 + level * (kind === 'detector' ? 8 : 6) + level * level * .1);
 }
 export function foodAmount(i) {
   return Math.floor(maxEnergy() * foods[i].percent / 100);

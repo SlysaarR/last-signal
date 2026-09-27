@@ -1,9 +1,9 @@
 // world responsibilities for Last Signal.
-import { rarities, signalRanges, surveyCols, surveyRows } from '../data/balance.js?v=0.18.0';
-import { types } from '../data/items.js?v=0.18.0';
-import { legacyLocation, locations } from '../data/locations.js?v=0.18.0';
-import { rollCondition } from './rules.js?v=0.18.0';
-import { s, save } from './storage.js?v=0.18.0';
+import { rarities, signalRanges, surveyCols, surveyRows } from '../data/balance.js?v=0.19.0';
+import { types } from '../data/items.js?v=0.19.0';
+import { legacyLocation, locations } from '../data/locations.js?v=0.19.0';
+import { rollCondition } from './rules.js?v=0.19.0';
+import { s, save } from './storage.js?v=0.19.0';
 export function rollLocation() {
   let roll = Math.random() * 100;
   for (let i = 0; i < locations.length; i++) {
@@ -57,13 +57,26 @@ export function rollDepth(loc) {
 export function exploredPercent() {
   return Math.floor(s.survey.length / (surveyCols * surveyRows) * 100);
 }
+// Rolled once when a new site is generated; saved objects keep the result on reload.
+// Equipment and player history do not change this roll.
+export function siteProfile(loc, roll = Math.random()) {
+  if (roll >= .25 && roll < .9) return { ...loc, signalFactor: 1 };
+  const poor = roll < .25;
+  const trash = poor ? Math.max(.94, loc.kinds[0]) : loc.kinds[0] * .65;
+  const other = 1 - loc.kinds[0];
+  return { ...loc,
+    kinds: [trash, ...loc.kinds.slice(1).map(weight => weight / other * (1 - trash))],
+    boost: loc.boost.map((weight, rarity) => rarity < 2 ? weight : weight * (poor ? .4 : 1.5)),
+    signalFactor: poor ? .6 : 1.15
+  };
+}
 export function generate() {
   s.objects = [];
   s.holes = [];
   s.survey = [];
-  const loc = currentLocation(),
+  const loc = siteProfile(currentLocation()),
     range = signalRanges[loc.terrain] || signalRanges.grass,
-    count = range[0] + Math.floor(Math.random() * (range[1] - range[0] + 1));
+    count = Math.max(3, Math.round((range[0] + Math.floor(Math.random() * (range[1] - range[0] + 1))) * loc.signalFactor));
   for (let i = 0; i < count; i++) {
     const kind = pickKind(loc),
       type = pickType(kind, loc),

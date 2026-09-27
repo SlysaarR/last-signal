@@ -61,4 +61,9 @@ const {newRun,root,golden,createHash,assert}=require('./harness.cjs');
  es.energy=15;em('search').dig();assert.equal(es.energy,0);assert(es.pending);assert.equal(es.pending.spent,15);
  for(const kind of ['detector','shovel','backpack']){let prev=0;for(let l=1;l<100;l++){es[kind==='detector'?'level':kind]=l;const cost=em('rules').upgradeCost(kind);assert(cost>prev);prev=cost;}}
  console.log('PASS insufficient energy cannot discount digs; exact energy works; upgrade prices increase');
+ const world=em('world'),loc=world.currentLocation();
+ for(const roll of [0,.249,.25,.899,.9,.999]){const profile=world.siteProfile(loc,roll);assert(Math.abs(profile.kinds.reduce((a,b)=>a+b,0)-1)<1e-9);assert(profile.kinds.every(n=>n>=0));}
+ assert(world.siteProfile(loc,0).kinds[0]>=.94);assert.deepEqual([...world.siteProfile(loc,.5).kinds],[...loc.kinds]);assert(world.siteProfile(loc,.95).kinds[0]<loc.kinds[0]);
+ es.pending=null;es.energy=100;world.generate();const objects=JSON.parse(JSON.stringify(es.objects));const resumed=await newRun(energyRun.store.get('last-signal-v1'));assert.deepEqual(resumed.state().objects,objects);
+ console.log('PASS site luck probabilities and saved site survives reload');
 })().catch(e=>{console.error(e);process.exit(1)});
