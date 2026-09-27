@@ -1,10 +1,10 @@
 // camp responsibilities for Last Signal.
-import { modal } from './dialogs.js?v=0.17.0';
-import { $ } from './dom.js?v=0.17.0';
-import { bagCapacity, bagUsed, canLeave, emergencyAllowed, maxEnergy, priceFor } from './rules.js?v=0.17.0';
-import { s, save } from './storage.js?v=0.17.0';
-import { busy, render, showTab } from './ui.js?v=0.17.0';
-import { currentLocation, generate, rollLocation } from './world.js?v=0.17.0';
+import { modal } from './dialogs.js?v=0.18.0';
+import { $ } from './dom.js?v=0.18.0';
+import { bagCapacity, bagUsed, canLeave, emergencyAllowed, maxEnergy, priceFor } from './rules.js?v=0.18.0';
+import { s, save } from './storage.js?v=0.18.0';
+import { busy, render, showTab } from './ui.js?v=0.18.0';
+import { currentLocation, generate, rollLocation } from './world.js?v=0.18.0';
 export function returnHome() {
   if (s.atCamp || s.pending) return;
   s.lastTrip = {

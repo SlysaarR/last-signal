@@ -1,12 +1,12 @@
 // search responsibilities for Last Signal.
-import { depthLevels } from '../data/balance.js?v=0.17.0';
-import { beep } from './audio.js?v=0.17.0';
-import { $ } from './dom.js?v=0.17.0';
-import { openExcavation } from './excavation.js?v=0.17.0';
-import { canvas } from './graphics/field.js?v=0.17.0';
-import { digCost, minDig } from './rules.js?v=0.17.0';
-import { s, save } from './storage.js?v=0.17.0';
-import { busy, render } from './ui.js?v=0.17.0';
+import { depthLevels } from '../data/balance.js?v=0.18.0';
+import { beep } from './audio.js?v=0.18.0';
+import { $ } from './dom.js?v=0.18.0';
+import { openExcavation } from './excavation.js?v=0.18.0';
+import { canvas } from './graphics/field.js?v=0.18.0';
+import { digCost, minDig } from './rules.js?v=0.18.0';
+import { s, save } from './storage.js?v=0.18.0';
+import { busy, render } from './ui.js?v=0.18.0';
 export function digInfo() {
   const n = signal(),
     info = n.obj && n.power > 35 ? depthLevels[n.obj.depth] : {
@@ -52,9 +52,9 @@ export function move(e) {
 export let dragging = false;
 export function dig() {
   const info = digInfo();
-  if (s.atCamp || s.energy < minDig() || $('modal').open || $('excavate').open || s.pending) return;
+  if (s.atCamp || s.energy < info.cost || $('modal').open || $('excavate').open || s.pending) return;
   const n = nearest(),
-    spent = Math.min(s.energy, info.cost);
+    spent = info.cost;
   s.energy = Math.round((s.energy - spent) * 10) / 10;
   s.holes.push({
     x: s.x,

@@ -1,16 +1,16 @@
 // Shared navigation, detector readout and quick sheets. Rendering functions never award items.
-import { renderCamp } from './camp.js?v=0.17.0';
-import { foods } from '../data/balance.js?v=0.17.0';
-import { types } from '../data/items.js?v=0.17.0';
-import { renderCollection } from './collection.js?v=0.17.0';
-import { $ } from './dom.js?v=0.17.0';
-import { draw } from './graphics/field.js?v=0.17.0';
-import { renderInventory } from './inventory.js?v=0.17.0';
-import { canLeave, emergencyAllowed, foodAmount, foodAvailable, foodFits, maxEnergy, minDig } from './rules.js?v=0.17.0';
-import { digInfo, signal } from './search.js?v=0.17.0';
-import { eatFood, renderShop } from './shop.js?v=0.17.0';
-import { s } from './storage.js?v=0.17.0';
-import { currentLocation } from './world.js?v=0.17.0';
+import { renderCamp } from './camp.js?v=0.18.0';
+import { foods } from '../data/balance.js?v=0.18.0';
+import { types } from '../data/items.js?v=0.18.0';
+import { renderCollection } from './collection.js?v=0.18.0';
+import { $ } from './dom.js?v=0.18.0';
+import { draw } from './graphics/field.js?v=0.18.0';
+import { renderInventory } from './inventory.js?v=0.18.0';
+import { canLeave, emergencyAllowed, foodAmount, foodAvailable, foodFits, maxEnergy, minDig } from './rules.js?v=0.18.0';
+import { digInfo, signal } from './search.js?v=0.18.0';
+import { eatFood, renderShop } from './shop.js?v=0.18.0';
+import { s } from './storage.js?v=0.18.0';
+import { currentLocation } from './world.js?v=0.18.0';
 export function renderFieldChrome() {
   const choices = document.getElementById('quickFoodChoices');
   if (!choices) return;
@@ -75,7 +75,8 @@ export function render() {
   const info = digInfo();
   $('dig').textContent = s.level >= 50 ? 'Копати · до ' + info.cost + ' сил' : 'Копати';
   $('hint').textContent = s.energy < minDig() ? 'Сили вичерпано. Час завершити виїзд.' : n.power > 84 ? 'Чіткий сигнал. Копати чи шукати далі?' : n.power > 35 ? 'Метал поруч. Шукай пік сигналу.' : 'Веди металошукачем і слухай сигнал.';
-  $('dig').disabled = s.energy < minDig() || !!s.pending;
+  if (s.energy >= minDig() && s.energy < info.cost) $('hint').textContent = 'На цю розкопку бракує енергії. Перевір їжу або пошукай інший сигнал.';
+  $('dig').disabled = s.energy < info.cost || !!s.pending;
   if (s.level >= 25 && n.obj && n.power > 35) $('hint').textContent += ' ' + (s.level >= 50 ? info.name : ['Неглибокий сигнал.', 'Середня глибина.', 'Глибокий сигнал.'][n.obj.depth]);
   renderShop();
   renderInventory();
