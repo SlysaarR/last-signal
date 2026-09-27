@@ -1,0 +1,32 @@
+/* Camp readiness and trip report. */
+.camp-heading { padding:16px 0 5px }
+.camp-heading h2 { font-size:26px; margin:8px 0 }
+#campStatus { font-size:12px; color:#a7b699; margin:0 0 12px; line-height:1.5 }
+.camp-ready { background:linear-gradient(130deg,#273623,#19291e); border:1px solid #536345; border-radius:19px; padding:18px }
+.camp-energy { display:flex; justify-content:space-between; align-items:center }
+.camp-energy > span,.camp-supplies span { font-size:9px; letter-spacing:1.3px; color:#b3c49c }
+.camp-energy strong { color:#e0edbb; font-size:23px; font-variant-numeric:tabular-nums }
+#campEnergyBar { height:7px; margin:12px 0 18px; accent-color:#c4de87 }
+.camp-supplies { display:grid; grid-template-columns:1fr 1fr; gap:16px }
+.camp-supplies > div + div { border-left:1px solid #495c3b; padding-left:16px }
+.camp-supplies span,.camp-supplies strong { display:block }
+.camp-supplies strong { margin-top:6px; font-size:19px; color:#e0e9ce }
+.camp-note { color:#adbd9f; font-size:11px; line-height:1.65; margin:13px 0 0 }
+#campReadiness { border-top:1px solid #43573a; padding-top:12px }
+#restHome { width:100%; min-height:44px; margin-top:13px; font-size:13px }
+.camp-links { display:grid; gap:9px; margin:18px 0 }
+.camp-links button { display:grid; grid-template-columns:1fr 20px; text-align:left; gap:5px 10px; border:1px solid #3b4c35; border-radius:14px; padding:14px 16px; background:#1a281e; color:#e0e9d2; min-height:66px }
+.camp-links b { font-size:14px }
+.camp-links small { grid-column:1; color:#a5b596; font-size:11px; line-height:1.4 }
+.camp-links span { grid-column:2; grid-row:1/3; align-self:center; color:#bfd791; font-size:20px }
+.camp-departure { margin:20px 0 24px }
+#startTrip { width:100%; min-height:52px; font-size:14px }
+.camp-departure p { text-align:center; margin-top:10px }
+.camp-summary { border-top:1px solid #3b4c34; padding:20px 0 0 }
+.camp-summary h2 { font-size:20px; margin:8px 0 14px }
+.trip-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px }
+.trip-grid > div { border:1px solid #394b32; border-radius:12px; background:#17261c; padding:12px }
+.trip-grid span { display:block; font-size:10px; color:#b0bf9f; min-height:25px }
+.trip-grid strong { display:block; color:#dfeccb; font-size:22px; font-variant-numeric:tabular-nums }
+.trip-grid small { font-size:10px; font-weight:400 }
+#camp button:focus-visible { outline:2px solid #d5e9a3; outline-offset:3px }

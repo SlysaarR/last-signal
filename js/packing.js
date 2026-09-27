@@ -1,12 +1,12 @@
 // Revealed-find card and the take/swap/leave decision.
-import { foods, rarities } from '../data/balance.js?v=0.16.0';
-import { types } from '../data/items.js?v=0.16.0';
-import { $ } from './dom.js?v=0.16.0';
-import { drawArtifact } from './graphics/artifacts.js?v=0.16.0';
-import { itemLabel } from './inventory.js?v=0.16.0';
-import { bagCapacity, bagUsed, conditionLabel, priceFor } from './rules.js?v=0.16.0';
-import { s, save } from './storage.js?v=0.16.0';
-import { render } from './ui.js?v=0.16.0';
+import { foods, rarities } from '../data/balance.js?v=0.17.0';
+import { types } from '../data/items.js?v=0.17.0';
+import { $ } from './dom.js?v=0.17.0';
+import { drawArtifact } from './graphics/artifacts.js?v=0.17.0';
+import { itemLabel } from './inventory.js?v=0.17.0';
+import { bagCapacity, bagUsed, conditionLabel, priceFor } from './rules.js?v=0.17.0';
+import { s, save } from './storage.js?v=0.17.0';
+import { render } from './ui.js?v=0.17.0';
 export function openPacking() {
   if (!s.pending) return;
   const item = s.pending,

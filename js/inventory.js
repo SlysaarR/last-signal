@@ -1,12 +1,12 @@
 // inventory responsibilities for Last Signal.
-import { foods } from '../data/balance.js?v=0.16.0';
-import { types } from '../data/items.js?v=0.16.0';
-import { modal } from './dialogs.js?v=0.16.0';
-import { $ } from './dom.js?v=0.16.0';
-import { bagCapacity, bagUsed, foodAmount, foodFits, maxEnergy, priceFor } from './rules.js?v=0.16.0';
-import { eatFood, transferFood } from './shop.js?v=0.16.0';
-import { s, save } from './storage.js?v=0.16.0';
-import { busy, render } from './ui.js?v=0.16.0';
+import { foods } from '../data/balance.js?v=0.17.0';
+import { types } from '../data/items.js?v=0.17.0';
+import { modal } from './dialogs.js?v=0.17.0';
+import { $ } from './dom.js?v=0.17.0';
+import { bagCapacity, bagUsed, foodAmount, foodFits, maxEnergy, priceFor } from './rules.js?v=0.17.0';
+import { eatFood, transferFood } from './shop.js?v=0.17.0';
+import { s, save } from './storage.js?v=0.17.0';
+import { busy, render } from './ui.js?v=0.17.0';
 export let inventoryRenderKey = '';
 export function itemLabel(item) {
   return types[item.type].name + ' · ' + (types[item.type].variant || '') + ' · ' + item.condition + '% · ' + priceFor(item.type, item.condition) + ' купонів';
@@ -33,11 +33,7 @@ export function renderInventory() {
   $('warehouseItems').innerHTML = s.atCamp ? itemRows(s.stash, 'stash') : '';
   $('bagFood').innerHTML = foods.map((f, i) => '<div class="card">' + f.name + ' × ' + s.food[i] + ' <button class="secondary" data-foodaction="' + (s.atCamp ? 'unpack' : 'eat') + '" data-index="' + i + '" ' + (!s.food[i] || !s.atCamp && !foodFits(i) ? 'disabled' : '') + '>' + (s.atCamp ? 'До сховища' : 'З’їсти · +' + foodAmount(i)) + '</button>' + (!s.atCamp ? ' <button class="quiet" data-foodaction="discard" data-index="' + i + '" ' + (!s.food[i] ? 'disabled' : '') + '>Викинути</button>' : '') + '</div>').join('');
   $('pantryItems').innerHTML = foods.map((f, i) => '<div class="card">' + f.name + ' × ' + s.pantry[i] + ' <button class="secondary" data-foodaction="pack" data-index="' + i + '" ' + (!s.pantry[i] || bagUsed() >= bagCapacity() ? 'disabled' : '') + '>У рюкзак</button></div>').join('');
-  $('campStatus').textContent = s.atCamp ? 'Вдома · ' + s.energy + ' / ' + maxEnergy() + ' сил' : 'Ти в полі. Повернися до табору, щоб відпочити та скористатися магазином.';
-  $('restHome').disabled = !s.atCamp || s.energy === maxEnergy();
-  $('startTrip').disabled = !s.atCamp || !!s.pending;
-  $('startTrip').textContent = s.coins < 25 ? 'Безкоштовно на бідне узбіччя' : 'Вирушити · 25 купонів';
-  if (s.lastTrip) $('tripSummary').textContent = 'Знайдено: ' + s.lastTrip.found + '. Принесено: ' + s.lastTrip.brought + ' предметів. Оцінка принесеного: ' + s.lastTrip.value + ' купонів (ще не продано). Дорога: ' + s.lastTrip.travel + '; з’їдена їжа: ' + s.lastTrip.food + ' купонів.';
+
 }
 export function inventoryAction(action, place, i) {
   if (busy() || !['bag', 'stash'].includes(place)) return;

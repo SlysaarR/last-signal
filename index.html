@@ -9,8 +9,9 @@
     <link rel="stylesheet" href="./css/search.css">
     <link rel="stylesheet" href="./css/excavation.css">
     <link rel="stylesheet" href="./css/inventory.css">
-    <link rel="stylesheet" href="./css/workshop.css?v=0.16.0">
-    <script type="module" src="./js/main.js?v=0.16.0">
+    <link rel="stylesheet" href="./css/workshop.css?v=0.17.0">
+    <link rel="stylesheet" href="./css/camp.css?v=0.17.0">
+    <script type="module" src="./js/main.js?v=0.17.0">
     </script>
   </head>
   <body>
@@ -76,26 +77,21 @@
       </div>
       <div id="saveNote" hidden>У цьому браузері збереження недоступне. Прогрес зберігається лише до закриття гри.</div>
       <section id="camp" hidden>
-        <h2>Твій табір</h2>
-        <p id="campStatus">
-        </p>
-        <div class="card">
-          <div class="eyebrow">ДІМ</div>
-          <h2>Перепочинок біля вогню</h2>
-          <p>Відпочинок безкоштовний. Повернення з поля назавжди завершує виїзд.</p>
-          <button class="primary" id="restHome">Відпочити</button>
+        <div class="camp-heading"><div class="eyebrow">ДІМ / ПІДГОТОВКА</div><h2>Твій табір</h2><p id="campStatus"></p></div>
+        <div class="camp-ready">
+          <div class="camp-energy"><span>ЕНЕРГІЯ</span><strong id="campEnergy"></strong></div>
+          <progress id="campEnergyBar" aria-label="Запас енергії" value="0" max="100"></progress>
+          <div class="camp-supplies"><div><span>ЇЖА В РЮКЗАКУ</span><strong id="campFood"></strong></div><div><span>ВІЛЬНІ МІСЦЯ</span><strong id="campSpace"></strong></div></div>
+          <p id="campReadiness" class="camp-note"></p>
+          <button class="secondary" id="restHome">Відпочити · безкоштовно</button>
         </div>
-        <div class="card">
-          <h2>Підготуйся до пошуку</h2>
-          <button class="secondary" data-open="inventory">Рюкзак і сховище</button>
-          <button class="secondary" data-open="gear">Магазин і майстерня</button>
-          <button class="secondary" data-open="collection">Альбоми колекції</button>
+        <div class="camp-links">
+          <button data-open="inventory"><b>Рюкзак і сховище</b><small>Звільнити місце · продати знахідки</small><span aria-hidden="true">→</span></button>
+          <button data-open="gear"><b>Майстерня та провізія</b><small>Спорядження · їжа на виїзд</small><span aria-hidden="true">→</span></button>
+          <button data-open="collection"><b>Твоя колекція</b><small>Переглянути альбоми знахідок</small><span aria-hidden="true">→</span></button>
         </div>
-        <button class="primary" id="startTrip">Вирушити · 25 купонів</button>
-        <div class="card">
-          <h2>Минулий виїзд</h2>
-          <p id="tripSummary">Поки немає завершених виїздів.</p>
-        </div>
+        <div class="camp-departure"><button class="primary" id="startTrip">Вирушити · 25 купонів</button><p id="departureNote" class="camp-note"></p></div>
+        <div class="camp-summary"><div class="eyebrow">ПОЛЬОВИЙ ЩОДЕННИК</div><h2>Минулий виїзд</h2><div id="tripSummary"></div></div>
       </section>
       <section id="inventory" hidden>
         <h2>Рюкзак</h2>
@@ -169,7 +165,7 @@
         <div class="search-status">
           <p class="sub" id="fieldBag">
           </p>
-          <span class="build-tag">v0.16.0</span>
+          <span class="build-tag">v0.17.0</span>
         </div>
         <div class="log" id="log" aria-live="polite">Обстежуй ділянку — кількість сигналів невідома. Шукай найчіткіший сигнал.</div>
       </section>
@@ -237,7 +233,7 @@
           </div>
           <p class="sub" id="catalogNote">Натисни комірку, щоб прочитати опис і відкрити джерело. Рівні рідкості та ціни адаптовано для гри. Монети намальовані схематично.</p>
         </section>
-        <footer>ПРОТОТИП 0.16.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
+        <footer>ПРОТОТИП 0.17.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
       </main>
       <dialog id="tripMenu" aria-labelledby="tripMenuTitle">
         <div class="sheet-heading">

@@ -65,4 +65,12 @@ async function newRun(saved,fail){const e=env(saved,fail),modules=new Map();func
  const count=state.pantry[0];shop.buyFood(0);assert.equal(state.pantry[0],count);
  state.atCamp=true;shop.buyFood(0);assert.equal(state.pantry[0],count+1);shop.transferFood(0,true);assert.equal(state.food[0],1);
  console.log('PASS all 297 upgrade steps, max level, purchase guards and food packing');
+ const camp=ns('camp');state.energy=10;state.backpack=1;state.food=[0,0,0];state.bag=Array.from({length:8},()=>({type:0,condition:40}));state.coins=100;
+ assert.equal(camp.departureWarnings().length,2);camp.confirmDeparture();assert.equal(inv.elements.get('modalClose').textContent,'Усе одно вирушити');
+ inv.elements.get('modalCancel').onclick();assert.equal(state.atCamp,true);assert.equal(state.coins,100);
+ inv.elements.get('restHome').onclick();assert.equal(state.energy,rules.maxEnergy());assert.equal(camp.departureWarnings().length,1);
+ camp.confirmDeparture();inv.elements.get('modalClose').onclick();assert.equal(state.atCamp,false);assert.equal(state.coins,75);assert.equal(state.bag.length,8);
+ inv.elements.get('modalClose').onclick();camp.returnHome();assert.equal(state.atCamp,true);assert.equal(state.lastTrip.travel,25);assert.equal(state.lastTrip.brought,8);
+ state.coins=0;camp.confirmDeparture();inv.elements.get('modalClose').onclick();assert.equal(state.coins,0);assert.equal(state.location,0);
+ console.log('PASS camp warnings → cancel → rest → paid departure → report → free departure');
 })().catch(e=>{console.error(e);process.exit(1)});
