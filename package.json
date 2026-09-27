@@ -1,0 +1,8 @@
+{
+  "name": "last-signal",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --experimental-vm-modules tests/refactor-check.cjs"
+  }
+}
