@@ -1,9 +1,9 @@
 // shop responsibilities for Last Signal.
-import { foods } from '../data/balance.js';
-import { $ } from './dom.js';
-import { bagCapacity, bagUsed, foodAmount, foodFits, maxEnergy, shovelFactor, upgradeCost } from './rules.js';
-import { s, save } from './storage.js';
-import { busy, render } from './ui.js';
+import { foods } from '../data/balance.js?v=0.15.0';
+import { $ } from './dom.js?v=0.15.0';
+import { bagCapacity, bagUsed, foodAmount, foodFits, maxEnergy, shovelFactor, upgradeCost } from './rules.js?v=0.15.0';
+import { s, save } from './storage.js?v=0.15.0';
+import { busy, render } from './ui.js?v=0.15.0';
 export let shopRenderKey = '';
 export function buyFood(i) {
   if (!foods[i] || busy() || !s.atCamp || s.coins < foods[i].price) return;

@@ -16,7 +16,7 @@ function env(saved,failStorage=false){
  context.window=context;context.addEventListener=(name,fn)=>{(listeners[name]??=[]).push(fn)};context.scrollTo=()=>{};
  return {context,elements,store,listeners};
 }
-async function newRun(saved,fail){const e=env(saved,fail),modules=new Map();function get(file){file=path.resolve(file);if(!modules.has(file))modules.set(file,new vm.SourceTextModule(fs.readFileSync(file,'utf8'),{context:e.context,identifier:file}));return modules.get(file)}const main=get(root+'/js/main.js');await main.link((specifier,ref)=>get(path.resolve(path.dirname(ref.identifier),specifier)));await main.evaluate();e.modules=modules;e.state=()=>JSON.parse(JSON.stringify(modules.get(root+'/js/storage.js').namespace.s));e.catalog=()=>JSON.stringify(modules.get(root+'/data/items.js').namespace.types);return e}
+async function newRun(saved,fail){const e=env(saved,fail),modules=new Map();function get(file){file=path.resolve(file);if(!modules.has(file))modules.set(file,new vm.SourceTextModule(fs.readFileSync(file,'utf8'),{context:e.context,identifier:file}));return modules.get(file)}const main=get(root+'/js/main.js');await main.link((specifier,ref)=>get(path.resolve(path.dirname(ref.identifier),specifier.split('?')[0])));await main.evaluate();e.modules=modules;e.state=()=>JSON.parse(JSON.stringify(modules.get(root+'/js/storage.js').namespace.s));e.catalog=()=>JSON.stringify(modules.get(root+'/data/items.js').namespace.types);return e}
 (async()=>{
  const advanced=JSON.parse(golden.fixtures.find(x=>x.name==='active trip').saved).state;
  for(const {name,saved,expected} of golden.fixtures){
