@@ -1,0 +1,35 @@
+/* Equipment comparisons and provisions. */
+#gear { padding-top:14px }
+#gear > h2 { margin:8px 0 10px; font-size:25px }
+.workshop-intro { font-size:12px; line-height:1.65; color:#aebb9f; margin:0 0 18px }
+.gear-card,.food-card { border:1px solid #42523a; background:linear-gradient(135deg,#213022,#17231b); border-radius:18px; padding:17px; margin:14px 0 }
+.gear-heading { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:15px }
+.gear-heading h2 { font-size:19px; margin:0 }
+.gear-badge { flex-shrink:0; border:1px solid #556444; padding:6px 9px; border-radius:20px; font-size:10px; color:#c6d6ad }
+.gear-stats { border-block:1px solid #394a32; padding:5px 0 }
+.gear-stat { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:9px 0; font-size:12px }
+.gear-stat > span { color:#b4c1a6; max-width:55%; line-height:1.45 }
+.gear-stat strong { font-variant-numeric:tabular-nums; text-align:right; font-size:14px }
+.gear-stat strong span { color:#829673; margin:0 3px }
+.gear-stat em { font-style:normal; color:#d8ec9c }
+.gear-milestones { list-style:none; padding:0; display:grid; gap:9px; margin:16px 0 }
+.gear-milestones li { display:flex; align-items:center; gap:9px; color:#a6b39b; font-size:11px; line-height:1.5 }
+.gear-milestones li > span { display:grid; place-items:center; flex:none; width:25px; height:25px; border:1px solid #4a5c3f; border-radius:8px; font-size:10px }
+.gear-milestones .unlocked { color:#d0e5a5 }
+.gear-note { font-size:11px; line-height:1.65; color:#b5c4a6; margin:13px 0 }
+.gear-card > button { width:100%; min-height:48px; font-size:13px; margin-top:4px }
+.upgrade-reason { text-align:center; color:#b9c59e; font-size:11px; margin:9px 0 0; line-height:1.5 }
+#gear .food-shop-heading { margin-top:28px }
+.food-title { display:flex; justify-content:space-between; align-items:center; gap:10px }
+.food-title h3 { margin:0; font-size:16px }
+.food-title > strong { color:#d6eaa0; font-size:22px; white-space:nowrap }
+.food-title strong small { display:block; font-size:10px; font-weight:400; text-align:right }
+.food-card > p { color:#aaba9f; font-size:11px; line-height:1.6; margin:10px 0 }
+.food-stock { display:grid; grid-template-columns:1fr 1fr; gap:10px; border-block:1px solid #3b4c33; padding:12px 0; margin:12px 0; font-size:12px; color:#b6c5a7 }
+.food-stock b { float:right; color:#e0eacb; font-variant-numeric:tabular-nums }
+.food-stock > span + span { border-left:1px solid #3b4c33; padding-left:10px }
+.food-buttons { display:grid; grid-template-columns:1fr 1fr; gap:8px }
+.food-buttons button { min-height:44px; font-size:12px; padding:10px 6px }
+.food-note { display:block; color:#a9b69b; font-size:10px; line-height:1.6; margin-top:10px }
+#gear button:focus-visible { outline:2px solid #d5e9a3; outline-offset:3px }
+@media(max-width:350px) { .gear-card,.food-card { padding:13px } .gear-stat { gap:7px } .gear-stat strong { font-size:12px } .gear-heading h2 { font-size:17px } }

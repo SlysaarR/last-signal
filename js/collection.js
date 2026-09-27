@@ -1,9 +1,9 @@
 // collection responsibilities for Last Signal.
-import { rarities } from '../data/balance.js?v=0.15.0';
-import { collectible, types } from '../data/items.js?v=0.15.0';
-import { $ } from './dom.js?v=0.15.0';
-import { priceFor } from './rules.js?v=0.15.0';
-import { s } from './storage.js?v=0.15.0';
+import { rarities } from '../data/balance.js?v=0.16.0';
+import { collectible, types } from '../data/items.js?v=0.16.0';
+import { $ } from './dom.js?v=0.16.0';
+import { priceFor } from './rules.js?v=0.16.0';
+import { s } from './storage.js?v=0.16.0';
 export let collectionCategory = 'coin',
   denomFilter = 'all',
   yearFilter = 'all',

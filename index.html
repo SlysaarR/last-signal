@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="./css/search.css">
     <link rel="stylesheet" href="./css/excavation.css">
     <link rel="stylesheet" href="./css/inventory.css">
-    <script type="module" src="./js/main.js?v=0.15.0">
+    <link rel="stylesheet" href="./css/workshop.css?v=0.16.0">
+    <script type="module" src="./js/main.js?v=0.16.0">
     </script>
   </head>
   <body>
@@ -168,46 +169,38 @@
         <div class="search-status">
           <p class="sub" id="fieldBag">
           </p>
-          <span class="build-tag">v0.15.0</span>
+          <span class="build-tag">v0.16.0</span>
         </div>
         <div class="log" id="log" aria-live="polite">Обстежуй ділянку — кількість сигналів невідома. Шукай найчіткіший сигнал.</div>
       </section>
       <section id="gear" hidden>
-        <h2>Спорядження та магазин</h2>
-        <div class="card">
-          <div class="eyebrow">ДЕТЕКТОР</div>
-          <h2 id="level">
-          </h2>
-          <p id="detectorInfo">
-          </p>
-          <p>Рівень 10 — метал; 25 — приблизна глибина; 50 — оцінка глибини та витрат. Предмет залишається невідомим.</p>
-          <button class="primary" id="upgrade">
-          </button>
-        </div>
-        <div class="card">
-          <h2 id="shovelLevel">
-          </h2>
-          <p id="shovelInfo">
-          </p>
-          <button class="primary" id="upgradeShovel">
-          </button>
-        </div>
-        <div class="card">
-          <h2 id="backpackLevel">
-          </h2>
-          <p id="backpackInfo">
-          </p>
-          <button class="primary" id="upgradeBackpack">
-          </button>
-        </div>
-        <div class="card">
-          <h2>Їжа та запаси</h2>
-          <p id="foodBudget">
-          </p>
-          <p>Купуй у запас. Кожен продукт одноразовий. Якщо енергії забракло, спершу перевір їжу.</p>
-          <div id="foodShop">
-          </div>
-        </div>
+        <div class="eyebrow">ТАБІР / СПОРЯДЖЕННЯ</div>
+        <h2>Майстерня</h2>
+        <p id="workshopStatus" class="workshop-intro"></p>
+        <article class="gear-card">
+          <div class="gear-heading"><h2 id="level"></h2><span id="detectorBadge" class="gear-badge"></span></div>
+          <div id="detectorInfo" class="gear-stats"></div>
+          <ul id="detectorMilestones" class="gear-milestones"></ul>
+          <button class="primary" id="upgrade"></button>
+          <p id="detectorReason" class="upgrade-reason" aria-live="polite"></p>
+        </article>
+        <article class="gear-card">
+          <div class="gear-heading"><h2 id="shovelLevel"></h2><span id="shovelBadge" class="gear-badge"></span></div>
+          <div id="shovelInfo" class="gear-stats"></div>
+          <p id="shovelNote" class="gear-note"></p>
+          <button class="primary" id="upgradeShovel"></button>
+          <p id="shovelReason" class="upgrade-reason" aria-live="polite"></p>
+        </article>
+        <article class="gear-card">
+          <div class="gear-heading"><h2 id="backpackLevel"></h2><span id="backpackBadge" class="gear-badge"></span></div>
+          <div id="backpackInfo" class="gear-stats"></div>
+          <p id="backpackNote" class="gear-note"></p>
+          <button class="primary" id="upgradeBackpack"></button>
+          <p id="backpackReason" class="upgrade-reason" aria-live="polite"></p>
+        </article>
+        <h2 class="food-shop-heading">Провізія</h2>
+        <p id="foodBudget" class="workshop-intro"></p>
+        <div id="foodShop"></div>
         <div class="card">
           <b>Як грати</b>
           <p>Рюкзак вміщує знахідки та їжу: кожен предмет займає одне місце. Рівні 1–100 дають 8–40 місць. У полі немає автоматичного продажу чи поповнення альбому. Повний рюкзак: залиш нову знахідку або заміни предмет. У таборі продай здобич, збережи у сховищі чи додай до альбому. Магазин і прокачка доступні лише вдома. Відпочинок удома відновлює енергію. Переїзд між ділянками за 25 купонів не поповнює сили й не скидає ліміт їжі. Повернення до табору безкоштовне, але ділянка втрачається. Якщо немає 25 купонів, із табору можна безкоштовно вирушити на бідне узбіччя.</p>
@@ -244,7 +237,7 @@
           </div>
           <p class="sub" id="catalogNote">Натисни комірку, щоб прочитати опис і відкрити джерело. Рівні рідкості та ціни адаптовано для гри. Монети намальовані схематично.</p>
         </section>
-        <footer>ПРОТОТИП 0.15.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
+        <footer>ПРОТОТИП 0.16.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
       </main>
       <dialog id="tripMenu" aria-labelledby="tripMenuTitle">
         <div class="sheet-heading">

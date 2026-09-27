@@ -1,7 +1,7 @@
 // rules responsibilities for Last Signal.
-import { foods, rarities } from '../data/balance.js?v=0.15.0';
-import { types } from '../data/items.js?v=0.15.0';
-import { s } from './storage.js?v=0.15.0';
+import { foods, rarities } from '../data/balance.js?v=0.16.0';
+import { types } from '../data/items.js?v=0.16.0';
+import { s } from './storage.js?v=0.16.0';
 export function rollCondition() {
   return Math.floor(Math.random() * 101);
 }
@@ -12,11 +12,11 @@ export function priceFor(type, condition) {
 export function conditionLabel(c) {
   return c < 20 ? 'Майже знищений' : c < 45 ? 'Поганий' : c < 70 ? 'Задовільний' : c < 90 ? 'Добрий' : 'Відмінний';
 }
-export function maxEnergy() {
-  return 100 + Math.round((s.level - 1) * 100 / 99);
+export function maxEnergy(level = s.level) {
+  return 100 + Math.round((level - 1) * 100 / 99);
 }
-export function shovelFactor() {
-  return 1 - .3 * (s.shovel - 1) / 99;
+export function shovelFactor(level = s.shovel) {
+  return 1 - .3 * (level - 1) / 99;
 }
 export function digCost(base) {
   return Math.round(base * shovelFactor() * 10) / 10;
@@ -37,8 +37,8 @@ export function foodFits(i) {
 export function foodAvailable() {
   return foods.some((f, i) => foodFits(i) && s.food[i] > 0);
 }
-export function bagCapacity() {
-  return 8 + Math.floor((s.backpack - 1) * 32 / 99);
+export function bagCapacity(level = s.backpack) {
+  return 8 + Math.floor((level - 1) * 32 / 99);
 }
 export function bagUsed() {
   return s.bag.length + s.food.reduce((a, b) => a + b, 0);

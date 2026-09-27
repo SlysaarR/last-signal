@@ -48,4 +48,21 @@ async function newRun(saved,fail){const e=env(saved,fail),modules=new Map();func
  assert(!ns('collection').categoryItems().some(t=>t.id===coin));
  assert(ns('collection').categoryItems().every(t=>t.denom===JSON.parse(inv.catalog())[coin].denom));
  console.log('PASS album upgrade → stash → bag → sell; denomination and missing filters');
+ const shop=ns('shop'),rules=ns('rules');
+ for(const kind of ['detector','shovel','backpack']){
+   const key=kind==='detector'?'level':kind;
+   for(let level=1;level<100;level++){
+     state[key]=level;state.coins=100000;state.atCamp=true;
+     const expected=kind==='detector'?rules.maxEnergy(level+1):kind==='shovel'?rules.shovelFactor(level+1):rules.bagCapacity(level+1);
+     const cost=rules.upgradeCost(kind);shop.upgradeGear(kind);
+     assert.equal(state[key],level+1);assert.equal(state.coins,100000-cost);
+     assert.equal(kind==='detector'?rules.maxEnergy():kind==='shovel'?rules.shovelFactor():rules.bagCapacity(),expected);
+   }
+   const balance=state.coins;shop.upgradeGear(kind);assert.equal(state[key],100);assert.equal(state.coins,balance);
+ }
+ state.coins=0;state.level=1;shop.upgradeGear('detector');assert.equal(state.level,1);
+ state.atCamp=false;state.coins=1000;shop.upgradeGear('detector');assert.equal(state.level,1);
+ const count=state.pantry[0];shop.buyFood(0);assert.equal(state.pantry[0],count);
+ state.atCamp=true;shop.buyFood(0);assert.equal(state.pantry[0],count+1);shop.transferFood(0,true);assert.equal(state.food[0],1);
+ console.log('PASS all 297 upgrade steps, max level, purchase guards and food packing');
 })().catch(e=>{console.error(e);process.exit(1)});
