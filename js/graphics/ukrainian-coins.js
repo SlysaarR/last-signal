@@ -1,20 +1,22 @@
 // Original Canvas rendition of the 25-kopiyok reverse; not an exact mint-die reproduction.
 // References: museum.mincult.gov.ua/collections/moneta-25-kopiyok-1992-r-125364
 // commons.wikimedia.org/wiki/File:Ukraine-25-kopiyok-1992.jpg
-import { types } from '../../data/items.js?v=0.23.2';
+import { types } from '../../data/items.js?v=0.24.0';
 // Shared denomination-side artwork; mint die micro-varieties are intentionally not simulated.
 export function isUkrainianCoin(t) {
   return t?.country === 'Україна' && (t.unit?.startsWith('коп') || (t.value === 1 && t.unit?.startsWith('гр')));
 }
 export function canFlipCoin(t) { return t?.country === 'Україна' && t.value === 25 && t.unit?.startsWith('коп'); }
 export function paintUkrainianCoin(c, item, condition = 75, side = 0) {
+  if (side === 2 && canFlipCoin(item)) { paintCoinEdge(c, condition); return; }
+  const perfect = condition === 100;
   const obverse = side === 1 && canFlipCoin(item);
   const seed = (item.value === 25 ? 1992 : item.value * 1992) + (obverse ? 917 : 0);
   const silver = item.material !== 'yellow', aluminum = item.material === 'aluminum';
   const hryvnia = item.unit.startsWith('гр');
   const modern = hryvnia && item.year >= 2004;
   const light = silver ? '#eef0ec' : '#f4df98', dark = silver ? '#606b70' : '#74602e';
-  const raised = silver ? (aluminum ? '#cbd0cd' : '#b5bfc0') : '#c6ac5e';
+  const raised = perfect ? (silver ? '#dce5e7' : '#ebce78') : silver ? (aluminum ? '#cbd0cd' : '#b5bfc0') : '#c6ac5e';
   const wear = 1 - Math.max(0, Math.min(100, condition)) / 100, r = 126;
   let n = seed * 37 + 251;
   const random = () => { n = n * 16807 % 2147483647; return n / 2147483647; };
@@ -24,15 +26,21 @@ export function paintUkrainianCoin(c, item, condition = 75, side = 0) {
   metal.addColorStop(.32, silver ? '#899698' : (wear > .6 ? '#786c45' : '#b6a15d'));
   metal.addColorStop(.62, silver ? '#c2ccce' : (wear > .6 ? '#918053' : '#cab46b'));
   metal.addColorStop(1, silver ? '#637176' : '#6b5c32');
+  if (perfect) {
+    metal.addColorStop(.12, silver ? '#f5fbff' : '#fff0af');
+    metal.addColorStop(.40, silver ? '#6c818c' : '#93702b');
+    metal.addColorStop(.48, silver ? '#e8f3f7' : '#ffe39a');
+    metal.addColorStop(.78, silver ? '#f4fbff' : '#f9dd84');
+  }
   c.shadowColor='#0009';c.shadowBlur=13;c.shadowOffsetY=7;
   c.fillStyle=silver?'#505e63':'#514329';c.beginPath();c.ellipse(0,4,r,r,0,0,Math.PI*2);c.fill();
   c.shadowBlur=0;c.shadowOffsetY=0;
   c.fillStyle=metal;c.beginPath();c.arc(0,0,r,0,Math.PI*2);c.fill();
   c.save();c.beginPath();c.arc(0,0,r-2,0,Math.PI*2);c.clip();
   // Fine metal grain stays in the same positions across all wear levels.
-  for(let i=0;i<1600;i++) {c.fillStyle=i%2?'#fff1ab0d':'#302b1a16';c.fillRect((random()-.5)*252,(random()-.5)*252,.4+random()*1.1,.4+random());}
+  for(let i=0;i<(perfect?350:1600);i++) {c.fillStyle=i%2?'#fff1ab0d':'#302b1a16';c.fillRect((random()-.5)*252,(random()-.5)*252,.4+random()*1.1,.4+random());}
   const relief = draw => {
-    c.save();c.globalAlpha=1-wear*.63;c.translate(.7,1.1);c.fillStyle=light;c.strokeStyle=light;draw();c.restore();
+    c.save();c.globalAlpha=1-wear*.63;c.translate(perfect?1:.7,perfect?1.4:1.1);c.fillStyle=light;c.strokeStyle=light;draw();c.restore();
     c.save();c.globalAlpha=1-wear*.58;c.translate(-.5,-.5);c.fillStyle=dark;c.strokeStyle=dark;draw();c.restore();
     c.save();c.globalAlpha=.9-wear*.5;c.fillStyle=raised;c.strokeStyle=raised;draw();c.restore();
   };
@@ -99,16 +107,26 @@ export function paintUkrainianCoin(c, item, condition = 75, side = 0) {
     });
   }
   // Wear dulls the raised design; irregular corrosion is strongest at the rim.
-  for(let i=0;i<38;i++) {
+  for(let i=0;i<(perfect?0:38);i++) {
     const a=random()*Math.PI*2,dist=65+random()*60,x=Math.cos(a)*dist,y=Math.sin(a)*dist,size=5+random()*25;
     const patch=c.createRadialGradient(x,y,0,x,y,size);
     patch.addColorStop(0,`rgba(${silver ? "44,53,57" : "39,54,32"},${wear*wear*(.2+random()*.45)})`);patch.addColorStop(.6,`rgba(71,61,34,${wear*.15})`);patch.addColorStop(1,'#463d2500');c.fillStyle=patch;c.fillRect(x-size,y-size,size*2,size*2);
   }
-  for(let i=0;i<95;i++) {
+  for(let i=0;i<(perfect?0:95);i++) {
     const x=(random()-.5)*240,y=(random()-.5)*240,len=2+random()*19;
     c.strokeStyle=`rgba(48,39,22,${.035+wear*.23})`;c.lineWidth=.3+random()*.8;c.beginPath();c.moveTo(x,y);c.lineTo(x+len,y-len*.4);c.stroke();
   }
   c.fillStyle=`rgba(${silver ? "43,52,56" : "58,54,32"},${wear*.2})`;c.fillRect(-r,-r,r*2,r*2);
+  if (perfect) {
+    c.lineWidth=2;c.strokeStyle=silver?'#f6fcff':'#fff2bb';
+    c.beginPath();c.arc(0,0,121,Math.PI*1.04,Math.PI*1.66);c.stroke();
+    c.lineWidth=1.3;c.beginPath();c.arc(0,0,120,.05,.66);c.stroke();
+    // Small specular highlights stay on the rim, away from the lettering.
+    for (const [x,y] of [[-86,-84],[102,61]]) {
+      const glint=c.createRadialGradient(x,y,0,x,y,9);glint.addColorStop(0,'#ffffefee');glint.addColorStop(.2,'#fff8ca88');glint.addColorStop(1,'#fff8ca00');
+      c.fillStyle=glint;c.fillRect(x-9,y-9,18,18);
+    }
+  }
   c.restore();c.restore();
 }
 
@@ -122,4 +140,27 @@ export function renderCoinThumbnails() {
     const c=canvas.getContext('2d');c.clearRect(0,0,260,260);c.save();c.translate(130,128);c.scale(.94,.94);
     paintUkrainianCoin(c,types[Number(canvas.dataset.coinArt)],Number(canvas.dataset.condition),Number(canvas.dataset.side));c.restore();canvas.dataset.rendered=key;
   });
+}
+
+// Schematic edge inspection, enlarged thickness for readability; sector reeding.
+export function paintCoinEdge(c, condition=75) {
+  const wear=1-Math.max(0,Math.min(100,condition))/100, perfect=condition===100;
+  c.save();c.rotate(-.13);
+  const metal=c.createLinearGradient(0,-24,0,24);
+  metal.addColorStop(0,perfect?'#fff0b3':'#d4bd76');metal.addColorStop(.22,perfect?'#f5d47b':'#a08b4b');
+  metal.addColorStop(.55,perfect?'#a88130':'#6c5c32');metal.addColorStop(.82,perfect?'#edd18c':'#ad9656');metal.addColorStop(1,'#514326');
+  c.shadowColor='#0009';c.shadowBlur=15;c.shadowOffsetY=12;
+  c.beginPath();c.moveTo(-120,-16);c.quadraticCurveTo(0,-29,120,-16);c.quadraticCurveTo(131,0,120,16);c.quadraticCurveTo(0,29,-120,16);c.quadraticCurveTo(-131,0,-120,-16);c.closePath();c.fillStyle=metal;c.fill();
+  c.shadowBlur=0;c.shadowOffsetY=0;c.save();c.clip();
+  for(let x=-119;x<120;x+=4) {
+    // Alternating reeded and smooth sectors; not a die-variety tooth count.
+    if(Math.floor((x+120)/36)%2===1)continue;
+    const bow=5*(1-(x/126)**2);c.lineWidth=1.4;c.strokeStyle=`rgba(38,30,15,${.6-wear*.3})`;
+    c.beginPath();c.moveTo(x,-16-bow);c.lineTo(x,16+bow);c.stroke();
+    c.strokeStyle=`rgba(255,235,161,${.75-wear*.5})`;c.lineWidth=.8;c.beginPath();c.moveTo(x+1.2,-16-bow);c.lineTo(x+1.2,16+bow);c.stroke();
+  }
+  if(!perfect) for(let i=0;i<42;i++) {const x=Math.sin(i*13.4)*120,y=Math.cos(i*7.9)*20;c.fillStyle=`rgba(48,48,27,${wear*.45})`;c.beginPath();c.ellipse(x,y,2+wear*4,1+wear*3,i,0,Math.PI*2);c.fill();}
+  c.fillStyle=`rgba(55,48,30,${wear*.3})`;c.fillRect(-130,-30,260,60);c.restore();
+  c.lineWidth=perfect?2:1.2;c.strokeStyle=perfect?'#fff1ba':'#cab574';c.beginPath();c.moveTo(-118,-16);c.quadraticCurveTo(0,-29,118,-16);c.stroke();
+  c.restore();
 }

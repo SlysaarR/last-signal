@@ -1,9 +1,9 @@
 // Save loading, legacy migration and persistence. Keep KEY and the version-1 envelope compatible.
-import { surveyCols, surveyRows } from '../data/balance.js?v=0.23.2';
-import { locations } from '../data/locations.js?v=0.23.2';
-import { $ } from './dom.js?v=0.23.2';
-import { bagCapacity, bagUsed, maxEnergy, rollCondition } from './rules.js?v=0.23.2';
-import { currentLocation, rollDepth, rollLocation } from './world.js?v=0.23.2';
+import { surveyCols, surveyRows } from '../data/balance.js?v=0.24.0';
+import { locations } from '../data/locations.js?v=0.24.0';
+import { $ } from './dom.js?v=0.24.0';
+import { bagCapacity, bagUsed, maxEnergy, rollCondition } from './rules.js?v=0.24.0';
+import { currentLocation, rollDepth, rollLocation } from './world.js?v=0.24.0';
 export const KEY = 'last-signal-v1';
 export function fresh() {
   return {

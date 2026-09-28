@@ -10,3 +10,6 @@
 
 .coin-flip { display:block; width:100%; margin:8px 0 12px; min-height:44px }
 .coin-flip[hidden] { display:none }
+
+.wear-grid { grid-template-columns:repeat(2,minmax(0,1fr)) }
+.wear-grid figure:last-child { border-color:#bca363; background:linear-gradient(145deg,#30402b,#17261d) }
