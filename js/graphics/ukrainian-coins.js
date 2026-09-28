@@ -1,12 +1,13 @@
+import { paintHryvniaPortrait } from './hryvnia.js?v=0.26.0';
 // Original Canvas rendition of the 25-kopiyok reverse; not an exact mint-die reproduction.
 // References: museum.mincult.gov.ua/collections/moneta-25-kopiyok-1992-r-125364
 // commons.wikimedia.org/wiki/File:Ukraine-25-kopiyok-1992.jpg
-import { types } from '../../data/items.js?v=0.25.0';
+import { types } from '../../data/items.js?v=0.26.0';
 // Shared denomination-side artwork; mint die micro-varieties are intentionally not simulated.
 export function isUkrainianCoin(t) {
   return t?.country === 'Україна' && (t.unit?.startsWith('коп') || (t.value === 1 && t.unit?.startsWith('гр')));
 }
-export function canFlipCoin(t) { return t?.country === 'Україна' && [1,2,5,10,25,50].includes(t.value) && t.unit?.startsWith('коп'); }
+export function canFlipCoin(t) { return isUkrainianCoin(t); }
 export function paintUkrainianCoin(c, item, condition = 75, side = 0) {
   if (side === 2 && canFlipCoin(item)) { paintCoinEdge(c, condition, item); return; }
   const perfect = condition === 100;
@@ -57,7 +58,9 @@ export function paintUkrainianCoin(c, item, condition = 75, side = 0) {
     });c.restore();
   }
   c.textAlign='center';c.textBaseline='alphabetic';
-  if (obverse) {
+  if (obverse && modern) {
+    paintHryvniaPortrait(c,item,relief);
+  } else if (obverse) {
     relief(()=>{
       c.font='bold 26px Georgia,serif';c.fillText('Україна',0,-80,124);
       c.font='bold 24px Georgia,serif';c.fillText(String(item.year),0,106,96);
@@ -143,7 +146,7 @@ export function renderCoinThumbnails() {
 }
 
 // Schematic edge inspection, enlarged thickness for readability; sector reeding.
-export function coinEdgeType(item) { return item.value <= 2 ? 'smooth' : item.value <= 10 ? 'reeded' : 'sector'; }
+export function coinEdgeType(item) { if(item.unit?.startsWith('гр')) return item.year>=2018?'reeded':item.year===1992?'smooth':'lettered'; return item.value <= 2 ? 'smooth' : item.value <= 10 ? 'reeded' : 'sector'; }
 export function paintCoinEdge(c, condition=75, item={value:25,material:'yellow'}) {
   const silver=item.material!=='yellow', edge=coinEdgeType(item);
   const tone=(gold,white)=>silver?white:gold;
@@ -155,12 +158,18 @@ export function paintCoinEdge(c, condition=75, item={value:25,material:'yellow'}
   c.shadowColor='#0009';c.shadowBlur=15;c.shadowOffsetY=12;
   c.beginPath();c.moveTo(-120,-16);c.quadraticCurveTo(0,-29,120,-16);c.quadraticCurveTo(131,0,120,16);c.quadraticCurveTo(0,29,-120,16);c.quadraticCurveTo(-131,0,-120,-16);c.closePath();c.fillStyle=metal;c.fill();
   c.shadowBlur=0;c.shadowOffsetY=0;c.save();c.clip();
-  for(let x=-119;edge!=='smooth' && x<120;x+=4) {
+  for(let x=-119;edge!=='smooth' && edge!=='lettered' && x<120;x+=4) {
     // Alternating reeded and smooth sectors; not a die-variety tooth count.
     if(edge==='sector' && Math.floor((x+120)/36)%2===1)continue;
     const bow=5*(1-(x/126)**2);c.lineWidth=1.4;c.strokeStyle=`rgba(38,30,15,${.6-wear*.3})`;
     c.beginPath();c.moveTo(x,-16-bow);c.lineTo(x,16+bow);c.stroke();
     c.strokeStyle=`rgba(${silver ? "231,244,251" : "255,235,161"},${.75-wear*.5})`;c.lineWidth=.8;c.beginPath();c.moveTo(x+1.2,-16-bow);c.lineTo(x+1.2,16+bow);c.stroke();
+  }
+  if(edge==='lettered') {
+    c.textAlign='center';c.textBaseline='middle';c.font='bold 16px Georgia,serif';
+    const text='ОДНА · ГРИВНЯ · '+item.year;
+    c.fillStyle=tone('#f7dfa0','#e1edf0');c.fillText(text,.6,1,215);
+    c.fillStyle=tone('#5b461d','#42535c');c.fillText(text,0,0,215);
   }
   if(!perfect) for(let i=0;i<42;i++) {const x=Math.sin(i*13.4)*120,y=Math.cos(i*7.9)*20;c.fillStyle=`rgba(48,48,27,${wear*.45})`;c.beginPath();c.ellipse(x,y,2+wear*4,1+wear*3,i,0,Math.PI*2);c.fill();}
   c.fillStyle=`rgba(55,48,30,${wear*.3})`;c.fillRect(-130,-30,260,60);c.restore();
