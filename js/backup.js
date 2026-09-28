@@ -1,6 +1,6 @@
-import { $ } from './dom.js?v=0.24.0';
-import { createBackup, parseBackup, MAX_BACKUP_SIZE } from './backup-format.js?v=0.24.0';
-import { s, RECOVERY_KEY, installBackupState } from './storage.js?v=0.24.0';
+import { $ } from './dom.js?v=0.25.0';
+import { createBackup, parseBackup, MAX_BACKUP_SIZE } from './backup-format.js?v=0.25.0';
+import { s, RECOVERY_KEY, installBackupState } from './storage.js?v=0.25.0';
 let candidate = null, reading = 0;
 function message(text) { $('backupStatus').textContent = text; }
 function download(text, prefix) {

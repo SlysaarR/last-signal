@@ -1,14 +1,14 @@
 // Original Canvas rendition of the 25-kopiyok reverse; not an exact mint-die reproduction.
 // References: museum.mincult.gov.ua/collections/moneta-25-kopiyok-1992-r-125364
 // commons.wikimedia.org/wiki/File:Ukraine-25-kopiyok-1992.jpg
-import { types } from '../../data/items.js?v=0.24.0';
+import { types } from '../../data/items.js?v=0.25.0';
 // Shared denomination-side artwork; mint die micro-varieties are intentionally not simulated.
 export function isUkrainianCoin(t) {
   return t?.country === 'Україна' && (t.unit?.startsWith('коп') || (t.value === 1 && t.unit?.startsWith('гр')));
 }
-export function canFlipCoin(t) { return t?.country === 'Україна' && t.value === 25 && t.unit?.startsWith('коп'); }
+export function canFlipCoin(t) { return t?.country === 'Україна' && [1,2,5,10,25,50].includes(t.value) && t.unit?.startsWith('коп'); }
 export function paintUkrainianCoin(c, item, condition = 75, side = 0) {
-  if (side === 2 && canFlipCoin(item)) { paintCoinEdge(c, condition); return; }
+  if (side === 2 && canFlipCoin(item)) { paintCoinEdge(c, condition, item); return; }
   const perfect = condition === 100;
   const obverse = side === 1 && canFlipCoin(item);
   const seed = (item.value === 25 ? 1992 : item.value * 1992) + (obverse ? 917 : 0);
@@ -143,24 +143,27 @@ export function renderCoinThumbnails() {
 }
 
 // Schematic edge inspection, enlarged thickness for readability; sector reeding.
-export function paintCoinEdge(c, condition=75) {
+export function coinEdgeType(item) { return item.value <= 2 ? 'smooth' : item.value <= 10 ? 'reeded' : 'sector'; }
+export function paintCoinEdge(c, condition=75, item={value:25,material:'yellow'}) {
+  const silver=item.material!=='yellow', edge=coinEdgeType(item);
+  const tone=(gold,white)=>silver?white:gold;
   const wear=1-Math.max(0,Math.min(100,condition))/100, perfect=condition===100;
   c.save();c.rotate(-.13);
   const metal=c.createLinearGradient(0,-24,0,24);
-  metal.addColorStop(0,perfect?'#fff0b3':'#d4bd76');metal.addColorStop(.22,perfect?'#f5d47b':'#a08b4b');
-  metal.addColorStop(.55,perfect?'#a88130':'#6c5c32');metal.addColorStop(.82,perfect?'#edd18c':'#ad9656');metal.addColorStop(1,'#514326');
+  metal.addColorStop(0,perfect?tone('#fff0b3','#f5fcff'):tone('#d4bd76','#cdd7d9'));metal.addColorStop(.22,perfect?tone('#f5d47b','#dce7eb'):tone('#a08b4b','#94a1a6'));
+  metal.addColorStop(.55,perfect?tone('#a88130','#7e919b'):tone('#6c5c32','#59686e'));metal.addColorStop(.82,perfect?tone('#edd18c','#e5eff3'):tone('#ad9656','#acb9be'));metal.addColorStop(1,tone('#514326','#445057'));
   c.shadowColor='#0009';c.shadowBlur=15;c.shadowOffsetY=12;
   c.beginPath();c.moveTo(-120,-16);c.quadraticCurveTo(0,-29,120,-16);c.quadraticCurveTo(131,0,120,16);c.quadraticCurveTo(0,29,-120,16);c.quadraticCurveTo(-131,0,-120,-16);c.closePath();c.fillStyle=metal;c.fill();
   c.shadowBlur=0;c.shadowOffsetY=0;c.save();c.clip();
-  for(let x=-119;x<120;x+=4) {
+  for(let x=-119;edge!=='smooth' && x<120;x+=4) {
     // Alternating reeded and smooth sectors; not a die-variety tooth count.
-    if(Math.floor((x+120)/36)%2===1)continue;
+    if(edge==='sector' && Math.floor((x+120)/36)%2===1)continue;
     const bow=5*(1-(x/126)**2);c.lineWidth=1.4;c.strokeStyle=`rgba(38,30,15,${.6-wear*.3})`;
     c.beginPath();c.moveTo(x,-16-bow);c.lineTo(x,16+bow);c.stroke();
-    c.strokeStyle=`rgba(255,235,161,${.75-wear*.5})`;c.lineWidth=.8;c.beginPath();c.moveTo(x+1.2,-16-bow);c.lineTo(x+1.2,16+bow);c.stroke();
+    c.strokeStyle=`rgba(${silver ? "231,244,251" : "255,235,161"},${.75-wear*.5})`;c.lineWidth=.8;c.beginPath();c.moveTo(x+1.2,-16-bow);c.lineTo(x+1.2,16+bow);c.stroke();
   }
   if(!perfect) for(let i=0;i<42;i++) {const x=Math.sin(i*13.4)*120,y=Math.cos(i*7.9)*20;c.fillStyle=`rgba(48,48,27,${wear*.45})`;c.beginPath();c.ellipse(x,y,2+wear*4,1+wear*3,i,0,Math.PI*2);c.fill();}
   c.fillStyle=`rgba(55,48,30,${wear*.3})`;c.fillRect(-130,-30,260,60);c.restore();
-  c.lineWidth=perfect?2:1.2;c.strokeStyle=perfect?'#fff1ba':'#cab574';c.beginPath();c.moveTo(-118,-16);c.quadraticCurveTo(0,-29,118,-16);c.stroke();
+  c.lineWidth=perfect?2:1.2;c.strokeStyle=perfect?tone('#fff1ba','#f5fcff'):tone('#cab574','#cbd9de');c.beginPath();c.moveTo(-118,-16);c.quadraticCurveTo(0,-29,118,-16);c.stroke();
   c.restore();
 }

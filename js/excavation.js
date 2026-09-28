@@ -1,11 +1,11 @@
-import { setupCoinFlip } from './coin-flip.js?v=0.24.0';
-import { canFlipCoin } from './graphics/ukrainian-coins.js?v=0.24.0';
+import { setupCoinFlip } from './coin-flip.js?v=0.25.0';
+import { canFlipCoin } from './graphics/ukrainian-coins.js?v=0.25.0';
 // Soil canvas, finger cleaning, dust and reveal progress.
-import { types } from '../data/items.js?v=0.24.0';
-import { $ } from './dom.js?v=0.24.0';
-import { drawArtifact, seededArt } from './graphics/artifacts.js?v=0.24.0';
-import { openPacking } from './packing.js?v=0.24.0';
-import { s, save } from './storage.js?v=0.24.0';
+import { types } from '../data/items.js?v=0.25.0';
+import { $ } from './dom.js?v=0.25.0';
+import { drawArtifact, seededArt } from './graphics/artifacts.js?v=0.25.0';
+import { openPacking } from './packing.js?v=0.25.0';
+import { s, save } from './storage.js?v=0.25.0';
 export const soil = $('soil'),
   dirt = soil.getContext('2d'),
   art = $('artifact').getContext('2d');
