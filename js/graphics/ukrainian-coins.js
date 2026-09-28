@@ -1,7 +1,7 @@
 // Original Canvas rendition of the 25-kopiyok reverse; not an exact mint-die reproduction.
 // References: museum.mincult.gov.ua/collections/moneta-25-kopiyok-1992-r-125364
 // commons.wikimedia.org/wiki/File:Ukraine-25-kopiyok-1992.jpg
-import { types } from '../../data/items.js?v=0.23.0';
+import { types } from '../../data/items.js?v=0.23.1';
 // Shared denomination-side artwork; mint die micro-varieties are intentionally not simulated.
 export function isUkrainianCoin(t) {
   return t?.country === 'Україна' && (t.unit?.startsWith('коп') || (t.value === 1 && t.unit?.startsWith('гр')));
@@ -52,7 +52,8 @@ export function paintUkrainianCoin(c, item, condition = 75, side = 0) {
   if (obverse) {
     relief(()=>{
       c.font='bold 33px Georgia,serif';c.fillText('Україна',0,-78,176);
-      c.font='bold 28px Georgia,serif';c.fillText(String(item.year),0,103,100);
+      c.font='bold 24px Georgia,serif';c.fillText(String(item.year),0,106,96);
+      c.save();c.translate(0,-3);c.scale(1,.86);
       // Shield and stylized trident based on the 25-kopiyok specimen.
       c.lineWidth=3.5;c.lineJoin='round';
       c.beginPath();c.moveTo(-51,-66);c.lineTo(51,-66);c.lineTo(51,62);c.quadraticCurveTo(24,81,0,87);c.quadraticCurveTo(-24,81,-51,62);c.closePath();c.stroke();
@@ -73,6 +74,7 @@ export function paintUkrainianCoin(c, item, condition = 75, side = 0) {
         for(let j=0;j<5;j++){c.beginPath();c.moveTo(76+j*4,-38);c.lineTo(76+j*4,-57);c.stroke();}
         c.restore();
       }
+      c.restore();
     });
   } else if (modern) {
     // Denomination face of the 2004/2018 hryvnia family: separate scroll ornament.

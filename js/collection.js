@@ -1,12 +1,12 @@
-import { setupCoinFlip } from './coin-flip.js?v=0.23.0';
-import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.23.0';
-import { drawArtifact } from './graphics/artifacts.js?v=0.23.0';
+import { setupCoinFlip } from './coin-flip.js?v=0.23.1';
+import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.23.1';
+import { drawArtifact } from './graphics/artifacts.js?v=0.23.1';
 // collection responsibilities for Last Signal.
-import { rarities } from '../data/balance.js?v=0.23.0';
-import { collectible, types } from '../data/items.js?v=0.23.0';
-import { $ } from './dom.js?v=0.23.0';
-import { priceFor } from './rules.js?v=0.23.0';
-import { s } from './storage.js?v=0.23.0';
+import { rarities } from '../data/balance.js?v=0.23.1';
+import { collectible, types } from '../data/items.js?v=0.23.1';
+import { $ } from './dom.js?v=0.23.1';
+import { priceFor } from './rules.js?v=0.23.1';
+import { s } from './storage.js?v=0.23.1';
 export let collectionCategory = 'coin',
   denomFilter = 'all',
   yearFilter = 'all',
