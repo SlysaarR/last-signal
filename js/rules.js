@@ -1,7 +1,7 @@
 // rules responsibilities for Last Signal.
-import { foods, rarities } from '../data/balance.js?v=0.23.1';
-import { types } from '../data/items.js?v=0.23.1';
-import { s } from './storage.js?v=0.23.1';
+import { foods, rarities } from '../data/balance.js?v=0.23.2';
+import { types } from '../data/items.js?v=0.23.2';
+import { s } from './storage.js?v=0.23.2';
 export function rollCondition() {
   return Math.floor(Math.random() * 101);
 }

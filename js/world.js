@@ -1,9 +1,9 @@
 // world responsibilities for Last Signal.
-import { rarities, signalRanges, surveyCols, surveyRows } from '../data/balance.js?v=0.23.1';
-import { types } from '../data/items.js?v=0.23.1';
-import { legacyLocation, locations } from '../data/locations.js?v=0.23.1';
-import { rollCondition } from './rules.js?v=0.23.1';
-import { s, save } from './storage.js?v=0.23.1';
+import { rarities, signalRanges, surveyCols, surveyRows } from '../data/balance.js?v=0.23.2';
+import { types } from '../data/items.js?v=0.23.2';
+import { legacyLocation, locations } from '../data/locations.js?v=0.23.2';
+import { rollCondition } from './rules.js?v=0.23.2';
+import { s, save } from './storage.js?v=0.23.2';
 export function rollLocation() {
   let roll = Math.random() * 100;
   for (let i = 0; i < locations.length; i++) {

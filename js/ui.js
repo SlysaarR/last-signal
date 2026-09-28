@@ -1,16 +1,16 @@
 // Shared navigation, detector readout and quick sheets. Rendering functions never award items.
-import { renderCamp } from './camp.js?v=0.23.1';
-import { foods } from '../data/balance.js?v=0.23.1';
-import { types } from '../data/items.js?v=0.23.1';
-import { renderCollection } from './collection.js?v=0.23.1';
-import { $ } from './dom.js?v=0.23.1';
-import { draw } from './graphics/field.js?v=0.23.1';
-import { renderInventory } from './inventory.js?v=0.23.1';
-import { canLeave, emergencyAllowed, foodAmount, foodAvailable, foodFits, maxEnergy, minDig } from './rules.js?v=0.23.1';
-import { digInfo, signal } from './search.js?v=0.23.1';
-import { eatFood, renderShop } from './shop.js?v=0.23.1';
-import { s } from './storage.js?v=0.23.1';
-import { currentLocation } from './world.js?v=0.23.1';
+import { renderCamp } from './camp.js?v=0.23.2';
+import { foods } from '../data/balance.js?v=0.23.2';
+import { types } from '../data/items.js?v=0.23.2';
+import { renderCollection } from './collection.js?v=0.23.2';
+import { $ } from './dom.js?v=0.23.2';
+import { draw } from './graphics/field.js?v=0.23.2';
+import { renderInventory } from './inventory.js?v=0.23.2';
+import { canLeave, emergencyAllowed, foodAmount, foodAvailable, foodFits, maxEnergy, minDig } from './rules.js?v=0.23.2';
+import { digInfo, signal } from './search.js?v=0.23.2';
+import { eatFood, renderShop } from './shop.js?v=0.23.2';
+import { s } from './storage.js?v=0.23.2';
+import { currentLocation } from './world.js?v=0.23.2';
 export function renderFieldChrome() {
   const choices = document.getElementById('quickFoodChoices');
   if (!choices) return;

@@ -1,13 +1,13 @@
-import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.23.1';
+import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.23.2';
 // inventory responsibilities for Last Signal.
-import { foods } from '../data/balance.js?v=0.23.1';
-import { types } from '../data/items.js?v=0.23.1';
-import { modal } from './dialogs.js?v=0.23.1';
-import { $ } from './dom.js?v=0.23.1';
-import { bagCapacity, bagUsed, foodAmount, foodFits, maxEnergy, priceFor } from './rules.js?v=0.23.1';
-import { eatFood, transferFood } from './shop.js?v=0.23.1';
-import { s, save } from './storage.js?v=0.23.1';
-import { busy, render } from './ui.js?v=0.23.1';
+import { foods } from '../data/balance.js?v=0.23.2';
+import { types } from '../data/items.js?v=0.23.2';
+import { modal } from './dialogs.js?v=0.23.2';
+import { $ } from './dom.js?v=0.23.2';
+import { bagCapacity, bagUsed, foodAmount, foodFits, maxEnergy, priceFor } from './rules.js?v=0.23.2';
+import { eatFood, transferFood } from './shop.js?v=0.23.2';
+import { s, save } from './storage.js?v=0.23.2';
+import { busy, render } from './ui.js?v=0.23.2';
 export let inventoryRenderKey = '';
 export function itemLabel(item) {
   return types[item.type].name + ' · ' + (types[item.type].variant || '') + ' · ' + item.condition + '% · ' + priceFor(item.type, item.condition) + ' купонів';

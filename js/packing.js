@@ -1,13 +1,13 @@
-import { setupCoinFlip } from './coin-flip.js?v=0.23.1';
+import { setupCoinFlip } from './coin-flip.js?v=0.23.2';
 // Revealed-find card and the take/swap/leave decision.
-import { foods, rarities } from '../data/balance.js?v=0.23.1';
-import { types } from '../data/items.js?v=0.23.1';
-import { $ } from './dom.js?v=0.23.1';
-import { drawArtifact } from './graphics/artifacts.js?v=0.23.1';
-import { itemLabel } from './inventory.js?v=0.23.1';
-import { bagCapacity, bagUsed, conditionLabel, priceFor } from './rules.js?v=0.23.1';
-import { s, save } from './storage.js?v=0.23.1';
-import { render } from './ui.js?v=0.23.1';
+import { foods, rarities } from '../data/balance.js?v=0.23.2';
+import { types } from '../data/items.js?v=0.23.2';
+import { $ } from './dom.js?v=0.23.2';
+import { drawArtifact } from './graphics/artifacts.js?v=0.23.2';
+import { itemLabel } from './inventory.js?v=0.23.2';
+import { bagCapacity, bagUsed, conditionLabel, priceFor } from './rules.js?v=0.23.2';
+import { s, save } from './storage.js?v=0.23.2';
+import { render } from './ui.js?v=0.23.2';
 export function openPacking() {
   if (!s.pending) return;
   const item = s.pending,

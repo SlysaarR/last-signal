@@ -1,7 +1,7 @@
 // Original Canvas rendition of the 25-kopiyok reverse; not an exact mint-die reproduction.
 // References: museum.mincult.gov.ua/collections/moneta-25-kopiyok-1992-r-125364
 // commons.wikimedia.org/wiki/File:Ukraine-25-kopiyok-1992.jpg
-import { types } from '../../data/items.js?v=0.23.1';
+import { types } from '../../data/items.js?v=0.23.2';
 // Shared denomination-side artwork; mint die micro-varieties are intentionally not simulated.
 export function isUkrainianCoin(t) {
   return t?.country === 'Україна' && (t.unit?.startsWith('коп') || (t.value === 1 && t.unit?.startsWith('гр')));
@@ -39,7 +39,7 @@ export function paintUkrainianCoin(c, item, condition = 75, side = 0) {
   relief(()=>{c.lineWidth=2.6;c.beginPath();c.arc(0,0,121,0,Math.PI*2);c.stroke();});
   // Flowing border, alternating elongated leaves and berry clusters.
   if (!modern && !obverse) for(let i=0;i<8;i++) {
-    c.save();c.rotate((i*45+14)*Math.PI/180);c.translate(0,-105);
+    c.save();c.rotate((i*45+14)*Math.PI/180);c.translate(0,-109);c.scale(.72,.72);
     relief(()=>{
       c.lineWidth=1.2;c.beginPath();c.moveTo(-23,2);c.bezierCurveTo(-4,-9,15,-8,27,5);c.stroke();
       c.beginPath();c.moveTo(-22,2);c.bezierCurveTo(-14,-3,-14,-15,1,-15);c.bezierCurveTo(-3,-6,13,-10,20,-3);c.bezierCurveTo(9,-1,1,8,-9,5);c.closePath();c.fill();
@@ -51,7 +51,7 @@ export function paintUkrainianCoin(c, item, condition = 75, side = 0) {
   c.textAlign='center';c.textBaseline='alphabetic';
   if (obverse) {
     relief(()=>{
-      c.font='bold 33px Georgia,serif';c.fillText('Україна',0,-78,176);
+      c.font='bold 26px Georgia,serif';c.fillText('Україна',0,-80,124);
       c.font='bold 24px Georgia,serif';c.fillText(String(item.year),0,106,96);
       c.save();c.translate(0,-3);c.scale(1,.86);
       // Shield and stylized trident based on the 25-kopiyok specimen.
@@ -94,8 +94,8 @@ export function paintUkrainianCoin(c, item, condition = 75, side = 0) {
     });
   } else {
     relief(()=>{
-      c.font='bold '+(item.value<10?139:123)+'px Georgia,serif';c.fillText(String(item.value),0,20,item.value<10?100:176);
-      c.font='bold '+(hryvnia?32:35)+'px Georgia,serif';c.fillText(item.unit,0,73,179);
+      c.font='bold '+(item.value<10?116:108)+'px Georgia,serif';c.fillText(String(item.value),0,20,item.value<10?88:132);
+      c.font='bold '+(hryvnia?26:27)+'px Georgia,serif';c.fillText(item.unit,0,60,128);
     });
   }
   // Wear dulls the raised design; irregular corrosion is strongest at the rim.
