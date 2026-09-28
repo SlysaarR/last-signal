@@ -1,11 +1,12 @@
-import { paintHryvniaPortrait } from './hryvnia.js?v=0.26.0';
+import { paintLaterHryvniaPortrait } from './hryvnia-portraits.js?v=0.27.0';
+import { paintHryvniaPortrait } from './hryvnia.js?v=0.27.0';
 // Original Canvas rendition of the 25-kopiyok reverse; not an exact mint-die reproduction.
 // References: museum.mincult.gov.ua/collections/moneta-25-kopiyok-1992-r-125364
 // commons.wikimedia.org/wiki/File:Ukraine-25-kopiyok-1992.jpg
-import { types } from '../../data/items.js?v=0.26.0';
+import { types } from '../../data/items.js?v=0.27.0';
 // Shared denomination-side artwork; mint die micro-varieties are intentionally not simulated.
 export function isUkrainianCoin(t) {
-  return t?.country === 'Україна' && (t.unit?.startsWith('коп') || (t.value === 1 && t.unit?.startsWith('гр')));
+  return t?.country === 'Україна' && (t.unit?.startsWith('коп') || ([1,2,5,10].includes(t.value) && t.unit?.startsWith('гр')));
 }
 export function canFlipCoin(t) { return isUkrainianCoin(t); }
 export function paintUkrainianCoin(c, item, condition = 75, side = 0) {
@@ -59,7 +60,8 @@ export function paintUkrainianCoin(c, item, condition = 75, side = 0) {
   }
   c.textAlign='center';c.textBaseline='alphabetic';
   if (obverse && modern) {
-    paintHryvniaPortrait(c,item,relief);
+    if(item.value===1) paintHryvniaPortrait(c,item,relief);
+    else paintLaterHryvniaPortrait(c,item,relief);
   } else if (obverse) {
     relief(()=>{
       c.font='bold 26px Georgia,serif';c.fillText('Україна',0,-80,124);
@@ -97,8 +99,8 @@ export function paintUkrainianCoin(c, item, condition = 75, side = 0) {
         c.restore();
       }
       c.font='bold 21px Georgia,serif';c.fillText('УКРАЇНА',0,-53,126);
-      c.font='bold 99px Georgia,serif';c.fillText('1',0,35,95);
-      c.font='bold 25px Georgia,serif';c.fillText('ГРИВНЯ',0,68,135);
+      c.font='bold 99px Georgia,serif';c.fillText(String(item.value),0,35,item.value===10?132:95);
+      c.font='bold 25px Georgia,serif';c.fillText(item.unit.toUpperCase(),0,68,135);
       c.font='18px Georgia,serif';c.fillText(String(item.year),0,100,80);
       // Small stylized trident, drawn as paths to avoid missing font glyphs.
       c.lineWidth=2.2;c.beginPath();c.moveTo(0,-114);c.lineTo(0,-81);c.moveTo(-13,-109);c.lineTo(-13,-86);c.lineTo(13,-86);c.lineTo(13,-109);c.moveTo(-13,-103);c.quadraticCurveTo(0,-99,0,-81);c.quadraticCurveTo(0,-99,13,-103);c.stroke();
@@ -146,7 +148,7 @@ export function renderCoinThumbnails() {
 }
 
 // Schematic edge inspection, enlarged thickness for readability; sector reeding.
-export function coinEdgeType(item) { if(item.unit?.startsWith('гр')) return item.year>=2018?'reeded':item.year===1992?'smooth':'lettered'; return item.value <= 2 ? 'smooth' : item.value <= 10 ? 'reeded' : 'sector'; }
+export function coinEdgeType(item) { if(item.unit?.startsWith('гр')) return item.value===5?'sector':item.year>=2018?'reeded':item.year===1992?'smooth':'lettered'; return item.value <= 2 ? 'smooth' : item.value <= 10 ? 'reeded' : 'sector'; }
 export function paintCoinEdge(c, condition=75, item={value:25,material:'yellow'}) {
   const silver=item.material!=='yellow', edge=coinEdgeType(item);
   const tone=(gold,white)=>silver?white:gold;
