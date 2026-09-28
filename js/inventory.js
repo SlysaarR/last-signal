@@ -1,12 +1,13 @@
+import { isCoin25, coin25Markup, renderCoin25Thumbnails } from './graphics/coin25.js?v=0.21.0';
 // inventory responsibilities for Last Signal.
-import { foods } from '../data/balance.js?v=0.20.0';
-import { types } from '../data/items.js?v=0.20.0';
-import { modal } from './dialogs.js?v=0.20.0';
-import { $ } from './dom.js?v=0.20.0';
-import { bagCapacity, bagUsed, foodAmount, foodFits, maxEnergy, priceFor } from './rules.js?v=0.20.0';
-import { eatFood, transferFood } from './shop.js?v=0.20.0';
-import { s, save } from './storage.js?v=0.20.0';
-import { busy, render } from './ui.js?v=0.20.0';
+import { foods } from '../data/balance.js?v=0.21.0';
+import { types } from '../data/items.js?v=0.21.0';
+import { modal } from './dialogs.js?v=0.21.0';
+import { $ } from './dom.js?v=0.21.0';
+import { bagCapacity, bagUsed, foodAmount, foodFits, maxEnergy, priceFor } from './rules.js?v=0.21.0';
+import { eatFood, transferFood } from './shop.js?v=0.21.0';
+import { s, save } from './storage.js?v=0.21.0';
+import { busy, render } from './ui.js?v=0.21.0';
 export let inventoryRenderKey = '';
 export function itemLabel(item) {
   return types[item.type].name + ' · ' + (types[item.type].variant || '') + ' · ' + item.condition + '% · ' + priceFor(item.type, item.condition) + ' купонів';
@@ -17,7 +18,7 @@ export function itemRows(list, place) {
     const best = s.best[item.type], canAlbum = t.kind !== 'trash' && (best === undefined || best < item.condition);
     const button = (action, label, disabled = false) => `<button class="secondary" data-itemaction="${action}" data-place="${place}" data-index="${i}" ${disabled ? 'disabled' : ''}>${label}</button>`;
     const albumLabel = t.kind === 'trash' ? 'Не для альбому' : best === undefined ? 'До альбому' : canAlbum ? 'Покращити альбом' : 'В альбомі кращий або такий';
-    return `<article class="find-card"><div class="find-heading"><span class="item-symbol" aria-hidden="true">${t.icon}</span><div><h3>${t.name}</h3>${t.variant ? `<p class="find-variant">${t.variant}</p>` : ''}<small>${t.kind === 'trash' ? 'Металобрухт' : canAlbum ? (best === undefined ? 'Нова позиція для альбому' : 'Кращий стан для альбому') : 'Є в альбомі'}</small></div></div><div class="find-metrics"><div><span>СТАН</span><strong>${item.condition}<small> / 100</small></strong><progress aria-label="Стан предмета" value="${item.condition}" max="100"></progress></div><div><span>ОЦІНКА</span><strong>${value}<small> купонів</small></strong></div></div><div class="find-actions">${s.atCamp ? button('album', albumLabel, !canAlbum) + button('move', place === 'bag' ? 'До сховища' : 'У рюкзак', place === 'stash' && bagUsed() >= bagCapacity()) + button('sell', 'Продати · ' + value) : button('discard', 'Викинути')}</div></article>`;
+    return `<article class="find-card"><div class="find-heading">${isCoin25(t) ? coin25Markup(item.type, item.condition) : `<span class="item-symbol" aria-hidden="true">${t.icon}</span>`}<div><h3>${t.name}</h3>${t.variant ? `<p class="find-variant">${t.variant}</p>` : ''}<small>${t.kind === 'trash' ? 'Металобрухт' : canAlbum ? (best === undefined ? 'Нова позиція для альбому' : 'Кращий стан для альбому') : 'Є в альбомі'}</small></div></div><div class="find-metrics"><div><span>СТАН</span><strong>${item.condition}<small> / 100</small></strong><progress aria-label="Стан предмета" value="${item.condition}" max="100"></progress></div><div><span>ОЦІНКА</span><strong>${value}<small> купонів</small></strong></div></div><div class="find-actions">${s.atCamp ? button('album', albumLabel, !canAlbum) + button('move', place === 'bag' ? 'До сховища' : 'У рюкзак', place === 'stash' && bagUsed() >= bagCapacity()) + button('sell', 'Продати · ' + value) : button('discard', 'Викинути')}</div></article>`;
   }).join('') || `<div class="empty-state"><b>${place === 'bag' ? 'Місце для нових знахідок' : 'Сховище порожнє'}</b><p>${place === 'bag' ? 'Знахідки з виїзду з’являться тут. Їжа також займає місця в рюкзаку.' : 'Залишай тут предмети, які хочеш зберегти для наступних рішень.'}</p></div>`;
 }
 export function renderInventory() {
@@ -31,6 +32,7 @@ export function renderInventory() {
   $('bagItems').innerHTML = itemRows(s.bag, 'bag');
   $('warehousePanel').hidden = !s.atCamp;
   $('warehouseItems').innerHTML = s.atCamp ? itemRows(s.stash, 'stash') : '';
+  renderCoin25Thumbnails();
   $('bagFood').innerHTML = foods.map((f, i) => '<div class="card">' + f.name + ' × ' + s.food[i] + ' <button class="secondary" data-foodaction="' + (s.atCamp ? 'unpack' : 'eat') + '" data-index="' + i + '" ' + (!s.food[i] || !s.atCamp && !foodFits(i) ? 'disabled' : '') + '>' + (s.atCamp ? 'До сховища' : 'З’їсти · +' + foodAmount(i)) + '</button>' + (!s.atCamp ? ' <button class="quiet" data-foodaction="discard" data-index="' + i + '" ' + (!s.food[i] ? 'disabled' : '') + '>Викинути</button>' : '') + '</div>').join('');
   $('pantryItems').innerHTML = foods.map((f, i) => '<div class="card">' + f.name + ' × ' + s.pantry[i] + ' <button class="secondary" data-foodaction="pack" data-index="' + i + '" ' + (!s.pantry[i] || bagUsed() >= bagCapacity() ? 'disabled' : '') + '>У рюкзак</button></div>').join('');
 

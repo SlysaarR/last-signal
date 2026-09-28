@@ -1,9 +1,11 @@
+import { isCoin25, coin25Markup, renderCoin25Thumbnails } from './graphics/coin25.js?v=0.21.0';
+import { drawArtifact } from './graphics/artifacts.js?v=0.21.0';
 // collection responsibilities for Last Signal.
-import { rarities } from '../data/balance.js?v=0.20.0';
-import { collectible, types } from '../data/items.js?v=0.20.0';
-import { $ } from './dom.js?v=0.20.0';
-import { priceFor } from './rules.js?v=0.20.0';
-import { s } from './storage.js?v=0.20.0';
+import { rarities } from '../data/balance.js?v=0.21.0';
+import { collectible, types } from '../data/items.js?v=0.21.0';
+import { $ } from './dom.js?v=0.21.0';
+import { priceFor } from './rules.js?v=0.21.0';
+import { s } from './storage.js?v=0.21.0';
 export let collectionCategory = 'coin',
   denomFilter = 'all',
   yearFilter = 'all',
@@ -51,8 +53,9 @@ export function renderCollection() {
       previous = t.denom;
       heading = '<h3 class="album-heading">' + t.denom + '<small>За роками випуску</small></h3>';
     }
-    return heading + `<button class="collect ${has ? 'owned' : 'unfound'}" data-item="${t.id}"><small class="ownership">${has ? '✓ В альбомі' : 'Не знайдено'}</small><span class="collection-symbol" aria-hidden="true">${has ? t.icon : '○'}</span><b>${t.country ? t.year + ' рік' : t.name}</b>${t.country ? '<small>' + t.denom + '</small>' : ''}${t.variant ? '<small class="coin-variant">' + t.variant + '</small>' : ''}${t.issue === 'set' ? '<small>Наборний випуск</small>' : ''}<small class="rarity" style="color:${r.color}">${r.name}</small><small class="collection-condition">${has ? 'Стан ' + s.best[t.id] + '/100' : 'Вільне місце в альбомі'}</small>${has ? '<small>' + priceFor(t.id, s.best[t.id]) + ' купонів</small>' : ''}</button>`;
+    return heading + `<button class="collect ${has ? 'owned' : 'unfound'}" data-item="${t.id}"><small class="ownership">${has ? '✓ В альбомі' : 'Не знайдено'}</small>${has && isCoin25(t) ? coin25Markup(t.id, s.best[t.id]) : `<span class="collection-symbol" aria-hidden="true">${has ? t.icon : '○'}</span>`}<b>${t.country ? t.year + ' рік' : t.name}</b>${t.country ? '<small>' + t.denom + '</small>' : ''}${t.variant ? '<small class="coin-variant">' + t.variant + '</small>' : ''}${t.issue === 'set' ? '<small>Наборний випуск</small>' : ''}<small class="rarity" style="color:${r.color}">${r.name}</small><small class="collection-condition">${has ? 'Стан ' + s.best[t.id] + '/100' : 'Вільне місце в альбомі'}</small>${has ? '<small>' + priceFor(t.id, s.best[t.id]) + ' купонів</small>' : ''}</button>`;
   }).join('') || '<p class="sub">За цими фільтрами позицій немає.</p>';
+  renderCoin25Thumbnails();
 }
 export function showItem(id) {
   const t = types[id];
@@ -66,6 +69,13 @@ export function showItem(id) {
   $('detailText').textContent = lines.join('\n\n');
   $('detailSource').hidden = !t.source;
   if (t.source) $('detailSource').href = t.source;
+  $('detailArt').hidden = !isCoin25(t);
+  $('wearExamples').hidden = !isCoin25(t);
+  if (isCoin25(t)) {
+    drawArtifact(id, $('detailArt').getContext('2d'), found ? s.best[id] : 75, true);
+    $('wearExamples').innerHTML = '<p>Порівняння ігрового стану · це зразки, не нові знахідки</p><div class="wear-grid">' + [20,60,95].map(c => '<figure>' + coin25Markup(id,c) + '<figcaption>' + c + ' / 100</figcaption></figure>').join('') + '</div>';
+    renderCoin25Thumbnails();
+  }
   $('coinDetail').showModal();
 }
 export const denominations = [...new Set(collectible.filter(t => t.kind === 'coin').map(t => t.denom))];

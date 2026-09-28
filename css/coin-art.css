@@ -1,0 +1,9 @@
+.coin25-thumb { width:68px; height:68px; flex:none; display:block }
+#items .coin25-thumb { width:90px; height:90px; margin:4px 0 }
+#detailArt { display:block; width:100%; height:auto; border:1px solid #52633f; border-radius:16px; margin:14px 0 }
+#wearExamples > p { font-size:11px; line-height:1.5; color:#aebe9e }
+.wear-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; margin-bottom:16px }
+.wear-grid figure { margin:0; background:#112016; border:1px solid #3a4c31; border-radius:12px; padding:8px 3px }
+.wear-grid canvas { width:100%; height:auto }
+.wear-grid figcaption { text-align:center; color:#d3dfba; font-size:11px; padding:4px 0 }
+#detailArt[hidden], #wearExamples[hidden] { display:none }

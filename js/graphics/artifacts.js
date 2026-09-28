@@ -1,7 +1,8 @@
+import { paint25, isCoin25 } from './coin25.js?v=0.21.0';
 // Procedural find artwork. Coin wreath reference: https://museum.mincult.gov.ua/collections/moneta-25-kopiyok-1992-r-125364
-import { types } from '../../data/items.js?v=0.20.0';
-import { $ } from '../dom.js?v=0.20.0';
-import { s } from '../storage.js?v=0.20.0';
+import { types } from '../../data/items.js?v=0.21.0';
+import { $ } from '../dom.js?v=0.21.0';
+import { s } from '../storage.js?v=0.21.0';
 export function seededArt(seed) {
   let n = Math.abs(seed | 0) + 1;
   return () => {
@@ -10,6 +11,7 @@ export function seededArt(seed) {
   };
 }
 export function paintCoinFace(c, item, condition) {
+  if (isCoin25(item)) { paint25(c, condition, 1992); return; }
   const yellow = item.material === 'yellow',
     r = 126,
     wear = 1 - Math.max(0, Math.min(100, condition)) / 100;
