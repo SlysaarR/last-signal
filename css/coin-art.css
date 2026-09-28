@@ -1,5 +1,5 @@
-.coin25-thumb { width:68px; height:68px; flex:none; display:block }
-#items .coin25-thumb { width:90px; height:90px; margin:4px 0 }
+.coin-thumb { width:68px; height:68px; flex:none; display:block }
+#items .coin-thumb { width:90px; height:90px; margin:4px 0 }
 #detailArt { display:block; width:100%; height:auto; border:1px solid #52633f; border-radius:16px; margin:14px 0 }
 #wearExamples > p { font-size:11px; line-height:1.5; color:#aebe9e }
 .wear-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; margin-bottom:16px }
