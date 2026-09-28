@@ -1,9 +1,11 @@
+import { setupCoinFlip } from './coin-flip.js?v=0.23.0';
+import { canFlipCoin } from './graphics/ukrainian-coins.js?v=0.23.0';
 // Soil canvas, finger cleaning, dust and reveal progress.
-import { types } from '../data/items.js?v=0.22.0';
-import { $ } from './dom.js?v=0.22.0';
-import { drawArtifact, seededArt } from './graphics/artifacts.js?v=0.22.0';
-import { openPacking } from './packing.js?v=0.22.0';
-import { s, save } from './storage.js?v=0.22.0';
+import { types } from '../data/items.js?v=0.23.0';
+import { $ } from './dom.js?v=0.23.0';
+import { drawArtifact, seededArt } from './graphics/artifacts.js?v=0.23.0';
+import { openPacking } from './packing.js?v=0.23.0';
+import { s, save } from './storage.js?v=0.23.0';
 export const soil = $('soil'),
   dirt = soil.getContext('2d'),
   art = $('artifact').getContext('2d');
@@ -96,6 +98,9 @@ export function animateDust(now) {
 }
 export function openExcavation() {
   if (!s.pending) return;
+  $('excFlip').hidden = true;
+  $('artifact').onclick = null;
+  soil.onclick = null;
   drawArtifact(s.pending.type);
   swept = new Set();
   phaseDone = false;
@@ -144,6 +149,10 @@ export function brushAt(x, y) {
     $('excNext').disabled = false;
     $('excNext').textContent = 'Оглянути знахідку';
     $('excStatus').textContent = 'Очищення завершено.';
+    const flip = setupCoinFlip($('artifact'), $('excFlip'), s.pending.type, s.pending.condition, false);
+    soil.onpointerdown = null;
+    if (canFlipCoin(types[s.pending.type])) $('excHint').textContent = 'Торкнись монети або кнопки, щоб перевернути її.';
+    soil.coinFlip = flip;
   }
 }
 export function brushMove(e) {
@@ -166,6 +175,7 @@ export function collectPending() {
 }
 export function initExcavation() {
   soil.addEventListener('pointerdown', e => {
+    if (phaseDone) { soil.coinFlip?.(); return; }
     if (brushDown) return;
     brushDown = true;
     soil.setPointerCapture(e.pointerId);

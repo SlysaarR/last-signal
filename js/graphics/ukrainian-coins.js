@@ -1,13 +1,15 @@
 // Original Canvas rendition of the 25-kopiyok reverse; not an exact mint-die reproduction.
 // References: museum.mincult.gov.ua/collections/moneta-25-kopiyok-1992-r-125364
 // commons.wikimedia.org/wiki/File:Ukraine-25-kopiyok-1992.jpg
-import { types } from '../../data/items.js?v=0.22.0';
+import { types } from '../../data/items.js?v=0.23.0';
 // Shared denomination-side artwork; mint die micro-varieties are intentionally not simulated.
 export function isUkrainianCoin(t) {
   return t?.country === 'Україна' && (t.unit?.startsWith('коп') || (t.value === 1 && t.unit?.startsWith('гр')));
 }
-export function paintUkrainianCoin(c, item, condition = 75) {
-  const seed = item.value === 25 ? 1992 : item.value * 1992;
+export function canFlipCoin(t) { return t?.country === 'Україна' && t.value === 25 && t.unit?.startsWith('коп'); }
+export function paintUkrainianCoin(c, item, condition = 75, side = 0) {
+  const obverse = side === 1 && canFlipCoin(item);
+  const seed = (item.value === 25 ? 1992 : item.value * 1992) + (obverse ? 917 : 0);
   const silver = item.material !== 'yellow', aluminum = item.material === 'aluminum';
   const hryvnia = item.unit.startsWith('гр');
   const modern = hryvnia && item.year >= 2004;
@@ -36,7 +38,7 @@ export function paintUkrainianCoin(c, item, condition = 75) {
   };
   relief(()=>{c.lineWidth=2.6;c.beginPath();c.arc(0,0,121,0,Math.PI*2);c.stroke();});
   // Flowing border, alternating elongated leaves and berry clusters.
-  if (!modern) for(let i=0;i<8;i++) {
+  if (!modern && !obverse) for(let i=0;i<8;i++) {
     c.save();c.rotate((i*45+14)*Math.PI/180);c.translate(0,-105);
     relief(()=>{
       c.lineWidth=1.2;c.beginPath();c.moveTo(-23,2);c.bezierCurveTo(-4,-9,15,-8,27,5);c.stroke();
@@ -47,7 +49,32 @@ export function paintUkrainianCoin(c, item, condition = 75) {
     });c.restore();
   }
   c.textAlign='center';c.textBaseline='alphabetic';
-  if (modern) {
+  if (obverse) {
+    relief(()=>{
+      c.font='bold 33px Georgia,serif';c.fillText('Україна',0,-78,176);
+      c.font='bold 28px Georgia,serif';c.fillText(String(item.year),0,103,100);
+      // Shield and stylized trident based on the 25-kopiyok specimen.
+      c.lineWidth=3.5;c.lineJoin='round';
+      c.beginPath();c.moveTo(-51,-66);c.lineTo(51,-66);c.lineTo(51,62);c.quadraticCurveTo(24,81,0,87);c.quadraticCurveTo(-24,81,-51,62);c.closePath();c.stroke();
+      c.beginPath();c.moveTo(0,-58);c.bezierCurveTo(-14,-35,3,-22,-3,3);c.lineTo(-17,34);c.lineTo(0,67);c.lineTo(17,34);c.lineTo(3,3);c.bezierCurveTo(-3,-22,14,-35,0,-58);c.closePath();c.stroke();
+      for(const sign of [-1,1]) {
+        c.save();c.scale(sign,1);
+        c.beginPath();c.moveTo(0,51);c.lineTo(36,51);c.lineTo(36,-49);c.bezierCurveTo(14,-29,15,-11,19,3);c.bezierCurveTo(42,19,13,31,0,25);c.stroke();
+        // Wheat ears above an oak branch on either side of the shield.
+        c.lineWidth=2;c.beginPath();c.moveTo(42,84);c.quadraticCurveTo(100,74,85,-13);c.stroke();
+        for(let j=0;j<5;j++) {
+          const y=55-j*14,x=82-j*1.2;
+          c.beginPath();c.ellipse(x-7,y,7,13,-.65,0,Math.PI*2);c.fill();
+          c.beginPath();c.ellipse(x+8,y-7,6,12,.65,0,Math.PI*2);c.fill();
+        }
+        for(let j=0;j<4;j++) {
+          const y=-13-j*9;c.beginPath();c.ellipse(80,y,3,6,-.6,0,Math.PI*2);c.ellipse(89,y-3,3,6,.6,0,Math.PI*2);c.fill();
+        }
+        for(let j=0;j<5;j++){c.beginPath();c.moveTo(76+j*4,-38);c.lineTo(76+j*4,-57);c.stroke();}
+        c.restore();
+      }
+    });
+  } else if (modern) {
     // Denomination face of the 2004/2018 hryvnia family: separate scroll ornament.
     relief(()=>{
       for(const side of [-1,1]) {
@@ -83,14 +110,14 @@ export function paintUkrainianCoin(c, item, condition = 75) {
   c.restore();c.restore();
 }
 
-export function coinMarkup(type, condition, className='coin-thumb') {
-  return `<canvas class="${className}" width="260" height="260" data-coin-art="${type}" data-condition="${condition}" role="img" aria-label="${types[type].denom}, стан ${condition} зі 100"></canvas>`;
+export function coinMarkup(type, condition, className='coin-thumb', side=0) {
+  return `<canvas class="${className}" width="260" height="260" data-coin-art="${type}" data-condition="${condition}" data-side="${side}" role="img" aria-label="${types[type].denom}, стан ${condition} зі 100"></canvas>`;
 }
 export function renderCoinThumbnails() {
   document.querySelectorAll('canvas[data-coin-art]').forEach(canvas => {
-    const key=canvas.dataset.coinArt+':'+canvas.dataset.condition;
+    const key=canvas.dataset.coinArt+':'+canvas.dataset.condition+':'+canvas.dataset.side;
     if(canvas.dataset.rendered===key)return;
     const c=canvas.getContext('2d');c.clearRect(0,0,260,260);c.save();c.translate(130,128);c.scale(.94,.94);
-    paintUkrainianCoin(c,types[Number(canvas.dataset.coinArt)],Number(canvas.dataset.condition));c.restore();canvas.dataset.rendered=key;
+    paintUkrainianCoin(c,types[Number(canvas.dataset.coinArt)],Number(canvas.dataset.condition),Number(canvas.dataset.side));c.restore();canvas.dataset.rendered=key;
   });
 }

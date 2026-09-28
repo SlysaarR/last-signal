@@ -9,11 +9,11 @@
     <link rel="stylesheet" href="./css/search.css">
     <link rel="stylesheet" href="./css/excavation.css">
     <link rel="stylesheet" href="./css/inventory.css">
-    <link rel="stylesheet" href="./css/workshop.css?v=0.22.0">
-    <link rel="stylesheet" href="./css/camp.css?v=0.22.0">
-    <link rel="stylesheet" href="./css/backup.css?v=0.22.0">
-    <link rel="stylesheet" href="./css/coin-art.css?v=0.22.0">
-    <script type="module" src="./js/main.js?v=0.22.0">
+    <link rel="stylesheet" href="./css/workshop.css?v=0.23.0">
+    <link rel="stylesheet" href="./css/camp.css?v=0.23.0">
+    <link rel="stylesheet" href="./css/backup.css?v=0.23.0">
+    <link rel="stylesheet" href="./css/coin-art.css?v=0.23.0">
+    <script type="module" src="./js/main.js?v=0.23.0">
     </script>
   </head>
   <body>
@@ -175,7 +175,7 @@
         <div class="search-status">
           <p class="sub" id="fieldBag">
           </p>
-          <span class="build-tag">v0.22.0</span>
+          <span class="build-tag">v0.23.0</span>
         </div>
         <div class="log" id="log" aria-live="polite">Обстежуй ділянку — кількість сигналів невідома. Шукай найчіткіший сигнал.</div>
       </section>
@@ -243,7 +243,7 @@
           </div>
           <p class="sub" id="catalogNote">Натисни комірку, щоб прочитати опис і відкрити джерело. Рівні рідкості та ціни адаптовано для гри. Монети намальовані схематично.</p>
         </section>
-        <footer>ПРОТОТИП 0.22.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
+        <footer>ПРОТОТИП 0.23.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
       </main>
       <dialog id="backupDialog" aria-labelledby="backupTitle">
         <h2 id="backupTitle">Відновити прогрес?</h2>
@@ -283,6 +283,7 @@
         <figure class="find-display">
           <canvas id="packArt" width="600" height="400" role="img" aria-label="Знайдений предмет">
           </canvas>
+          <button id="packFlip" class="secondary coin-flip" hidden>Перевернути монету</button>
           <figcaption>ПОЛЬОВА КОЛЕКЦІЯ</figcaption>
         </figure>
         <h2 id="packTitle">
@@ -334,6 +335,7 @@
           <canvas id="dustOverlay" width="600" height="500" aria-hidden="true">
           </canvas>
         </div>
+        <button id="excFlip" class="secondary coin-flip" hidden>Перевернути монету</button>
         <div class="exc-progress-row">
           <span>ОЧИЩЕННЯ ПРЕДМЕТА</span>
           <strong id="excPercent">0%</strong>
@@ -351,6 +353,7 @@
         <h2 id="detailTitle" tabindex="-1" autofocus>
         </h2>
         <canvas id="detailArt" width="600" height="500" role="img" aria-label="Зображення монети" hidden></canvas>
+        <button id="detailFlip" class="secondary coin-flip" hidden>Перевернути монету</button>
         <div id="wearExamples" hidden></div>
         <p id="detailText">
         </p>

@@ -1,12 +1,13 @@
+import { setupCoinFlip } from './coin-flip.js?v=0.23.0';
 // Revealed-find card and the take/swap/leave decision.
-import { foods, rarities } from '../data/balance.js?v=0.22.0';
-import { types } from '../data/items.js?v=0.22.0';
-import { $ } from './dom.js?v=0.22.0';
-import { drawArtifact } from './graphics/artifacts.js?v=0.22.0';
-import { itemLabel } from './inventory.js?v=0.22.0';
-import { bagCapacity, bagUsed, conditionLabel, priceFor } from './rules.js?v=0.22.0';
-import { s, save } from './storage.js?v=0.22.0';
-import { render } from './ui.js?v=0.22.0';
+import { foods, rarities } from '../data/balance.js?v=0.23.0';
+import { types } from '../data/items.js?v=0.23.0';
+import { $ } from './dom.js?v=0.23.0';
+import { drawArtifact } from './graphics/artifacts.js?v=0.23.0';
+import { itemLabel } from './inventory.js?v=0.23.0';
+import { bagCapacity, bagUsed, conditionLabel, priceFor } from './rules.js?v=0.23.0';
+import { s, save } from './storage.js?v=0.23.0';
+import { render } from './ui.js?v=0.23.0';
 export function openPacking() {
   if (!s.pending) return;
   const item = s.pending,
@@ -22,6 +23,7 @@ export function openPacking() {
   $('packCapacity').textContent = 'Рюкзак ' + bagUsed() + ' / ' + bagCapacity() + ' · витрачено ' + (item.spent || 0) + ' енергії';
   $('packArt').setAttribute('aria-label', t.name + ', стан ' + item.condition + ' відсотків');
   drawArtifact(item.type, $('packArt').getContext('2d'), item.condition, true);
+  setupCoinFlip($('packArt'), $('packFlip'), item.type, item.condition);
   $('packChoices').innerHTML = bagUsed() < bagCapacity() ? '<button class="primary" data-pack="take">Забрати в рюкзак</button>' : '<p>Рюкзак повний. Залиш знахідку або заміни один предмет:</p>' + s.bag.map((it, i) => '<button class="secondary" style="width:100%;margin:4px 0" data-pack="swap" data-index="' + i + '">Замінити: ' + itemLabel(it) + '</button>').join('') + foods.map((f, i) => s.food[i] ? '<button class="secondary" style="width:100%;margin:4px 0" data-pack="food" data-index="' + i + '">Викинути 1 × ' + f.name + ' і забрати знахідку</button>' : '').join('');
   if (!$('packDialog').open) $('packDialog').showModal();
 }

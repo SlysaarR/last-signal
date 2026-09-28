@@ -1,11 +1,12 @@
-import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.22.0';
-import { drawArtifact } from './graphics/artifacts.js?v=0.22.0';
+import { setupCoinFlip } from './coin-flip.js?v=0.23.0';
+import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.23.0';
+import { drawArtifact } from './graphics/artifacts.js?v=0.23.0';
 // collection responsibilities for Last Signal.
-import { rarities } from '../data/balance.js?v=0.22.0';
-import { collectible, types } from '../data/items.js?v=0.22.0';
-import { $ } from './dom.js?v=0.22.0';
-import { priceFor } from './rules.js?v=0.22.0';
-import { s } from './storage.js?v=0.22.0';
+import { rarities } from '../data/balance.js?v=0.23.0';
+import { collectible, types } from '../data/items.js?v=0.23.0';
+import { $ } from './dom.js?v=0.23.0';
+import { priceFor } from './rules.js?v=0.23.0';
+import { s } from './storage.js?v=0.23.0';
 export let collectionCategory = 'coin',
   denomFilter = 'all',
   yearFilter = 'all',
@@ -69,13 +70,17 @@ export function showItem(id) {
   $('detailText').textContent = lines.join('\n\n');
   $('detailSource').hidden = !t.source;
   if (t.source) $('detailSource').href = t.source;
+  $('detailFlip').hidden = true;
+  $('detailArt').onclick = null;
   $('detailArt').hidden = !isUkrainianCoin(t);
   $('wearExamples').hidden = !isUkrainianCoin(t);
   if (isUkrainianCoin(t)) {
     $('detailArt').setAttribute('aria-label', 'Зображення: ' + t.denom);
     drawArtifact(id, $('detailArt').getContext('2d'), found ? s.best[id] : 75, true);
-    $('wearExamples').innerHTML = '<p>Порівняння ігрового стану · це зразки, не нові знахідки</p><div class="wear-grid">' + [20,60,95].map(c => '<figure>' + coinMarkup(id,c) + '<figcaption>' + c + ' / 100</figcaption></figure>').join('') + '</div>';
-    renderCoinThumbnails();
+    const drawExamples = (side=0) => { $('wearExamples').innerHTML = '<p>Порівняння ігрового стану · це зразки, не нові знахідки</p><div class="wear-grid">' + [20,60,95].map(c => '<figure>' + coinMarkup(id,c,'coin-thumb',side) + '<figcaption>' + c + ' / 100</figcaption></figure>').join('') + '</div>';
+    renderCoinThumbnails(); };
+    drawExamples();
+    setupCoinFlip($('detailArt'), $('detailFlip'), id, found ? s.best[id] : 75, true, drawExamples);
   }
   $('coinDetail').showModal();
 }

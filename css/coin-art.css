@@ -7,3 +7,6 @@
 .wear-grid canvas { width:100%; height:auto }
 .wear-grid figcaption { text-align:center; color:#d3dfba; font-size:11px; padding:4px 0 }
 #detailArt[hidden], #wearExamples[hidden] { display:none }
+
+.coin-flip { display:block; width:100%; margin:8px 0 12px; min-height:44px }
+.coin-flip[hidden] { display:none }
