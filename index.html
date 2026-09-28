@@ -9,9 +9,10 @@
     <link rel="stylesheet" href="./css/search.css">
     <link rel="stylesheet" href="./css/excavation.css">
     <link rel="stylesheet" href="./css/inventory.css">
-    <link rel="stylesheet" href="./css/workshop.css?v=0.19.0">
-    <link rel="stylesheet" href="./css/camp.css?v=0.19.0">
-    <script type="module" src="./js/main.js?v=0.19.0">
+    <link rel="stylesheet" href="./css/workshop.css?v=0.20.0">
+    <link rel="stylesheet" href="./css/camp.css?v=0.20.0">
+    <link rel="stylesheet" href="./css/backup.css?v=0.20.0">
+    <script type="module" src="./js/main.js?v=0.20.0">
     </script>
   </head>
   <body>
@@ -92,6 +93,14 @@
         </div>
         <div class="camp-departure"><button class="primary" id="startTrip">Вирушити · 25 купонів</button><p id="departureNote" class="camp-note"></p></div>
         <div class="camp-summary"><div class="eyebrow">ПОЛЬОВИЙ ЩОДЕННИК</div><h2>Минулий виїзд</h2><div id="tripSummary"></div></div>
+        <details class="backup-panel"><summary>Збереження та резервні копії</summary>
+          <p>Прогрес зберігається в цьому браузері. Файл допоможе перенести його на інший пристрій або відновити після втрати даних.</p>
+          <button class="secondary" id="backupExport">Зберегти прогрес у файл</button>
+          <label for="backupFile">Вибрати копію для відновлення</label>
+          <input id="backupFile" type="file" accept=".json,application/json">
+          <button class="quiet" id="backupRecovery">Копія перед останнім відновленням</button>
+          <p id="backupStatus" role="status" aria-live="polite">Зберігай копію після важливих знахідок. Це ручна копія, а не хмарна синхронізація.</p>
+        </details>
       </section>
       <section id="inventory" hidden>
         <h2>Рюкзак</h2>
@@ -165,7 +174,7 @@
         <div class="search-status">
           <p class="sub" id="fieldBag">
           </p>
-          <span class="build-tag">v0.19.0</span>
+          <span class="build-tag">v0.20.0</span>
         </div>
         <div class="log" id="log" aria-live="polite">Обстежуй ділянку — кількість сигналів невідома. Шукай найчіткіший сигнал.</div>
       </section>
@@ -233,8 +242,15 @@
           </div>
           <p class="sub" id="catalogNote">Натисни комірку, щоб прочитати опис і відкрити джерело. Рівні рідкості та ціни адаптовано для гри. Монети намальовані схематично.</p>
         </section>
-        <footer>ПРОТОТИП 0.19.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
+        <footer>ПРОТОТИП 0.20.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
       </main>
+      <dialog id="backupDialog" aria-labelledby="backupTitle">
+        <h2 id="backupTitle">Відновити прогрес?</h2>
+        <p id="backupPreview"></p>
+        <button class="secondary" id="backupSafetyExport">Зберегти поточний прогрес у файл</button>
+        <button class="primary" id="backupConfirm">Замінити прогрес цією копією</button>
+        <button class="quiet" id="backupCancel">Скасувати</button>
+      </dialog>
       <dialog id="tripMenu" aria-labelledby="tripMenuTitle">
         <div class="sheet-heading">
           <h2 id="tripMenuTitle">Твій виїзд</h2>

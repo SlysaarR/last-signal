@@ -3,6 +3,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "node --experimental-vm-modules tests/refactor-check.cjs"
+    "check": "node --experimental-vm-modules tests/refactor-check.cjs && node --experimental-vm-modules tests/backup-check.cjs"
   }
 }

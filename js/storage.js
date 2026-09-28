@@ -1,9 +1,9 @@
 // Save loading, legacy migration and persistence. Keep KEY and the version-1 envelope compatible.
-import { surveyCols, surveyRows } from '../data/balance.js?v=0.19.0';
-import { locations } from '../data/locations.js?v=0.19.0';
-import { $ } from './dom.js?v=0.19.0';
-import { bagCapacity, bagUsed, maxEnergy, rollCondition } from './rules.js?v=0.19.0';
-import { currentLocation, rollDepth, rollLocation } from './world.js?v=0.19.0';
+import { surveyCols, surveyRows } from '../data/balance.js?v=0.20.0';
+import { locations } from '../data/locations.js?v=0.20.0';
+import { $ } from './dom.js?v=0.20.0';
+import { bagCapacity, bagUsed, maxEnergy, rollCondition } from './rules.js?v=0.20.0';
+import { currentLocation, rollDepth, rollLocation } from './world.js?v=0.20.0';
 export const KEY = 'last-signal-v1';
 export function fresh() {
   return {
@@ -73,4 +73,14 @@ export function loadGame() {
     delete s.pending.phase;
   }
   for (const o of s.objects) delete o.mark;
+}
+
+// Save the previous state first; abort restoration if either write is unavailable.
+export const RECOVERY_KEY = 'last-signal-before-restore-v1';
+export function installBackupState(next, recoveryText) {
+  const incoming = JSON.stringify({version:1,state:next});
+  localStorage.setItem(RECOVERY_KEY, recoveryText);
+  localStorage.setItem(KEY, incoming);
+  s = next; // pagehide must save the imported state, never overwrite it with the old one.
+  storage = true;
 }

@@ -1,12 +1,12 @@
 // inventory responsibilities for Last Signal.
-import { foods } from '../data/balance.js?v=0.19.0';
-import { types } from '../data/items.js?v=0.19.0';
-import { modal } from './dialogs.js?v=0.19.0';
-import { $ } from './dom.js?v=0.19.0';
-import { bagCapacity, bagUsed, foodAmount, foodFits, maxEnergy, priceFor } from './rules.js?v=0.19.0';
-import { eatFood, transferFood } from './shop.js?v=0.19.0';
-import { s, save } from './storage.js?v=0.19.0';
-import { busy, render } from './ui.js?v=0.19.0';
+import { foods } from '../data/balance.js?v=0.20.0';
+import { types } from '../data/items.js?v=0.20.0';
+import { modal } from './dialogs.js?v=0.20.0';
+import { $ } from './dom.js?v=0.20.0';
+import { bagCapacity, bagUsed, foodAmount, foodFits, maxEnergy, priceFor } from './rules.js?v=0.20.0';
+import { eatFood, transferFood } from './shop.js?v=0.20.0';
+import { s, save } from './storage.js?v=0.20.0';
+import { busy, render } from './ui.js?v=0.20.0';
 export let inventoryRenderKey = '';
 export function itemLabel(item) {
   return types[item.type].name + ' · ' + (types[item.type].variant || '') + ' · ' + item.condition + '% · ' + priceFor(item.type, item.condition) + ' купонів';

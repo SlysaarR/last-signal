@@ -1,0 +1,10 @@
+.backup-panel { margin:24px 0 0; border:1px solid #43543a; border-radius:15px; background:#17251c; padding:15px }
+.backup-panel summary { cursor:pointer; min-height:30px; font-weight:600; font-size:14px; color:#d6e3bf }
+.backup-panel p { color:#b0c0a1; font-size:12px; line-height:1.65 }
+.backup-panel button,#backupDialog button { display:block; width:100%; min-height:44px; margin:10px 0; font-size:12px }
+.backup-panel label { display:block; margin:18px 0 8px }
+#backupFile { display:block; max-width:100%; width:100%; color:#c2d1b4; font-size:12px }
+#backupFile::file-selector-button { min-height:44px; background:#293c29; color:#e2ecd1; border:1px solid #657a50; border-radius:9px; padding:8px; margin-right:8px }
+#backupStatus { padding-top:12px; border-top:1px solid #3b4f32 }
+#backupDialog { max-height:90dvh; overflow:auto }
+#backupPreview { white-space:pre-line; overflow-wrap:anywhere }
