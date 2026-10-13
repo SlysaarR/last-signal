@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
     <meta name="theme-color" content="#111f20">
     <title>Останній сигнал</title>
-    <link rel="stylesheet" href="./css/base.css?v=0.35.0">
-    <link rel="stylesheet" href="./css/search.css?v=0.35.0">
-    <link rel="stylesheet" href="./css/excavation.css?v=0.35.0">
-    <link rel="stylesheet" href="./css/inventory.css?v=0.35.0">
-    <link rel="stylesheet" href="./css/workshop.css?v=0.35.0">
-    <link rel="stylesheet" href="./css/camp.css?v=0.35.0">
-    <link rel="stylesheet" href="./css/backup.css?v=0.35.0">
-    <link rel="stylesheet" href="./css/coin-art.css?v=0.35.0">
-    <link rel="stylesheet" href="./css/journal.css?v=0.35.0">
-    <script type="module" src="./js/main.js?v=0.35.0">
+    <link rel="stylesheet" href="./css/base.css?v=0.36.0">
+    <link rel="stylesheet" href="./css/search.css?v=0.36.0">
+    <link rel="stylesheet" href="./css/excavation.css?v=0.36.0">
+    <link rel="stylesheet" href="./css/inventory.css?v=0.36.0">
+    <link rel="stylesheet" href="./css/workshop.css?v=0.36.0">
+    <link rel="stylesheet" href="./css/camp.css?v=0.36.0">
+    <link rel="stylesheet" href="./css/backup.css?v=0.36.0">
+    <link rel="stylesheet" href="./css/coin-art.css?v=0.36.0">
+    <link rel="stylesheet" href="./css/journal.css?v=0.36.0">
+    <script type="module" src="./js/main.js?v=0.36.0">
     </script>
   </head>
   <body>
@@ -119,6 +119,10 @@
         <details class="journal-panel" open><summary>Історія виїздів <span>останні 12</span></summary><div id="tripHistory"></div></details>
       </section>
       <section id="inventory" hidden>
+        <div id="inventoryNotice" hidden>
+          <p id="inventoryNoticeText" role="status" aria-live="polite"></p>
+          <button class="secondary" id="showReturnedItem" hidden>Показати попередній екземпляр у сховищі</button>
+        </div>
         <h2>Рюкзак</h2>
         <p id="bagStatus">
         </p>
@@ -130,7 +134,7 @@
         </div>
         <div id="warehousePanel">
           <h2>Домашнє сховище</h2>
-          <p>Сховище не обмежене. До альбому додається лише найкращий стан; замінений екземпляр лишається тут для продажу.</p>
+          <p>Сховище не обмежене. При покращенні альбому попередній екземпляр потрапляє на початок сховища. Його можна зберегти або продати.</p>
           <button class="secondary" id="unload">Перекласти все зі рюкзака</button>
           <div id="warehouseItems">
           </div>
@@ -195,7 +199,7 @@
         <div class="search-status">
           <p class="sub" id="fieldBag">
           </p>
-          <span class="build-tag">v0.35.0</span>
+          <span class="build-tag">v0.36.0</span>
         </div>
         <div class="log" id="log" aria-live="polite">Обстежуй ділянку — кількість сигналів невідома. Шукай найчіткіший сигнал.</div>
       </section>
@@ -264,9 +268,9 @@
           </p>
           <div class="grid" id="items">
           </div>
-          <p class="sub" id="catalogNote">Натисни комірку, щоб прочитати опис і відкрити джерело. Рівні рідкості та ціни адаптовано для гри. Монети намальовані схематично.</p>
+          <p class="sub" id="catalogNote">Натисни монету, щоб оглянути обидва боки та гурт. Рівні рідкості та ціни адаптовано для гри.</p>
         </section>
-        <footer>ПРОТОТИП 0.35.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
+        <footer>ПРОТОТИП 0.36.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
       </main>
       <dialog id="backupDialog" aria-labelledby="backupTitle">
         <h2 id="backupTitle">Відновити прогрес?</h2>
@@ -387,6 +391,7 @@
         <p id="detailText">
         </p>
         <a id="detailSource" target="_blank" rel="noopener noreferrer">Відкрити статтю каталогу</a>
+        <a id="detailArtSource" target="_blank" rel="noopener noreferrer" hidden>Зображення зразка · Національний банк України / Numista</a>
       </dialog>
     </body>
   </html>

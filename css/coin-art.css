@@ -3,6 +3,8 @@
 #detailArt { display:block; width:100%; height:auto; border:1px solid #52633f; border-radius:16px; margin:0 }
 #detailArt[hidden], #wearExamples[hidden] { display:none }
 .inspection-hint { text-align:center; color:#aebe9e; font-size:11px; line-height:1.5; margin:6px 0 16px }
+#detailSource,#detailArtSource { display:block; margin-top:12px; font-size:12px; line-height:1.5; color:#d0e4ac; overflow-wrap:anywhere }
+#detailArtSource[hidden] { display:none }
 .condition-preview { padding:14px; border:1px solid #425539; border-radius:14px; background:#102016 }
 .condition-preview label { display:flex; align-items:center; justify-content:space-between; color:#cad9bc; font-size:13px }
 .condition-preview output { font-size:20px; font-weight:700; color:#d6e9aa; font-variant-numeric:tabular-nums }

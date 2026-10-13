@@ -25,6 +25,10 @@
 #inventory .card { padding:14px; font-size:14px; line-height:1.7; background:#1b291e; border-color:#3c4b35 }
 #inventory .card button { display:block; min-height:44px; margin-top:10px; font-size:12px }
 #warehousePanel { border-top:1px solid #394833; margin-top:24px; padding-top:4px }
+#inventoryNotice { padding:14px; margin:14px 0; border:1px solid #849b61; border-radius:14px; background:#273923; scroll-margin-top:16px }
+#inventoryNotice p { margin:0; font-size:13px; line-height:1.6; color:#e1edc9 }
+#inventoryNotice button { width:100%; min-height:44px; margin-top:10px; font-size:12px }
+.find-card:focus { outline:2px solid #c7e292; outline-offset:3px }
 #warehousePanel > p { font-size:12px; line-height:1.6; color:#a8b69e }
 #unload { width:100%; min-height:44px; font-size:13px }
 #collection .category-tabs { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px }
@@ -57,3 +61,5 @@
 #catalogNote { line-height:1.7 }
 #inventory button:focus-visible, #collection button:focus-visible, #collection select:focus-visible { outline:2px solid #d5e9a3; outline-offset:3px }
 @media(max-width:350px) { .find-metrics strong { font-size:20px } #coinFilters { padding:10px } #items .collect { padding:11px 7px } }
+
+.album-return-hint { margin:0 0 12px; color:#bed298; font-size:12px; line-height:1.5 }

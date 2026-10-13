@@ -1,10 +1,11 @@
-import { setupInspection, clearInspection } from './coin-flip.js?v=0.35.0';
+import { setupInspection, clearInspection } from './coin-flip.js?v=0.36.0';
+import { onCoinImagesReady } from './graphics/coin-reference.js?v=0.36.0';
 // Soil canvas, finger cleaning, dust and reveal progress.
-import { types } from '../data/items.js?v=0.35.0';
-import { $ } from './dom.js?v=0.35.0';
-import { drawArtifact, seededArt } from './graphics/artifacts.js?v=0.35.0';
-import { openPacking } from './packing.js?v=0.35.0';
-import { s, save } from './storage.js?v=0.35.0';
+import { types } from '../data/items.js?v=0.36.0';
+import { $ } from './dom.js?v=0.36.0';
+import { drawArtifact, seededArt } from './graphics/artifacts.js?v=0.36.0';
+import { openPacking } from './packing.js?v=0.36.0';
+import { s, save } from './storage.js?v=0.36.0';
 export const soil = $('soil'),
   dirt = soil.getContext('2d'),
   art = $('artifact').getContext('2d');
@@ -130,6 +131,9 @@ export function openExcavation() {
   updateCleaning();
   if (!$('excavate').open) $('excavate').showModal();
 }
+// The dirt is on its own canvas. Loading the specimen may redraw the metal but
+// must never clear soil, reset a brush stroke or change saved cleaning progress.
+onCoinImagesReady(()=>{if(s.pending && $('excavate').open && !phaseDone)drawArtifact(s.pending.type);});
 export function brushAt(x, y) {
   if (!s.pending || phaseDone) return;
   const radius = 64,

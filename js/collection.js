@@ -1,12 +1,13 @@
-import { artifactMarkup, renderArtifactThumbnails } from './graphics/thumbnails.js?v=0.35.0';
-import { setupInspection } from './coin-flip.js?v=0.35.0';
-import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.35.0';
+import { artifactMarkup, renderArtifactThumbnails } from './graphics/thumbnails.js?v=0.36.0';
+import { setupInspection } from './coin-flip.js?v=0.36.0';
+import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.36.0';
 // collection responsibilities for Last Signal.
-import { rarities } from '../data/balance.js?v=0.35.0';
-import { collectible, types } from '../data/items.js?v=0.35.0';
-import { $ } from './dom.js?v=0.35.0';
-import { priceFor } from './rules.js?v=0.35.0';
-import { s } from './storage.js?v=0.35.0';
+import { rarities } from '../data/balance.js?v=0.36.0';
+import { collectible, types } from '../data/items.js?v=0.36.0';
+import { $ } from './dom.js?v=0.36.0';
+import { priceFor } from './rules.js?v=0.36.0';
+import { s } from './storage.js?v=0.36.0';
+import { coinSource, coinEdgeSpec, coinDesign } from '../data/coin-art.js?v=0.36.0';
 export let collectionCategory = 'coin',
   denomFilter = 'all',
   yearFilter = 'all',
@@ -44,7 +45,7 @@ export function renderCollection() {
   }).join('');
   const list = categoryItems();
   $('categoryCount').textContent = collectionCategory === 'coin' ? 'Альбом: ' + yearFound.size + ' / ' + yearTotal.size + ' років за номіналами · Показано ' + list.length + ' позицій' : 'Знайдено: ' + list.filter(t => owned.has(t.id)).length + ' / ' + list.length;
-  $('catalogNote').textContent = collectionCategory === 'coin' ? 'Кожен номінал і рік — окрема ціль. Будь-який знайдений різновид зараховує рік; різновиди зберігаються окремо. Натисни монету, щоб оглянути її та порівняти стан. Ігрові ціни, стан і шанси умовні; малюнки схематичні.' : collectionCategory === 'legacy' ? 'Тут збережено умовні монети з ранніх версій.' : 'У колекції залишається найкращий стан кожного виду.';
+  $('catalogNote').textContent = collectionCategory === 'coin' ? 'Кожен номінал і рік — окрема ціль. Різновиди зберігаються окремо. Монети відтворено за зображеннями реальних зразків. Обертай монету, щоб оглянути обидва боки та гурт. При покращенні альбому попередній екземпляр залишається у сховищі.' : collectionCategory === 'legacy' ? 'Тут збережено умовні монети з ранніх версій.' : 'У колекції залишається найкращий стан кожного виду. Попередній екземпляр при заміні зберігається у сховищі.';
   let previous = '';
   $('items').innerHTML = list.map(t => {
     const has = owned.has(t.id),
@@ -66,10 +67,17 @@ export function showItem(id) {
   const lines = [];
   if (t.country) lines.push(t.country + ' · ' + t.denom + ' · ' + t.year + ' р.', 'Різновид: ' + t.variant, t.note);else if (t.legacy) lines.push('Умовна монета раннього прототипу. Збережена як твоя попередня знахідка.');
   lines.push('Ігрова рідкість: ' + rarities[t.rarity].name, found ? 'Найкращий стан: ' + s.best[id] + '/100. Ігрова оцінка: ' + priceFor(id, s.best[id]) + ' купонів.' : 'Цю позицію ще треба знайти.');
-  if (t.source) lines.push('Шкала 0–100 — ігровий стан, не нумізматичний грейд. Ціна не є ринковою оцінкою в гривнях. Схематичний малюнок не відтворює всі деталі штемпеля.', 'Джерело: ' + (t.source.includes('ucoin.net') ? 'uCoin' : t.source.includes('bank.gov.ua') ? 'НБУ' : 'Монети-Ягідки') + '. Перевірено 20.09.2026.');
+  if (t.source) lines.push('Шкала 0–100 — ігровий стан, не нумізматичний грейд. Ціна не є ринковою оцінкою в гривнях.');
+  const dimensions=coinDesign(t);
+  if(dimensions){const edge=coinEdgeSpec(t);lines.push(`Діаметр: ${dimensions.diameter} мм · товщина: ${dimensions.thickness} мм. Гурт: ${{smooth:'гладкий',reeded:'рифлений',sector:'секторальне рифлення',lettered:'вдавлений напис'}[edge.kind]}${edge.text?' «'+edge.text+'»':''}.`);}
   $('detailText').textContent = lines.join('\n\n');
   $('detailSource').hidden = !t.source;
   if (t.source) $('detailSource').href = t.source;
+  $('detailArtSource').hidden=!coinSource(t);
+  if(coinSource(t)){
+    $('detailArtSource').href=coinSource(t);
+    $('detailArtSource').textContent=coinSource(t).includes('numista')?'Зображення зразка · НБУ / Numista':'Фото різновиду · нумізматичний каталог';
+  }
   $('detailArt').hidden = false;
   $('wearExamples').hidden = false;
   const condition = found ? s.best[id] : 75;

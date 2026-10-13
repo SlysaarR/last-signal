@@ -1,15 +1,22 @@
-import { artifactMarkup, renderArtifactThumbnails } from './graphics/thumbnails.js?v=0.35.0';
-import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.35.0';
+import { artifactMarkup, renderArtifactThumbnails } from './graphics/thumbnails.js?v=0.36.0';
+import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.36.0';
 // inventory responsibilities for Last Signal.
-import { foods } from '../data/balance.js?v=0.35.0';
-import { types } from '../data/items.js?v=0.35.0';
-import { modal } from './dialogs.js?v=0.35.0';
-import { $ } from './dom.js?v=0.35.0';
-import { bagCapacity, bagUsed, foodAmount, foodFits, maxEnergy, priceFor } from './rules.js?v=0.35.0';
-import { eatFood, transferFood } from './shop.js?v=0.35.0';
-import { s, save } from './storage.js?v=0.35.0';
-import { busy, render } from './ui.js?v=0.35.0';
+import { foods } from '../data/balance.js?v=0.36.0';
+import { types } from '../data/items.js?v=0.36.0';
+import { modal } from './dialogs.js?v=0.36.0';
+import { $ } from './dom.js?v=0.36.0';
+import { bagCapacity, bagUsed, foodAmount, foodFits, maxEnergy, priceFor } from './rules.js?v=0.36.0';
+import { eatFood, transferFood } from './shop.js?v=0.36.0';
+import { s, save } from './storage.js?v=0.36.0';
+import { busy, render } from './ui.js?v=0.36.0';
 export let inventoryRenderKey = '';
+let returnedItem = null;
+function albumNotice(text, returned = null) {
+  returnedItem = returned;
+  $('inventoryNoticeText').textContent = text;
+  $('inventoryNotice').hidden = !text;
+  $('showReturnedItem').hidden = !returned;
+}
 export function itemLabel(item) {
   return [types[item.type].name, types[item.type].variant, item.condition + '%', priceFor(item.type, item.condition) + ' купонів'].filter(Boolean).join(' · ');
 }
@@ -18,8 +25,8 @@ export function itemRows(list, place) {
     const t = types[item.type], value = priceFor(item.type, item.condition);
     const best = s.best[item.type], canAlbum = t.kind !== 'trash' && (best === undefined || best < item.condition);
     const button = (action, label, disabled = false) => `<button class="secondary" data-itemaction="${action}" data-place="${place}" data-index="${i}" ${disabled ? 'disabled' : ''}>${label}</button>`;
-    const albumLabel = best === undefined ? 'До альбому' : 'Покращити альбом';
-    return `<article class="find-card"><div class="find-heading">${isUkrainianCoin(t) ? coinMarkup(item.type, item.condition) : artifactMarkup(item.type, item.condition)}<div><h3>${t.name}</h3>${t.variant ? `<p class="find-variant">${t.variant}</p>` : ''}<small>${t.kind === 'trash' ? 'Металобрухт' : canAlbum ? (best === undefined ? 'Нова позиція для альбому' : 'Кращий стан для альбому') : 'Є в альбомі'}</small></div></div><div class="find-metrics"><div><span>СТАН</span><strong>${item.condition}<small> / 100</small></strong><progress aria-label="Стан предмета" value="${item.condition}" max="100"></progress></div><div><span>ОЦІНКА</span><strong>${value}<small> купонів</small></strong></div></div><div class="find-actions">${s.atCamp ? (canAlbum ? button('album', albumLabel) : '') + button('move', place === 'bag' ? 'До сховища' : 'У рюкзак', place === 'stash' && bagUsed() >= bagCapacity()) + button('sell', 'Продати · ' + value) : button('discard', 'Викинути')}</div></article>`;
+    const albumLabel = best === undefined ? 'До альбому' : `Покращити альбом · ${best} → ${item.condition}%`;
+    return `<article class="find-card"><div class="find-heading">${isUkrainianCoin(t) ? coinMarkup(item.type, item.condition) : artifactMarkup(item.type, item.condition)}<div><h3>${t.name}</h3>${t.variant ? `<p class="find-variant">${t.variant}</p>` : ''}<small>${t.kind === 'trash' ? 'Металобрухт' : canAlbum ? (best === undefined ? 'Нова позиція для альбому' : 'Кращий стан для альбому') : 'Є в альбомі'}</small></div></div><div class="find-metrics"><div><span>СТАН</span><strong>${item.condition}<small> / 100</small></strong><progress aria-label="Стан предмета" value="${item.condition}" max="100"></progress></div><div><span>ОЦІНКА</span><strong>${value}<small> купонів</small></strong></div></div>${s.atCamp && canAlbum && Number.isFinite(best) ? `<p class="album-return-hint">Попередній екземпляр ${best}% → у сховище</p>` : ''}<div class="find-actions">${s.atCamp ? (canAlbum ? button('album', albumLabel) : '') + button('move', place === 'bag' ? 'До сховища' : 'У рюкзак', place === 'stash' && bagUsed() >= bagCapacity()) + button('sell', 'Продати · ' + value) : button('discard', 'Викинути')}</div></article>`;
   }).join('') || `<div class="empty-state"><b>${place === 'bag' ? 'Місце для нових знахідок' : 'Сховище порожнє'}</b><p>${place === 'bag' ? 'Знахідки з виїзду з’являться тут. Їжа також займає місця в рюкзаку.' : 'Залишай тут предмети, які хочеш зберегти для наступних рішень.'}</p></div>`;
 }
 export function renderInventory() {
@@ -53,6 +60,7 @@ export function inventoryAction(action, place, i) {
     return;
   }
   if (!s.atCamp) return;
+  albumNotice('');
   if (action === 'sell') {
     s.coins += priceFor(item.type, item.condition);
     list.splice(i, 1);
@@ -60,10 +68,14 @@ export function inventoryAction(action, place, i) {
     if (types[item.type].kind === 'trash' || s.best[item.type] >= item.condition) return;
     const old = s.best[item.type];
     list.splice(i, 1);
-    if (Number.isFinite(old)) s.stash.push({
-      type: item.type,
-      condition: old
-    });else s.collection.push(item.type);
+    if (Number.isFinite(old)) {
+      const returned = {type: item.type, condition: old};
+      s.stash.unshift(returned);
+      albumNotice(`${types[item.type].name}: в альбомі тепер ${item.condition}%. Попередній екземпляр зі станом ${old}% збережено в домашньому сховищі.`, returned);
+    } else {
+      s.collection.push(item.type);
+      albumNotice(`${types[item.type].name} · ${item.condition}% — додано до альбому.`);
+    }
     s.best[item.type] = item.condition;
   } else if (action === 'move') {
     if (place === 'stash' && bagUsed() >= bagCapacity()) return;
@@ -72,8 +84,17 @@ export function inventoryAction(action, place, i) {
   } else return;
   save();
   render();
+  if (action === 'album') $('inventoryNotice').scrollIntoView?.({block:'nearest', behavior:'smooth'});
 }
 export function initInventory() {
+  $('showReturnedItem').onclick = () => {
+    const index = s.stash.indexOf(returnedItem);
+    if (index < 0) return;
+    const card = $('warehouseItems').children[index];
+    card?.scrollIntoView?.({block:'center', behavior:'smooth'});
+    card?.setAttribute('tabindex', '-1');
+    card?.focus?.({preventScroll:true});
+  };
   $('inventory').addEventListener('click', e => {
     const b = e.target.closest('[data-itemaction]'),
       f = e.target.closest('[data-foodaction]');

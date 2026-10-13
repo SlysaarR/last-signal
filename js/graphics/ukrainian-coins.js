@@ -1,10 +1,12 @@
-import { conditionProfile, metalPalette, paintWear } from './condition.js?v=0.35.0';
-import { paintLaterHryvniaPortrait } from './hryvnia-portraits.js?v=0.35.0';
-import { paintHryvniaPortrait } from './hryvnia.js?v=0.35.0';
+import { conditionProfile, metalPalette, paintWear } from './condition.js?v=0.36.0';
+import { coinEdgeSpec } from '../../data/coin-art.js?v=0.36.0';
+import { paintCoinReference, onCoinImagesReady, coinFaceImageKey } from './coin-reference.js?v=0.36.0';
+import { paintLaterHryvniaPortrait } from './hryvnia-portraits.js?v=0.36.0';
+import { paintHryvniaPortrait } from './hryvnia.js?v=0.36.0';
 // Original Canvas rendition of the 25-kopiyok reverse; not an exact mint-die reproduction.
 // References: museum.mincult.gov.ua/collections/moneta-25-kopiyok-1992-r-125364
 // commons.wikimedia.org/wiki/File:Ukraine-25-kopiyok-1992.jpg
-import { types } from '../../data/items.js?v=0.35.0';
+import { types } from '../../data/items.js?v=0.36.0';
 // Shared denomination-side artwork; mint die micro-varieties are intentionally not simulated.
 export function isUkrainianCoin(t) {
   return t?.country === 'Україна' && (t.unit?.startsWith('коп') || ([1,2,5,10].includes(t.value) && t.unit?.startsWith('гр')));
@@ -12,6 +14,7 @@ export function isUkrainianCoin(t) {
 export function canFlipCoin(t) { return isUkrainianCoin(t); }
 export function paintUkrainianCoin(c, item, condition = 75, side = 0) {
   if (side === 2 && canFlipCoin(item)) { paintCoinEdge(c, condition, item); return; }
+  if (paintCoinReference(c,item,condition,side)) return;
   const profile = conditionProfile(condition), palette = metalPalette(item, condition);
   const obverse = side === 1 && canFlipCoin(item);
   const seed = (item.value === 25 ? 1992 : item.value * 1992) + (obverse ? 917 : 0);
@@ -126,15 +129,17 @@ export function coinMarkup(type, condition, className='coin-thumb', side=0) {
 }
 export function renderCoinThumbnails() {
   document.querySelectorAll('canvas[data-coin-art]').forEach(canvas => {
-    const key=canvas.dataset.coinArt+':'+canvas.dataset.condition+':'+canvas.dataset.side;
+    const key=canvas.dataset.coinArt+':'+canvas.dataset.condition+':'+canvas.dataset.side+':'+coinFaceImageKey(types[Number(canvas.dataset.coinArt)],Number(canvas.dataset.side));
     if(canvas.dataset.rendered===key)return;
     const c=canvas.getContext('2d');c.clearRect(0,0,260,260);c.save();c.translate(130,128);c.scale(.94,.94);
     paintUkrainianCoin(c,types[Number(canvas.dataset.coinArt)],Number(canvas.dataset.condition),Number(canvas.dataset.side));c.restore();canvas.dataset.rendered=key;
   });
 }
+let thumbnailsFrame=0;
+onCoinImagesReady(()=>{if(!thumbnailsFrame)thumbnailsFrame=requestAnimationFrame(()=>{thumbnailsFrame=0;renderCoinThumbnails();});});
 
 // Schematic edge inspection, enlarged thickness for readability; sector reeding.
-export function coinEdgeType(item) { if(item.unit?.startsWith('гр')) return item.value===5?'sector':item.year>=2018?'reeded':item.year===1992?'smooth':'lettered'; return item.value <= 2 ? 'smooth' : item.value <= 10 ? 'reeded' : 'sector'; }
+export function coinEdgeType(item) { return coinEdgeSpec(item).kind; }
 export function paintCoinEdge(c, condition=75, item={value:25,material:'yellow'}) {
   const silver=item.material!=='yellow', edge=coinEdgeType(item);
   const tone=(gold,white)=>silver?white:gold;
@@ -155,7 +160,7 @@ export function paintCoinEdge(c, condition=75, item={value:25,material:'yellow'}
   }
   if(edge==='lettered') {
     c.textAlign='center';c.textBaseline='middle';c.font='bold 16px Georgia,serif';
-    const text='ОДНА · ГРИВНЯ · '+item.year;
+    const text=coinEdgeSpec(item).text;
     c.fillStyle=tone('#f7dfa0','#e1edf0');c.fillText(text,.6,1,215);
     c.fillStyle=tone('#5b461d','#42535c');c.fillText(text,0,0,215);
   }

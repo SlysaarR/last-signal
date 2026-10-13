@@ -1,5 +1,6 @@
-import { types } from '../data/items.js?v=0.35.0';
-import { createInspectionModel, drawInspection } from './graphics/inspection.js?v=0.35.0';
+import { types } from '../data/items.js?v=0.36.0';
+import { createInspectionModel, drawInspection } from './graphics/inspection.js?v=0.36.0';
+import { onCoinImagesReady } from './graphics/coin-reference.js?v=0.36.0';
 const viewers=new WeakMap();
 export function clearInspection(canvas) {
   viewers.get(canvas)?.dispose();viewers.delete(canvas);
@@ -22,6 +23,7 @@ export function setupInspection(canvas,button,type,condition,studio=true) {
     canvas.dataset.yaw=String(yaw);canvas.dataset.pitch=String(pitch);
   };
   const schedule=()=>{if(!frame)frame=requestAnimationFrame(render);};
+  const stopImages=onCoinImagesReady(()=>{dirty=true;schedule();});
   const reset=()=>{yaw=0;pitch=0;canvas.focus?.({preventScroll:true});schedule();};
   const end=e=>{
     if(e.pointerId!==pointer)return;
@@ -50,7 +52,7 @@ export function setupInspection(canvas,button,type,condition,studio=true) {
   const viewer={
     setCondition(value){condition=value;dirty=true;label();schedule();},
     reset,
-    dispose(){disposed=true;if(frame)cancelAnimationFrame(frame);if(pointer!==null)end({pointerId:pointer});for(const key of ['onclick','onkeydown','onpointerdown','onpointermove','onpointerup','onpointercancel','onlostpointercapture'])canvas[key]=null;canvas.style.cursor='';canvas.style.touchAction='';button.onclick=null;},
+    dispose(){disposed=true;stopImages();if(frame)cancelAnimationFrame(frame);if(pointer!==null)end({pointerId:pointer});for(const key of ['onclick','onkeydown','onpointerdown','onpointermove','onpointerup','onpointercancel','onlostpointercapture'])canvas[key]=null;canvas.style.cursor='';canvas.style.touchAction='';button.onclick=null;},
   };
   viewers.set(canvas,viewer);label();render();return viewer;
 }
