@@ -1,11 +1,11 @@
-import { drawDetectorPreview } from './graphics/detector-art.js?v=0.36.0';
-import { MAX_GEAR_LEVEL, creditFor, detectorMilestones, detectorLook } from '../data/gear.js?v=0.36.0';
+import { drawDetectorPreview } from './graphics/detector-art.js?v=0.37.0';
+import { MAX_GEAR_LEVEL, creditFor, detectorMilestones, detectorLook } from '../data/gear.js?v=0.37.0';
 // shop responsibilities for Last Signal.
-import { foods } from '../data/balance.js?v=0.36.0';
-import { $ } from './dom.js?v=0.36.0';
-import { bagCapacity, bagUsed, detectorStats, foodAmount, foodFits, maxEnergy, shovelFactor, upgradeCost } from './rules.js?v=0.36.0';
-import { s, save } from './storage.js?v=0.36.0';
-import { busy, render } from './ui.js?v=0.36.0';
+import { foods } from '../data/balance.js?v=0.37.0';
+import { $ } from './dom.js?v=0.37.0';
+import { bagCapacity, bagUsed, detectorStats, foodAmount, foodFits, maxEnergy, shovelFactor, upgradeCost } from './rules.js?v=0.37.0';
+import { s, save } from './storage.js?v=0.37.0';
+import { busy, render } from './ui.js?v=0.37.0';
 export let shopRenderKey = '';
 export function buyFood(i) {
   if (!foods[i] || busy() || !s.atCamp || s.coins < foods[i].price) return;

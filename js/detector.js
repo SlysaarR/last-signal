@@ -1,5 +1,5 @@
-import { types } from '../data/items.js?v=0.36.0';
-import { detectorAt, detectorFeatures } from '../data/gear.js?v=0.36.0';
+import { types } from '../data/items.js?v=0.37.0';
+import { detectorAt, detectorFeatures } from '../data/gear.js?v=0.37.0';
 const clamp=(x,min,max)=>Math.max(min,Math.min(max,x));
 export const distanceTo=(o,x,y)=>Math.hypot(o.x-x,(o.y-y)*720/880);
 // Conductivity bands deliberately overlap: a bright tone never promises a valuable find.

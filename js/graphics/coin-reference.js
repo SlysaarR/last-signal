@@ -1,5 +1,6 @@
-import { coinDesign, coinDesignKey } from '../../data/coin-art.js?v=0.36.0';
-import { conditionProfile, metalPalette, paintWear } from './condition.js?v=0.36.0';
+import { coinDesign, coinDesignKey } from '../../data/coin-art.js?v=0.37.0';
+import { conditionProfile, metalPalette, paintWear } from './condition.js?v=0.37.0';
+import { wornCoinFace } from './coin-surface.js?v=0.37.0';
 const images=new Map(),faces=new Map(),listeners=new Set();
 let revision=0;
 export const coinImageRevision=()=>revision;
@@ -10,33 +11,54 @@ function photo(key,side) {
     const entry={image:new Image(),ready:false};images.set(path,entry);
     entry.image.onload=()=>{entry.ready=true;revision++;for(const fn of listeners)fn();};
     entry.image.onerror=()=>{entry.failed=true;};
-    entry.image.src='assets/coins/'+path+'.webp?v=0.36.0';
+    entry.image.src='assets/coins/'+path+'.webp?v=0.37.0';
   }
   const entry=images.get(path);return entry?.ready?entry.image:null;
 }
-// Replace only the date/mint-mark field, sampling the adjacent metal. Feathered
-// boundaries preserve the photograph's lighting; every inventory year is legible.
+// Bounds include the entire original engraving AND its highlight/shadow halo.
+// For dates, sample metal along the same radius: straight horizontal sampling
+// cuts through the circular borders of modern hryvnias and leaves stripes.
 function clearField(c,[x,y,w,h],texture=false) {
   const image=c.getImageData(0,0,512,512),out=c.getImageData(x,y,w,h),src=image.data,dst=out.data;
   for(let v=0;v<h;v++)for(let u=0;u<w;u++) {
     const a=Math.min(1,Math.min(u,v,w-1-u,h-1-v)/3),t=u/(w-1);
-    const sampleY=texture ? y+((v+u*7)%h) : y+v;
+    const radius2=(x+u-256)**2+(y+v-256)**2;
+    const sample=(side,k)=>{
+      let sum=0;
+      for(let n=0;n<9;n++) {
+        const offset=5+(texture?((u*13+v*7+n*3)%15):n%3*3);
+        const sx=side?x+w+offset:x-offset;
+        const sy=texture?Math.round(256+Math.sqrt(Math.max(0,radius2-(sx-256)**2))):y+v+(Math.floor(n/3)-1)*3;
+        sum+=src[(Math.max(0,Math.min(511,sy))*512+sx)*4+k];
+      }
+      return sum/9;
+    };
     for(let k=0;k<3;k++) {
-      const left=src[(sampleY*512+x-4)*4+k],right=src[(sampleY*512+x+w+3)*4+k];
-      const value=left*(1-t)+right*t;
+      const left=sample(0,k),right=sample(1,k);
+      const grain=texture?0:(src[(Math.min(511,y+((u*11+v*7)%h))*512+x-7)*4+k]-left)*.12;
+      const value=left*(1-t)+right*t+grain;
       dst[(v*w+u)*4+k]=dst[(v*w+u)*4+k]*(1-a)+value*a;
     }
   }
   c.putImageData(out,x,y);
 }
 function date(c,item,d) {
-  const [x,y,w,h]=d.date,gold=item.material==='yellow';
-  clearField(c,d.date,d.modern && item.value>=5);
-  c.save();c.textAlign='center';c.textBaseline='middle';c.font=`bold ${d.font}px Georgia,serif`;
-  const label=String(item.year),baseline=y+h*.51;
-  c.fillStyle=gold?'#51421c':'#484845';c.fillText(label,x+w/2+1,baseline+1,w-9);
-  c.fillStyle=gold?'#fff1b2':'#f4f2e9';c.fillText(label,x+w/2-1,baseline-1,w-9);
-  c.fillStyle=gold?'#cbb36c':'#b0afaa';c.fillText(label,x+w/2,baseline,w-9);c.restore();
+  const [x,y,w,h]=d.date;
+  clearField(c,d.date,!!d.modern);
+  const field=c.getImageData(x+Math.floor(w/2)-2,y+Math.floor(h/2)-2,5,5).data;
+  const metal=[0,0,0];for(let i=0;i<field.length;i+=4)for(let k=0;k<3;k++)metal[k]+=field[i+k]/25;
+  const shade=delta=>`rgb(${metal.map(v=>Math.max(0,Math.min(255,Math.round(v+delta)))).join(',')})`;
+  c.save();c.textAlign='center';c.textBaseline='alphabetic';c.font=`${d.font}px Georgia,serif`;
+  const label=String(item.year),m=c.measureText(label);
+  const ascent=m.actualBoundingBoxAscent||d.font*.75,descent=m.actualBoundingBoxDescent||0;
+  // Canvas maxWidth only SHRINKS text. Explicit scaling keeps a replacement
+  // date the same size as the source, including on phones with another font.
+  c.translate(x+w/2,y+h/2);c.scale((w-(d.modern?24:30))/Math.max(1,m.width),(h-(d.modern?16:26))/Math.max(1,ascent+descent));
+  const baseline=(ascent-descent)/2;
+  c.lineJoin='round';c.lineWidth=1.25;c.strokeStyle=shade(-70);
+  c.strokeText(label,.55,baseline+.55);
+  c.strokeStyle=shade(52);c.strokeText(label,-.55,baseline-.55);
+  c.fillStyle=shade(8);c.fillText(label,0,baseline);c.restore();
 }
 function reference(item,side) {
   const key=coinDesignKey(item),d=coinDesign(item);if(!d)return null;
@@ -79,8 +101,8 @@ export function paintCoinReference(c,item,condition,side) {
   c.save();c.beginPath();c.arc(0,0,126,0,Math.PI*2);c.clip();
   // The source specimen supplies lettering, portrait, shield and ornament. Wear
   // is a separate deterministic layer; it never changes a name, date or price.
-  c.filter=`saturate(${1-p.wear*.48}) contrast(${1-p.wear*.36}) brightness(${1-p.wear*.28}) blur(${p.wear*p.wear*.55}px)`;
-  c.drawImage(src,-126,-126,252,252);c.filter='none';
+  c.filter=`saturate(${1-p.wear*.38}) brightness(${1-p.wear*.12})`;
+  c.drawImage(wornCoinFace(src,condition),-126,-126,252,252);c.filter='none';
   c.fillStyle=palette.mid;c.globalAlpha=p.wear*.13;c.fillRect(-128,-128,256,256);c.globalAlpha=1;
   paintWear(c,item,condition,(item.year||1992)*31+item.value*17+side*917);
   c.restore();return true;

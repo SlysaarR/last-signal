@@ -2,7 +2,7 @@
 export const clampCondition = value => Math.max(0, Math.min(100, Number(value) || 0));
 export function conditionProfile(value) {
   const quality = clampCondition(value) / 100, wear = 1 - quality;
-  return { quality, wear, corrosion: wear ** 1.6, polish: quality ** 4, relief: 1 - wear * .76 };
+  return { quality, wear, corrosion: wear ** 1.6, polish: quality ** 4, relief: .04 + .96 * quality ** 1.3 };
 }
 export function artRandom(seed) {
   let n = Math.abs(seed | 0) % 2147483646 + 1;

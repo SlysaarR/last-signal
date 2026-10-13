@@ -1,6 +1,6 @@
-import { types } from '../data/items.js?v=0.36.0';
-import { createInspectionModel, drawInspection } from './graphics/inspection.js?v=0.36.0';
-import { onCoinImagesReady } from './graphics/coin-reference.js?v=0.36.0';
+import { types } from '../data/items.js?v=0.37.0';
+import { createInspectionModel, drawInspection } from './graphics/inspection.js?v=0.37.0';
+import { onCoinImagesReady } from './graphics/coin-reference.js?v=0.37.0';
 const viewers=new WeakMap();
 export function clearInspection(canvas) {
   viewers.get(canvas)?.dispose();viewers.delete(canvas);

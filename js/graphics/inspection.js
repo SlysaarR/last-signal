@@ -1,7 +1,7 @@
-import { renderMesh } from './inspection-gl.js?v=0.36.0';
-import { paintUkrainianCoin, isUkrainianCoin, coinEdgeType } from './ukrainian-coins.js?v=0.36.0';
-import { conditionProfile, metalPalette, paintWear } from './condition.js?v=0.36.0';
-import { coinDesign, coinEdgeSpec } from '../../data/coin-art.js?v=0.36.0';
+import { renderMesh } from './inspection-gl.js?v=0.37.0';
+import { paintUkrainianCoin, isUkrainianCoin, coinEdgeType } from './ukrainian-coins.js?v=0.37.0';
+import { conditionProfile, metalPalette, paintWear } from './condition.js?v=0.37.0';
+import { coinDesign, coinEdgeSpec } from '../../data/coin-art.js?v=0.37.0';
 
 const TAU=Math.PI*2;
 const sub=(a,b)=>a.map((v,i)=>v-b[i]);
@@ -79,11 +79,13 @@ export function createInspectionModel(item, condition) {
     const front=material(texture(c=>paintUkrainianCoin(c,item,condition,0)));
     const back=material(texture(c=>paintUkrainianCoin(c,item,condition,1)));
     const edge=material(metalTexture(item,condition,seed+331,(c,p)=>{
-      const spec=coinEdgeSpec(item),kind=spec.kind;c.lineWidth=.75;
+      c.save();
+      const spec=coinEdgeSpec(item),kind=spec.kind;c.lineWidth=.3+.45*profile.relief;c.globalAlpha=profile.relief;
       const groove=x=>{c.strokeStyle=p.dark;c.beginPath();c.moveTo(x,-128);c.lineTo(x,128);c.stroke();c.strokeStyle=p.light;c.beginPath();c.moveTo(x+.6,-128);c.lineTo(x+.6,128);c.stroke();};
       if(kind==='reeded')for(let n=0;n<(spec.count||128);n++)groove(-128+n*256/(spec.count||128));
       if(kind==='sector')for(let group=0;group<spec.groups;group++)for(let tooth=0;tooth<spec.teeth;tooth++)groove(-128+(group+tooth/spec.teeth*.5)*256/spec.groups);
       if(kind==='lettered') {c.fillStyle=p.dark;c.font='bold 58px Georgia';c.textAlign='center';c.fillText(spec.text,0,20,245);}
+      c.restore();
     }));
     const dimensions=coinDesign(item);
     disc(1,dimensions?2*dimensions.thickness/dimensions.diameter:.13,front,back,edge);

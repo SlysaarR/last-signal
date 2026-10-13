@@ -1,22 +1,22 @@
 // Photos of official NBU specimens; full provenance: assets/coins/sources.json.
 // Side 0 in the viewer is always the denomination, regardless of mint terminology.
 export const coinDesigns = {
-  k1:{source:3303,year:2011,date:[188,395,134,61],font:44,diameter:16,thickness:1.2,mint:[343,377,39,36]},
-  k2:{source:9675,year:2010,date:[184,399,142,61],font:41,diameter:17.3,thickness:1.2,mint:[348,385,37,38]},
-  'k2-old':{year:1994,date:[178,406,145,65],font:42,diameter:17.3,thickness:1.2},
-  k5:{source:3104,year:1992,date:[187,423,138,44],font:40,diameter:24,thickness:1.5},
-  'k10-old':{source:3304,year:1992,date:[181,416,149,59],font:39,diameter:16.3,thickness:1.25},
-  k10:{source:11192,year:2010,date:[188,408,132,46],font:41,diameter:16.3,thickness:1.25},
-  'k25-old':{source:1970,year:1994,date:[190,418,134,48],font:40,diameter:20.8,thickness:1.35},
-  k25:{source:11195,year:2006,date:[188,422,142,45],font:38,diameter:20.8,thickness:1.35},
-  'k50-old':{source:3305,year:1992,date:[181,425,148,54],font:47,diameter:23,thickness:1.55},
-  k50:{source:11198,year:2007,date:[191,420,128,44],font:38,diameter:23,thickness:1.55},
-  'h1-trident':{source:3755,year:2001,date:[180,412,152,62],font:41,diameter:26,thickness:1.85,mint:[352,400,35,42]},
-  'h1-gold':{source:3399,year:2006,date:[194,441,120,31],font:29,diameter:26,thickness:1.85,modern:true},
-  h1:{source:140064,year:2018,date:[200,425,109,36],font:32,diameter:18.9,thickness:1.7,modern:true},
-  h2:{source:140065,year:2018,date:[200,425,110,36],font:32,diameter:20.2,thickness:1.8,modern:true},
-  h5:{source:190032,year:2018,date:[201,424,110,34],font:31,diameter:22.1,thickness:2.1,modern:true},
-  h10:{source:219691,year:2018,date:[197,422,116,37],font:32,diameter:23.5,thickness:2.3,modern:true}
+  k1:{source:3303,year:2011,date:[182,393,144,64],font:44,diameter:16,thickness:1.2,mint:[343,377,39,36]},
+  k2:{source:9675,year:2010,date:[179,399,150,67],font:41,diameter:17.3,thickness:1.2,mint:[348,385,37,38]},
+  'k2-old':{year:1994,date:[173,401,154,72],font:42,diameter:17.3,thickness:1.2},
+  k5:{source:3104,year:1992,date:[176,419,155,65],font:40,diameter:24,thickness:1.5},
+  'k10-old':{source:3304,year:1992,date:[174,410,160,68],font:39,diameter:16.3,thickness:1.25},
+  k10:{source:11192,year:2010,date:[179,398,152,65],font:41,diameter:16.3,thickness:1.25},
+  'k25-old':{source:1970,year:1994,date:[180,411,155,62],font:40,diameter:20.8,thickness:1.35},
+  k25:{source:11195,year:2006,date:[180,412,155,64],font:38,diameter:20.8,thickness:1.35},
+  'k50-old':{source:3305,year:1992,date:[173,420,163,65],font:47,diameter:23,thickness:1.55},
+  k50:{source:11198,year:2007,date:[180,411,154,63],font:38,diameter:23,thickness:1.55},
+  'h1-trident':{source:3755,year:2001,date:[175,408,160,69],font:41,diameter:26,thickness:1.85,mint:[352,400,35,42]},
+  'h1-gold':{source:3399,year:2006,date:[189,435,133,43],font:29,diameter:26,thickness:1.85,modern:true},
+  h1:{source:140064,year:2018,date:[195,421,122,43],font:32,diameter:18.9,thickness:1.7,modern:true},
+  h2:{source:140065,year:2018,date:[195,421,122,43],font:32,diameter:20.2,thickness:1.8,modern:true},
+  h5:{source:190032,year:2018,date:[195,419,123,44],font:31,diameter:22.1,thickness:2.1,modern:true},
+  h10:{source:219691,year:2018,date:[191,419,129,45],font:32,diameter:23.5,thickness:2.3,modern:true}
 };
 export function coinDesignKey(item) {
   if(item.country!=='Україна')return null;
