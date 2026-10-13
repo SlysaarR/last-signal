@@ -1,5 +1,5 @@
-import { types } from '../data/items.js?v=0.33.0';
-import { createInspectionModel, drawInspection } from './graphics/inspection.js?v=0.33.0';
+import { types } from '../data/items.js?v=0.34.0';
+import { createInspectionModel, drawInspection } from './graphics/inspection.js?v=0.34.0';
 const viewers=new WeakMap();
 export function clearInspection(canvas) {
   viewers.get(canvas)?.dispose();viewers.delete(canvas);

@@ -1,5 +1,5 @@
-import { types } from '../../data/items.js?v=0.33.0';
-import { createInspectionModel, drawInspection } from './inspection.js?v=0.33.0';
+import { types } from '../../data/items.js?v=0.34.0';
+import { createInspectionModel, drawInspection } from './inspection.js?v=0.34.0';
 const cache=new Map(),waiting=new Set();
 function paint(canvas){
  const type=Number(canvas.dataset.artifact),condition=Number(canvas.dataset.condition),key=type+':'+condition;

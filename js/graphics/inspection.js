@@ -1,6 +1,6 @@
-import { renderMesh } from './inspection-gl.js?v=0.33.0';
-import { paintUkrainianCoin, isUkrainianCoin, coinEdgeType } from './ukrainian-coins.js?v=0.33.0';
-import { conditionProfile, metalPalette, paintWear } from './condition.js?v=0.33.0';
+import { renderMesh } from './inspection-gl.js?v=0.34.0';
+import { paintUkrainianCoin, isUkrainianCoin, coinEdgeType } from './ukrainian-coins.js?v=0.34.0';
+import { conditionProfile, metalPalette, paintWear } from './condition.js?v=0.34.0';
 
 const TAU=Math.PI*2;
 const sub=(a,b)=>a.map((v,i)=>v-b[i]);

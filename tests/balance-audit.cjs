@@ -3,7 +3,7 @@
 const {newRun,root}=require('./harness.cjs');
 (async()=>{
   const output=[];
-  for(const level of [1,50,100]) for(let routeIndex=0;routeIndex<4;routeIndex++) {
+  for(const level of [1,5,10]) for(let routeIndex=0;routeIndex<4;routeIndex++) {
     const r=await newRun(), mod=f=>r.modules.get(root+'/js/'+f+'.js').namespace;
     const world=mod('world'),rules=mod('rules'),state=mod('storage').s;
     const {routes,conditions}=r.modules.get(root+'/data/expeditions.js').namespace;

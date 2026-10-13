@@ -1,7 +1,10 @@
 const {newRun,root,golden,createHash,assert}=require('./harness.cjs');
 (async()=>{
  const advanced=JSON.parse(golden.fixtures.find(x=>x.name==='active trip').saved).state;
- for(const {name,saved,expected} of golden.fixtures){
+ for(const {name,saved,expected:previous} of golden.fixtures){
+  const expected=JSON.parse(JSON.stringify(previous));
+  const middle=['active trip','hidden find','revealed find','oversized food'].includes(name);
+  Object.assign(expected,{gearVersion:2,energyCapacity:middle?119:name==='legacy save'?102:100,gearCredit:{detector:middle?1268:0,shovel:middle?147:0,backpack:middle&&name!=='oversized food'?567:0},level:middle?4:name==='legacy save'?2:1,shovel:middle?3:1,backpack:middle&&name!=='oversized food'?4:1});
   const next=await newRun(saved);
   assert.deepEqual(next.state(),expected,name+' save mismatch');
   const existingCatalog=JSON.parse(next.catalog()).slice(0,golden.catalogLength);
@@ -15,7 +18,7 @@ const {newRun,root,golden,createHash,assert}=require('./harness.cjs');
  const blocked=await newRun(null,true);assert.equal(blocked.elements.get('saveNote').hidden,false);console.log('PASS unavailable storage warning');
  const run=await newRun(JSON.stringify({version:1,state:advanced}));const mod=f=>run.modules.get(root+'/js/'+f+'.js').namespace;
  mod('search').dig();assert(run.state().pending);assert.equal(run.elements.get('excavate').open,true);
- mod('excavation').collectPending();assert(run.state().pending.revealed);mod('packing').resolvePacking('take');assert.equal(run.state().bag.length,2);assert.equal(run.state().pending,null);assert.equal(run.state().energy,76.2);
+ mod('excavation').collectPending();assert(run.state().pending.revealed);mod('packing').resolvePacking('take');assert.equal(run.state().bag.length,2);assert.equal(run.state().pending,null);assert.equal(run.state().energy,76.7);
  const reloaded=await newRun(run.store.get('last-signal-v1'));assert.deepEqual(reloaded.state(),run.state());console.log('PASS dig → reveal → take → reload');
  const inv=await newRun(null); const ns=f=>inv.modules.get(root+'/js/'+f+'.js').namespace;
  const state=ns('storage').s;
@@ -34,20 +37,20 @@ const {newRun,root,golden,createHash,assert}=require('./harness.cjs');
  const shop=ns('shop'),rules=ns('rules');
  for(const kind of ['detector','shovel','backpack']){
    const key=kind==='detector'?'level':kind;
-   for(let level=1;level<100;level++){
+   for(let level=1;level<10;level++){
      state[key]=level;state.coins=100000;state.atCamp=true;
-     const expected=kind==='detector'?rules.maxEnergy(level+1):kind==='shovel'?rules.shovelFactor(level+1):rules.bagCapacity(level+1);
+     const expected=kind==='detector'?rules.detectorStats(level+1).radius:kind==='shovel'?rules.shovelFactor(level+1):rules.bagCapacity(level+1);
      const cost=rules.upgradeCost(kind);shop.upgradeGear(kind);
      assert.equal(state[key],level+1);assert.equal(state.coins,100000-cost);
-     assert.equal(kind==='detector'?rules.maxEnergy():kind==='shovel'?rules.shovelFactor():rules.bagCapacity(),expected);
+     assert.equal(kind==='detector'?rules.detectorStats().radius:kind==='shovel'?rules.shovelFactor():rules.bagCapacity(),expected);
    }
-   const balance=state.coins;shop.upgradeGear(kind);assert.equal(state[key],100);assert.equal(state.coins,balance);
+   const balance=state.coins;shop.upgradeGear(kind);assert.equal(state[key],10);assert.equal(state.coins,balance);
  }
  state.coins=0;state.level=1;shop.upgradeGear('detector');assert.equal(state.level,1);
  state.atCamp=false;state.coins=1000;shop.upgradeGear('detector');assert.equal(state.level,1);
  const count=state.pantry[0];shop.buyFood(0);assert.equal(state.pantry[0],count);
  state.atCamp=true;shop.buyFood(0);assert.equal(state.pantry[0],count+1);shop.transferFood(0,true);assert.equal(state.food[0],1);
- console.log('PASS all 297 upgrade steps, max level, purchase guards and food packing');
+ console.log('PASS all 27 upgrade steps, max level, purchase guards and food packing');
  const camp=ns('camp');state.energy=10;state.backpack=1;state.food=[0,0,0];state.bag=Array.from({length:8},()=>({type:0,condition:40}));state.coins=100;
  assert.equal(camp.departureWarnings().length,2);camp.confirmDeparture();assert.equal(inv.elements.get('modalClose').textContent,'Усе одно вирушити');
  inv.elements.get('modalCancel').onclick();assert.equal(state.atCamp,true);assert.equal(state.coins,100);
@@ -60,7 +63,7 @@ const {newRun,root,golden,createHash,assert}=require('./harness.cjs');
  es.atCamp=false;es.energy=5;es.x=.5;es.y=.5;es.objects=[{x:.5,y:.5,type:0,condition:50,depth:2,dug:false}];
  em('search').dig();assert.equal(es.energy,5);assert(!es.pending);assert.equal(es.objects[0].dug,false);
  es.energy=15;em('search').dig();assert.equal(es.energy,0);assert(es.pending);assert.equal(es.pending.spent,15);
- for(const kind of ['detector','shovel','backpack']){let prev=0;for(let l=1;l<100;l++){es[kind==='detector'?'level':kind]=l;const cost=em('rules').upgradeCost(kind);assert(cost>prev);prev=cost;}}
+ for(const kind of ['detector','shovel','backpack']){let prev=0;for(let l=1;l<10;l++){es[kind==='detector'?'level':kind]=l;const cost=em('rules').upgradeCost(kind);assert(cost>prev);prev=cost;}}
  console.log('PASS insufficient energy cannot discount digs; exact energy works; upgrade prices increase');
  const world=em('world'),loc=world.currentLocation();
  for(const roll of [0,.249,.25,.899,.9,.999]){const profile=world.siteProfile(loc,roll);assert(Math.abs(profile.kinds.reduce((a,b)=>a+b,0)-1)<1e-9);assert(profile.kinds.every(n=>n>=0));}

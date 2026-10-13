@@ -1,11 +1,12 @@
-import { routes, validProgress } from '../data/expeditions.js?v=0.33.0';
+import { GEAR_VERSION, migrateGear } from '../data/gear.js?v=0.34.0';
+import { routes, validProgress } from '../data/expeditions.js?v=0.34.0';
 // Save loading, legacy migration and persistence. Keep KEY and the version-1 envelope compatible.
-import { surveyCols, surveyRows } from '../data/balance.js?v=0.33.0';
-import { locations } from '../data/locations.js?v=0.33.0';
-import { $ } from './dom.js?v=0.33.0';
-import { bagCapacity, bagUsed, maxEnergy, rollCondition } from './rules.js?v=0.33.0';
-import { currentLocation, rollDepth, rollLocation } from './world.js?v=0.33.0';
-import { validateBackupState } from './backup-format.js?v=0.33.0';
+import { surveyCols, surveyRows } from '../data/balance.js?v=0.34.0';
+import { locations } from '../data/locations.js?v=0.34.0';
+import { $ } from './dom.js?v=0.34.0';
+import { bagCapacity, bagUsed, maxEnergy, rollCondition } from './rules.js?v=0.34.0';
+import { currentLocation, rollDepth, rollLocation } from './world.js?v=0.34.0';
+import { validateBackupState } from './backup-format.js?v=0.34.0';
 export const KEY = 'last-signal-v1';
 export function fresh() {
   return {
@@ -13,6 +14,11 @@ export function fresh() {
     energy: 100,
     day: 1,
     level: 1,
+    shovel: 1,
+    backpack: 1,
+    gearVersion: GEAR_VERSION,
+    gearCredit: {detector:0,shovel:0,backpack:0},
+    energyCapacity: 100,
     collection: [],
     objects: [],
     holes: [],
@@ -74,8 +80,9 @@ function migrateState() {
   s.food = Array.isArray(s.food) ? s.food.slice(0, 3).map(n => Number.isInteger(n) && n > 0 ? n : 0) : [0, 0, 0];
   while (s.food.length < 3) s.food.push(0);
   s.foodUsed = Number.isFinite(s.foodUsed) ? Math.max(0, Math.min(50, s.foodUsed)) : 0;
-  s.energy = Math.max(0, Math.min(maxEnergy(), s.energy));
   s.backpack = Number.isInteger(s.backpack) ? Math.max(1, Math.min(100, s.backpack)) : 1;
+  migrateGear(s);
+  s.energy = Math.max(0, Math.min(maxEnergy(), s.energy));
   s.bag = Array.isArray(s.bag) ? s.bag : [];
   s.stash = Array.isArray(s.stash) ? s.stash : [];
   s.pantry = Array.isArray(s.pantry) ? s.pantry : [0, 0, 0];

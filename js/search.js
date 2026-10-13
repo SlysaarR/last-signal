@@ -1,13 +1,14 @@
-import { recordDig } from './progression.js?v=0.33.0';
+import { sampleSignal } from './detector.js?v=0.34.0';
+import { recordDig } from './progression.js?v=0.34.0';
 // search responsibilities for Last Signal.
-import { depthLevels } from '../data/balance.js?v=0.33.0';
-import { beep } from './audio.js?v=0.33.0';
-import { $ } from './dom.js?v=0.33.0';
-import { openExcavation } from './excavation.js?v=0.33.0';
-import { canvas, draw } from './graphics/field.js?v=0.33.0';
-import { digCost, minDig } from './rules.js?v=0.33.0';
-import { s, save } from './storage.js?v=0.33.0';
-import { busy, render, renderDetector } from './ui.js?v=0.33.0';
+import { depthLevels } from '../data/balance.js?v=0.34.0';
+import { beep } from './audio.js?v=0.34.0';
+import { $ } from './dom.js?v=0.34.0';
+import { openExcavation } from './excavation.js?v=0.34.0';
+import { canvas, draw } from './graphics/field.js?v=0.34.0';
+import { digCost, minDig } from './rules.js?v=0.34.0';
+import { s, save } from './storage.js?v=0.34.0';
+import { busy, render, renderDetector } from './ui.js?v=0.34.0';
 let moveFrame = 0, pointerId = null;
 function renderMovement() {
   if (moveFrame) return;
@@ -20,7 +21,7 @@ function renderMovement() {
 }
 export function digInfo() {
   const n = signal(),
-    info = n.obj && n.power > 35 ? depthLevels[n.obj.depth] : {
+    info = n.obj && (n.pinpoint || n.power > 35) ? depthLevels[n.obj.depth] : {
       name: 'Глибина невідома · пробна ямка',
       cost: 10
     };
@@ -29,29 +30,8 @@ export function digInfo() {
     cost: digCost(info.cost)
   };
 }
-export function nearest() {
-  let obj = null,
-    d = Infinity;
-  for (const o of s.objects) {
-    if (o.dug) continue;
-    const dd = Math.hypot(o.x - s.x, (o.y - s.y) * 720 / 880);
-    if (dd < d) {
-      d = dd;
-      obj = o;
-    }
-  }
-  return {
-    obj,
-    d
-  };
-}
-export function signal() {
-  const n = nearest();
-  return {
-    ...n,
-    power: Math.max(0, Math.round(100 * (1 - n.d / (.205 * (1 + (s.level - 1) * .5 / 99)))))
-  };
-}
+export function signal() { return sampleSignal(s.objects,s.x,s.y,s.level); }
+export function nearest() { const {obj,d}=signal(); return {obj,d}; }
 export function move(e) {
   if (s.atCamp || busy()) return;
   const r = canvas.getBoundingClientRect();
@@ -59,7 +39,7 @@ export function move(e) {
   s.x = Math.max(.02, Math.min(.98, (e.clientX - r.left) / r.width));
   s.y = Math.max(.02, Math.min(.98, (e.clientY - r.top) / r.height));
   renderMovement();
-  beep(signal().power);
+  beep(signal());
 }
 export let dragging = false;
 export function dig() {
@@ -84,7 +64,7 @@ export function dig() {
     render();
     openExcavation();
   } else {
-    $('log').textContent = 'Порожня ямка. Витрачено ' + spent + ' сил. Шукай самий пік сигналу.';
+    $('log').textContent = 'Порожня ямка. Витрачено ' + spent + ' сил. Проведи котушкою навхрест і знайди центр відгуку.';
     save();
     render();
   }
@@ -119,7 +99,7 @@ export function initSearch() {
       s.y = Math.max(.02, Math.min(.98, s.y + (e.key === 'ArrowDown' ? .015 : e.key === 'ArrowUp' ? -.015 : 0)));
       renderDetector();
       draw();
-      beep(signal().power);
+      beep(signal());
     }
   });
   $('dig').onclick = dig;

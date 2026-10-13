@@ -435,3 +435,18 @@ body:has(#search:not([hidden])) footer {
     scroll-behavior:auto!important
   }
 }
+
+.signal-readings { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:5px 0 7px; }
+.signal-readings>div { min-width:0; display:flex; flex-direction:column; gap:3px; }
+.signal-readings span { font-size:8px; letter-spacing:1px; color:#9dad96; }
+.signal-readings strong { font-size:12px; font-weight:600; color:#d6e2c6; font-variant-numeric:tabular-nums; }
+#signalStability[data-quality="clear"] { color:#d2e79f; }
+.signal-guide { margin:18px 0; border:1px solid #40563e; border-radius:14px; padding:14px; }
+.signal-guide summary { cursor:pointer; font-size:14px; color:#d1e59b; }
+.signal-guide p { color:#b0bfa7; font-size:13px; line-height:1.55; }
+/* Short phones keep a usable field; the page can scroll above the fixed navigation. */
+@media(max-height:640px) {
+  body:has(#search:not([hidden])) main { min-height:600px; }
+}
+html { scroll-padding-bottom:calc(78px + env(safe-area-inset-bottom)); }
+#dig { scroll-margin-bottom:calc(78px + env(safe-area-inset-bottom)); }

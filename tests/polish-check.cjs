@@ -84,7 +84,7 @@ const ns=(run,name)=>run.modules.get(root+'/js/'+name+'.js').namespace;
   emit('lostpointercapture',{pointerId:1});assert.equal(search.dragging,false);
   field.elements.get('coinDetail').showModal();const power=state.energy;
   search.dig();assert.equal(state.energy,power);assert(!state.pending);field.elements.get('coinDetail').close();
-  state.level=100;state.x=.5;state.y=.5;state.objects=[{x:.54,y:.5,type:0,condition:50,depth:0,dug:false}];
+  state.level=10;state.x=.5;state.y=.5;state.objects=[{x:.54,y:.5,type:0,condition:50,depth:0,dug:false}];
   ns(field,'ui').renderDetector();assert(!field.elements.get('hint').textContent.includes('Можна копати'));
   state.objects[0].x=.52;ns(field,'ui').renderDetector();assert(field.elements.get('hint').textContent.includes('Можна копати'));
   console.log('PASS movement coalesced to one frame, no hidden-screen rebuilding, capture loss and exact dig hint');
