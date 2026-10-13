@@ -1,12 +1,11 @@
-import { setupCoinFlip } from './coin-flip.js?v=0.31.0';
-import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.31.0';
-import { drawArtifact } from './graphics/artifacts.js?v=0.31.0';
+import { setupInspection } from './coin-flip.js?v=0.32.0';
+import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.32.0';
 // collection responsibilities for Last Signal.
-import { rarities } from '../data/balance.js?v=0.31.0';
-import { collectible, types } from '../data/items.js?v=0.31.0';
-import { $ } from './dom.js?v=0.31.0';
-import { priceFor } from './rules.js?v=0.31.0';
-import { s } from './storage.js?v=0.31.0';
+import { rarities } from '../data/balance.js?v=0.32.0';
+import { collectible, types } from '../data/items.js?v=0.32.0';
+import { $ } from './dom.js?v=0.32.0';
+import { priceFor } from './rules.js?v=0.32.0';
+import { s } from './storage.js?v=0.32.0';
 export let collectionCategory = 'coin',
   denomFilter = 'all',
   yearFilter = 'all',
@@ -70,20 +69,17 @@ export function showItem(id) {
   $('detailText').textContent = lines.join('\n\n');
   $('detailSource').hidden = !t.source;
   if (t.source) $('detailSource').href = t.source;
-  $('detailFlip').hidden = true;
-  $('detailArt').onclick = null;
   $('detailArt').hidden = false;
-  $('wearExamples').hidden = !isUkrainianCoin(t);
+  $('wearExamples').hidden = false;
   const condition = found ? s.best[id] : 75;
-  drawArtifact(id, $('detailArt').getContext('2d'), condition, true);
-  setupCoinFlip($('detailArt'), $('detailFlip'), id, condition);
-  if (isUkrainianCoin(t)) {
-    $('detailArt').setAttribute('aria-label', 'Зображення: ' + t.denom);
-    const drawExamples = (side=0) => { $('wearExamples').innerHTML = '<p>Порівняння ігрового стану · це зразки, не нові знахідки</p><div class="wear-grid">' + [20,60,95,100].map(c => '<figure>' + coinMarkup(id,c,'coin-thumb',side) + '<figcaption>' + c + ' / 100</figcaption></figure>').join('') + '</div>';
-    renderCoinThumbnails(); };
-    drawExamples();
-    setupCoinFlip($('detailArt'), $('detailFlip'), id, found ? s.best[id] : 75, true, drawExamples);
-  }
+  const viewer = setupInspection($('detailArt'), $('detailFlip'), id, condition);
+  const slider=$('conditionPreview'), label=$('conditionPreviewValue');
+  slider.value=condition;
+  $('conditionPreviewReset').textContent=found?'Повернути стан знахідки':'Повернути початковий зразок';
+  const updateLabel=()=>{label.textContent=slider.value+'%';$('conditionPreviewNote').textContent=Number(slider.value)===condition ? (found ? 'Стан твоєї знахідки' : 'Зразок для огляду') : 'Порівняння вигляду · стан знахідки не змінюється';};
+  updateLabel();
+  slider.oninput=()=>{viewer.setCondition(Number(slider.value));updateLabel();};
+  $('conditionPreviewReset').onclick=()=>{slider.value=condition;viewer.setCondition(condition);updateLabel();};
   if (!found) $('detailText').textContent += '\n\nЗображення — зразок для огляду, не знайдений предмет.';
   $('coinDetail').showModal();
 }

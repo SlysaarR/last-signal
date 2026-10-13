@@ -95,13 +95,12 @@ const ns=(run,name)=>run.modules.get(root+'/js/'+name+'.js').namespace;
   for(let id=0;id<catalog.length;id++){
     const t=catalog[id];if(t.kind==='trash')continue;
     collection.showItem(id);assert.equal(canvasArt.hidden,false);
-    if(t.country){
-      assert.equal(button.hidden,false);const first=button.textContent;
-      canvasArt.onkeydown({key:'Enter',preventDefault(){}});assert.notEqual(button.textContent,first);
-      button.onclick();assert(button.textContent.includes('гурт'));button.onclick();assert.equal(button.textContent,first);
-    }else{assert.equal(button.hidden,true);assert.equal(canvasArt.onkeydown,null);assert.equal(canvasArt.role,'img');}
+    assert.equal(button.hidden,false);
+    canvasArt.onkeydown({key:'ArrowRight',preventDefault(){}});art.flushFrames();
+    assert(Number(canvasArt.dataset.yaw)>0);
+    button.onclick();art.flushFrames();assert.equal(Number(canvasArt.dataset.yaw),0);
     art.elements.get('coinDetail').close();
   }
   assert.equal(JSON.stringify(art.state()),snapshot,'inspection cannot award items or alter saved collection');
-  console.log('PASS every catalogue card, three coin views, keyboard flip and non-coin art without state mutations');
+  console.log('PASS every catalogue card, continuous rotation, keyboard control and non-coin meshes without state mutations');
 })().catch(e=>{console.error(e);process.exit(1)});

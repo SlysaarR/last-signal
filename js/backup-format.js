@@ -1,7 +1,7 @@
-import { routes, validProgress } from '../data/expeditions.js?v=0.31.0';
+import { routes, validProgress } from '../data/expeditions.js?v=0.32.0';
 // Strict validation for portable backups. Reading a file never changes game state.
-import { types } from '../data/items.js?v=0.31.0';
-import { locations } from '../data/locations.js?v=0.31.0';
+import { types } from '../data/items.js?v=0.32.0';
+import { locations } from '../data/locations.js?v=0.32.0';
 export const MAX_BACKUP_SIZE = 4 * 1024 * 1024;
 const object = v => v !== null && typeof v === 'object' && !Array.isArray(v);
 const number = (v, min = 0, max = Number.MAX_SAFE_INTEGER) => typeof v === 'number' && Number.isFinite(v) && v >= min && v <= max;
@@ -34,7 +34,7 @@ export function createBackup(state, createdAt = new Date().toISOString()) {
   state = JSON.parse(JSON.stringify(state));
   for (const key of ['earned', 'found']) if (state[key] === undefined) state[key] = 0;
   validateBackupState(state);
-  const text = JSON.stringify({format:'last-signal-backup',backupVersion:1,saveVersion:1,gameVersion:'0.31.0',createdAt,state});
+  const text = JSON.stringify({format:'last-signal-backup',backupVersion:1,saveVersion:1,gameVersion:'0.32.0',createdAt,state});
   if (text.length > MAX_BACKUP_SIZE) throw new Error('Прогрес завеликий для цього формату копії.');
   return text;
 }

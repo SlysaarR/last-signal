@@ -1,16 +1,20 @@
 .coin-thumb { width:68px; height:68px; flex:none; display:block }
 #items .coin-thumb { width:90px; height:90px; margin:4px 0 }
 #detailArt { display:block; width:100%; height:auto; border:1px solid #52633f; border-radius:16px; margin:14px 0 }
-#wearExamples > p { font-size:11px; line-height:1.5; color:#aebe9e }
-.wear-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; margin-bottom:16px }
-.wear-grid figure { margin:0; background:#112016; border:1px solid #3a4c31; border-radius:12px; padding:8px 3px }
-.wear-grid canvas { width:100%; height:auto }
-.wear-grid figcaption { text-align:center; color:#d3dfba; font-size:11px; padding:4px 0 }
 #detailArt[hidden], #wearExamples[hidden] { display:none }
+.inspection-hint { text-align:center; color:#aebe9e; font-size:11px; line-height:1.5; margin:6px 0 16px }
+.condition-preview { padding:14px; border:1px solid #425539; border-radius:14px; background:#102016 }
+.condition-preview label { display:flex; align-items:center; justify-content:space-between; color:#cad9bc; font-size:13px }
+.condition-preview output { font-size:20px; font-weight:700; color:#d6e9aa; font-variant-numeric:tabular-nums }
+.condition-preview input[type="range"] { display:block; width:100%; height:36px; padding:0; margin:6px 0; accent-color:#c5df98; background:transparent; border:0; touch-action:pan-y }
+.condition-scale { display:flex; justify-content:space-between; gap:12px; font-size:10px; color:#9cb08e }
+.condition-preview p { font-size:11px; line-height:1.5; color:#afc39f; min-height:33px; margin:10px 0 0 }
+.condition-preview .quiet { min-height:38px; padding:8px 0; font-size:11px; color:#cbdcb5; text-decoration:underline }
+#packArt,#detailArt { touch-action:none }
+#packArt:focus-visible,#detailArt:focus-visible,#artifact:focus-visible { outline:2px solid #d5e9a3; outline-offset:-4px }
 
 .coin-flip { display:block; width:100%; margin:8px 0 12px; min-height:44px }
 .coin-flip[hidden] { display:none }
 canvas[role="button"]:focus-visible { outline:2px solid #d5e9a3; outline-offset:3px }
 
-.wear-grid { grid-template-columns:repeat(2,minmax(0,1fr)) }
-.wear-grid figure:last-child { border-color:#bca363; background:linear-gradient(145deg,#30402b,#17261d) }
+#detailTitle:focus,#packTitle:focus { outline:none }

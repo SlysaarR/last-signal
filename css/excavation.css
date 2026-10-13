@@ -132,18 +132,16 @@
 .find-display canvas {
   display:block;
   width:100%;
-  aspect-ratio:1.5;
-  object-fit:contain
+  height:auto;
+  touch-action:none
 }
 .find-display figcaption {
-  position:absolute;
-  bottom:9px;
-  left:0;
-  right:0;
+  margin:0;
+  padding:9px 12px 11px;
   text-align:center;
   color:#98ad8b;
-  font-size:8px;
-  letter-spacing:1.2px;
+  font-size:11px;
+  line-height:1.4;
   pointer-events:none
 }
 #packTitle {
@@ -241,7 +239,8 @@
     margin:8px 0
   }
   .find-display canvas {
-    max-height:27dvh
+    width:min(100%,38dvh);
+    margin:auto
   }
   .find-facts {
     margin:8px 0
@@ -250,3 +249,5 @@
     padding:8px 10px
   }
 }
+
+.excavation.done #soil { pointer-events:none }

@@ -1,9 +1,10 @@
-import { paintLaterHryvniaPortrait } from './hryvnia-portraits.js?v=0.31.0';
-import { paintHryvniaPortrait } from './hryvnia.js?v=0.31.0';
+import { conditionProfile, metalPalette, paintWear } from './condition.js?v=0.32.0';
+import { paintLaterHryvniaPortrait } from './hryvnia-portraits.js?v=0.32.0';
+import { paintHryvniaPortrait } from './hryvnia.js?v=0.32.0';
 // Original Canvas rendition of the 25-kopiyok reverse; not an exact mint-die reproduction.
 // References: museum.mincult.gov.ua/collections/moneta-25-kopiyok-1992-r-125364
 // commons.wikimedia.org/wiki/File:Ukraine-25-kopiyok-1992.jpg
-import { types } from '../../data/items.js?v=0.31.0';
+import { types } from '../../data/items.js?v=0.32.0';
 // Shared denomination-side artwork; mint die micro-varieties are intentionally not simulated.
 export function isUkrainianCoin(t) {
   return t?.country === 'Україна' && (t.unit?.startsWith('коп') || ([1,2,5,10].includes(t.value) && t.unit?.startsWith('гр')));
@@ -11,40 +12,34 @@ export function isUkrainianCoin(t) {
 export function canFlipCoin(t) { return isUkrainianCoin(t); }
 export function paintUkrainianCoin(c, item, condition = 75, side = 0) {
   if (side === 2 && canFlipCoin(item)) { paintCoinEdge(c, condition, item); return; }
-  const perfect = condition === 100;
+  const profile = conditionProfile(condition), palette = metalPalette(item, condition);
   const obverse = side === 1 && canFlipCoin(item);
   const seed = (item.value === 25 ? 1992 : item.value * 1992) + (obverse ? 917 : 0);
-  const silver = item.material !== 'yellow', aluminum = item.material === 'aluminum';
+  const silver = item.material !== 'yellow';
   const hryvnia = item.unit.startsWith('гр');
   const modern = hryvnia && item.year >= 2004;
   const light = silver ? '#eef0ec' : '#f4df98', dark = silver ? '#606b70' : '#74602e';
-  const raised = perfect ? (silver ? '#dce5e7' : '#ebce78') : silver ? (aluminum ? '#cbd0cd' : '#b5bfc0') : '#c6ac5e';
+  const raised = palette.light;
   const wear = 1 - Math.max(0, Math.min(100, condition)) / 100, r = 126;
   let n = seed * 37 + 251;
   const random = () => { n = n * 16807 % 2147483647; return n / 2147483647; };
   c.save();
   const metal = c.createLinearGradient(-100,-120,105,130);
-  metal.addColorStop(0, silver ? (aluminum ? '#e0e4df' : '#d2dce0') : (wear > .6 ? '#97865a' : '#d8c47b'));
-  metal.addColorStop(.32, silver ? '#899698' : (wear > .6 ? '#786c45' : '#b6a15d'));
-  metal.addColorStop(.62, silver ? '#c2ccce' : (wear > .6 ? '#918053' : '#cab46b'));
-  metal.addColorStop(1, silver ? '#637176' : '#6b5c32');
-  if (perfect) {
-    metal.addColorStop(.12, silver ? '#f5fbff' : '#fff0af');
-    metal.addColorStop(.40, silver ? '#6c818c' : '#93702b');
-    metal.addColorStop(.48, silver ? '#e8f3f7' : '#ffe39a');
-    metal.addColorStop(.78, silver ? '#f4fbff' : '#f9dd84');
-  }
+  metal.addColorStop(0, palette.light);
+  metal.addColorStop(.32, palette.mid);
+  metal.addColorStop(.62, palette.light);
+  metal.addColorStop(1, palette.dark);
   c.shadowColor='#0009';c.shadowBlur=13;c.shadowOffsetY=7;
   c.fillStyle=silver?'#505e63':'#514329';c.beginPath();c.ellipse(0,4,r,r,0,0,Math.PI*2);c.fill();
   c.shadowBlur=0;c.shadowOffsetY=0;
   c.fillStyle=metal;c.beginPath();c.arc(0,0,r,0,Math.PI*2);c.fill();
   c.save();c.beginPath();c.arc(0,0,r-2,0,Math.PI*2);c.clip();
   // Fine metal grain stays in the same positions across all wear levels.
-  for(let i=0;i<(perfect?350:1600);i++) {c.fillStyle=i%2?'#fff1ab0d':'#302b1a16';c.fillRect((random()-.5)*252,(random()-.5)*252,.4+random()*1.1,.4+random());}
+  for(let i=0;i<700;i++) {c.fillStyle=i%2?'#fff1ab09':'#302b1a0c';c.fillRect((random()-.5)*252,(random()-.5)*252,.4+random()*1.1,.4+random());}
   const relief = draw => {
-    c.save();c.globalAlpha=1-wear*.63;c.translate(perfect?1:.7,perfect?1.4:1.1);c.fillStyle=light;c.strokeStyle=light;draw();c.restore();
-    c.save();c.globalAlpha=1-wear*.58;c.translate(-.5,-.5);c.fillStyle=dark;c.strokeStyle=dark;draw();c.restore();
-    c.save();c.globalAlpha=.9-wear*.5;c.fillStyle=raised;c.strokeStyle=raised;draw();c.restore();
+    c.save();c.globalAlpha=profile.relief;c.translate(.7+profile.polish*.3,1.1+profile.polish*.3);c.fillStyle=light;c.strokeStyle=light;draw();c.restore();
+    c.save();c.globalAlpha=profile.relief;c.translate(-.5,-.5);c.fillStyle=dark;c.strokeStyle=dark;draw();c.restore();
+    c.save();c.globalAlpha=.9-wear*.66;c.fillStyle=raised;c.strokeStyle=raised;draw();c.restore();
   };
   relief(()=>{c.lineWidth=2.6;c.beginPath();c.arc(0,0,121,0,Math.PI*2);c.stroke();});
   // Flowing border, alternating elongated leaves and berry clusters.
@@ -111,18 +106,9 @@ export function paintUkrainianCoin(c, item, condition = 75, side = 0) {
       c.font='bold '+(hryvnia?26:27)+'px Georgia,serif';c.fillText(item.unit,0,60,128);
     });
   }
-  // Wear dulls the raised design; irregular corrosion is strongest at the rim.
-  for(let i=0;i<(perfect?0:38);i++) {
-    const a=random()*Math.PI*2,dist=65+random()*60,x=Math.cos(a)*dist,y=Math.sin(a)*dist,size=5+random()*25;
-    const patch=c.createRadialGradient(x,y,0,x,y,size);
-    patch.addColorStop(0,`rgba(${silver ? "44,53,57" : "39,54,32"},${wear*wear*(.2+random()*.45)})`);patch.addColorStop(.6,`rgba(71,61,34,${wear*.15})`);patch.addColorStop(1,'#463d2500');c.fillStyle=patch;c.fillRect(x-size,y-size,size*2,size*2);
-  }
-  for(let i=0;i<(perfect?0:95);i++) {
-    const x=(random()-.5)*240,y=(random()-.5)*240,len=2+random()*19;
-    c.strokeStyle=`rgba(48,39,22,${.035+wear*.23})`;c.lineWidth=.3+random()*.8;c.beginPath();c.moveTo(x,y);c.lineTo(x+len,y-len*.4);c.stroke();
-  }
-  c.fillStyle=`rgba(${silver ? "43,52,56" : "58,54,32"},${wear*.2})`;c.fillRect(-r,-r,r*2,r*2);
-  if (perfect) {
+  paintWear(c, item, condition, seed);
+  c.save();c.globalAlpha=profile.polish;
+  {
     c.lineWidth=2;c.strokeStyle=silver?'#f6fcff':'#fff2bb';
     c.beginPath();c.arc(0,0,121,Math.PI*1.04,Math.PI*1.66);c.stroke();
     c.lineWidth=1.3;c.beginPath();c.arc(0,0,120,.05,.66);c.stroke();
@@ -132,7 +118,7 @@ export function paintUkrainianCoin(c, item, condition = 75, side = 0) {
       c.fillStyle=glint;c.fillRect(x-9,y-9,18,18);
     }
   }
-  c.restore();c.restore();
+  c.restore();c.restore();c.restore();
 }
 
 export function coinMarkup(type, condition, className='coin-thumb', side=0) {

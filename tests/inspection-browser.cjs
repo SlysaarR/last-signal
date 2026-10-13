@@ -1,0 +1,26 @@
+// Optional real-browser check. Supply Playwright and a Chromium executable; no game dependencies.
+const http=require('http'),fs=require('fs'),path=require('path'),assert=require('assert/strict');
+const root=path.resolve(__dirname,'..');
+const server=http.createServer((req,res)=>{const file=path.join(root,req.url.split('?')[0]==='/'?'index.html':req.url.split('?')[0]);res.setHeader('Content-Type',file.endsWith('.js')?'text/javascript':file.endsWith('.css')?'text/css':'text/html');try{res.end(fs.readFileSync(file))}catch{res.statusCode=404;res.end('Missing')}});
+const {chromium:playwright}=require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+(async()=>{await new Promise(r=>server.listen(0,'127.0.0.1',r));const browser=await playwright.launch({executablePath:process.env.CHROMIUM_PATH || undefined,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader'],headless:true});
+const page=await browser.newPage({viewport:{width:390,height:844},hasTouch:true});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+await page.goto('http://127.0.0.1:'+server.address().port);
+const data=await page.evaluate(async()=>{const {types}=await import('./data/items.js?v=0.32.0'),{s,save}=await import('./js/storage.js?v=0.32.0');const type=types.findIndex(t=>t.value===1&&t.year===2003&&t.unit?.startsWith('гр'));s.atCamp=false;s.pending={type,condition:65,revealed:true,spent:13.1};save();(await import('./js/packing.js?v=0.32.0')).openPacking();return {type,before:JSON.stringify(s)};});
+for(const [width,height] of [[320,568],[390,844],[412,915],[844,390]]){
+await page.setViewportSize({width,height});
+const layout=await page.evaluate(()=>{const c=document.querySelector('#packArt').getBoundingClientRect(),cap=document.querySelector('.find-display figcaption').getBoundingClientRect(),fig=document.querySelector('.find-display').getBoundingClientRect(),b=document.querySelector('#packFlip').getBoundingClientRect(),dialog=document.querySelector('#packDialog');return {overlap:cap.top<c.bottom-1||b.top<fig.bottom-1,overflow:dialog.scrollWidth>dialog.clientWidth,ratio:c.width/c.height};});assert(!layout.overlap&&!layout.overflow,JSON.stringify(layout));assert(Math.abs(layout.ratio-1.2)<.01);console.log('PASS packing layout',width,height);
+}
+await page.setViewportSize({width:390,height:844});if(process.env.INSPECTION_SCREENSHOTS)await page.screenshot({path:path.join(process.env.INSPECTION_SCREENSHOTS,'mobile-pack.png')});
+const art=page.locator('#packArt'),rect=await art.boundingBox();const cdp=await page.context().newCDPSession(page);
+await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:rect.x+100,y:rect.y+100}]});
+await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:rect.x+175,y:rect.y+125}]});
+await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await page.waitForFunction(()=>Number(document.querySelector('#packArt').dataset.yaw)>.5);console.log('PASS real touch drag',await art.getAttribute('data-yaw'));
+if(process.env.INSPECTION_SCREENSHOTS)await page.screenshot({path:path.join(process.env.INSPECTION_SCREENSHOTS,'mobile-rotated.png')});
+await page.reload();await page.waitForSelector('#packDialog[open]');assert.equal(await page.locator('#packCondition').textContent(),'65%');console.log('PASS pending find reload keeps condition');
+await page.evaluate(async id=>{document.querySelector('#packDialog').close();(await import('./js/collection.js?v=0.32.0')).showItem(id);},data.type);
+const before=await page.evaluate(async()=>JSON.stringify((await import('./js/storage.js?v=0.32.0')).s));
+const slider=page.locator('#conditionPreview');await slider.fill('64');const at64=await page.locator('#conditionPreviewValue').textContent();await slider.fill('65');assert.equal(await page.locator('#conditionPreviewValue').textContent(),'65%');assert.equal(at64,'64%');
+assert.equal(await page.evaluate(async()=>JSON.stringify((await import('./js/storage.js?v=0.32.0')).s)),before);console.log('PASS interactive wear preview does not change save');
+const appearances=await page.evaluate(async()=>{const {types}=await import('./data/items.js?v=0.32.0'),{createInspectionModel,drawInspection}=await import('./js/graphics/inspection.js?v=0.32.0');const item=types.find(t=>t.value===1&&t.year===2003&&t.unit?.startsWith('гр'));const images=new Set();let sample;for(let n=0;n<=100;n++){const model=createInspectionModel(item,n);const value=model.textures[1].toDataURL();images.add(value);if(n===65)sample=value;}const same=createInspectionModel(item,65).textures[1].toDataURL()===sample;const stage=document.createElement('canvas');stage.width=600;stage.height=500;drawInspection(stage.getContext('2d'),createInspectionModel(item,65),Math.PI,0,true);return {count:images.size,same,back:stage.toDataURL()};});assert.equal(appearances.count,101);assert(appearances.same);if(process.env.INSPECTION_SCREENSHOTS)fs.writeFileSync(path.join(process.env.INSPECTION_SCREENSHOTS,'coin-back.png'),Buffer.from(appearances.back.split(',')[1],'base64'));console.log('PASS 101 unique condition textures, repeat 65% byte-identical');
+assert.deepEqual(errors,[]);console.log('PASS no browser errors');await browser.close();server.close();})().catch(e=>{console.error(e);process.exit(1)});
