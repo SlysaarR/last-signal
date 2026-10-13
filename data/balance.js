@@ -34,6 +34,9 @@ export const depthLevels = [{
   cost: 15
 }];
 export const signalRanges = {
+  forest: [5, 12],
+  orchard: [7, 15],
+  river: [10, 19],
   road: [8, 16],
   field: [6, 14],
   beach: [15, 25],
@@ -54,3 +57,4 @@ export const foods = [{
   percent: 30,
   price: 20
 }];
+

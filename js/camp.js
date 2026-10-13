@@ -1,10 +1,12 @@
+import { chosenRoute, conditions } from '../data/expeditions.js?v=0.30.0';
+import { startLeg,endLeg } from './progression.js?v=0.30.0';
 // camp responsibilities for Last Signal.
-import { modal } from './dialogs.js?v=0.27.0';
-import { $ } from './dom.js?v=0.27.0';
-import { bagCapacity, bagUsed, canLeave, emergencyAllowed, maxEnergy, priceFor } from './rules.js?v=0.27.0';
-import { s, save } from './storage.js?v=0.27.0';
-import { busy, render, showTab } from './ui.js?v=0.27.0';
-import { currentLocation, generate, rollLocation } from './world.js?v=0.27.0';
+import { modal } from './dialogs.js?v=0.30.0';
+import { $ } from './dom.js?v=0.30.0';
+import { bagCapacity, bagUsed, canLeave, emergencyAllowed, maxEnergy, priceFor, travelCost } from './rules.js?v=0.30.0';
+import { s, save } from './storage.js?v=0.30.0';
+import { busy, render, showTab } from './ui.js?v=0.30.0';
+import { currentLocation, generate, rollLocation } from './world.js?v=0.30.0';
 export function returnHome() {
   if (s.atCamp || s.pending) return;
   s.lastTrip = {
@@ -14,6 +16,7 @@ export function returnHome() {
     travel: s.travelSpent,
     food: s.foodSpent
   };
+  endLeg();
   s.atCamp = true;
   s.objects = [];
   s.holes = [];
@@ -22,12 +25,13 @@ export function returnHome() {
 }
 export function showArrival() {
   const loc = currentLocation();
-  modal('НОВА ДІЛЯНКА', loc.icon, loc.name, s.energy + ' сил. Слухай металошукач і вирішуй, де копати.', 'Почати пошук');
+  modal('НОВА ДІЛЯНКА', loc.icon, loc.name, s.energy + ' сил. ' + (conditions[s.progress?.active?.condition]?.text || '') + ' ' + loc.hint, 'Почати пошук');
 }
 export function depart() {
   if (!canLeave()) return;
   const fromCamp = s.atCamp,
-    emergency = emergencyAllowed();
+    emergency = emergencyAllowed(), cost = travelCost(), route = chosenRoute(s);
+  endLeg();
   if (fromCamp) {
     s.travelSpent = 0;
     s.foodSpent = 0;
@@ -36,15 +40,17 @@ export function depart() {
     s.foodUsed = 0;
   }
   if (!emergency) {
-    s.coins -= 25;
-    s.travelSpent += 25;
+    s.coins -= cost;
+    s.travelSpent += cost;
   }
   s.day++;
   s.atCamp = false;
   s.x = .5;
   s.y = .52;
   s.emergency = emergency;
-  s.location = emergency ? 0 : rollLocation();
+  s.location = emergency ? 0 : rollLocation(route);
+  const weatherRoll = Math.random();
+  startLeg(cost, emergency ? 0 : weatherRoll < .6 ? 0 : weatherRoll < .8 ? 1 : 2);
   generate();
   save();
   showTab('search');
@@ -68,16 +74,16 @@ export function renderCamp() {
   $('campReadiness').textContent = !s.atCamp ? 'Для відпочинку та підготовки повернися через меню виїзду на екрані пошуку.' : departureWarnings().join(' ') || (food ? 'Спорядження готове. Можна вирушати.' : 'Їжі в рюкзаку немає. За бажанням візьми запас у майстерні.');
   $('restHome').disabled = !s.atCamp || s.energy === maxEnergy() || !!s.pending;
   $('restHome').textContent = s.energy === maxEnergy() ? 'Енергію відновлено' : 'Відпочити · безкоштовно';
-  $('startTrip').disabled = !s.atCamp || !!s.pending;
-  $('startTrip').textContent = s.coins < 25 ? 'На узбіччя · безкоштовно' : 'Вирушити · 25 купонів';
-  $('departureNote').textContent = s.coins < 25 ? 'Коли купонів менше 25, доступне бідне узбіччя. Дорога не відновлює енергію.' : 'Випадкова ділянка. Після оплати залишиться ' + (s.coins - 25) + ' купонів. Дорога не відновлює енергію.';
+  $('startTrip').disabled = !s.atCamp || !canLeave();
+  $('startTrip').textContent = s.coins < 25 ? 'На узбіччя · безкоштовно' : 'Вирушити · '+travelCost()+' купонів';
+  $('departureNote').textContent = s.coins < 25 ? 'Коли купонів менше 25, доступне бідне узбіччя. Дорога не відновлює енергію.' : (canLeave() ? chosenRoute(s).name + '. Після оплати залишиться ' + (s.coins - travelCost()) + ' купонів.' : 'Бракує купонів. Обери дешевший напрямок або продай знахідки.') + ' Дорога не відновлює енергію.';
   const trip = s.lastTrip;
   $('tripSummary').innerHTML = trip ? `<div class="trip-grid"><div><span>Знайдено</span><strong>${trip.found}</strong></div><div><span>Принесено предметів</span><strong>${trip.brought}</strong></div><div><span>Оцінка здобичі</span><strong>${trip.value}<small> купонів</small></strong></div><div><span>Витрати на виїзд</span><strong>${trip.travel + trip.food}<small> купонів</small></strong></div></div><p class="camp-note">Дорога: ${trip.travel} · з’їдена їжа: ${trip.food} купонів. Оцінка здобичі — вартість на момент повернення, а не отриманий дохід. Для продажу відкрий рюкзак.</p>` : '<p class="camp-note">Тут з’являться знахідки й витрати після першого повернення з поля.</p>';
 }
 export function confirmDeparture() {
   if (!canLeave() || busy()) return;
   const warnings = departureWarnings();
-  modal(warnings.length ? 'ПЕРЕВІР ПІДГОТОВКУ' : 'ВИРУШИТИ?', '⛺', emergencyAllowed() ? 'Бідне узбіччя' : 'Нова випадкова ділянка', (emergencyAllowed() ? 'Безкоштовний виїзд на бідне узбіччя.' : 'Вартість: 25 купонів.') + ' Енергія: ' + s.energy + ' / ' + maxEnergy() + '. Вільних місць: ' + Math.max(0, bagCapacity() - bagUsed()) + '. ' + warnings.join(' ') + ' Дорога не відновлює сили.' + (s.atCamp ? '' : ' Стару ділянку буде втрачено.'), warnings.length ? 'Усе одно вирушити' : 'Вирушити', depart);
+  modal(warnings.length ? 'ПЕРЕВІР ПІДГОТОВКУ' : 'ВИРУШИТИ?', '⛺', emergencyAllowed() ? 'Бідне узбіччя' : chosenRoute(s).name, (emergencyAllowed() ? 'Безкоштовний виїзд на бідне узбіччя.' : 'Вартість: '+travelCost()+' купонів.') + ' Енергія: ' + s.energy + ' / ' + maxEnergy() + '. Вільних місць: ' + Math.max(0, bagCapacity() - bagUsed()) + '. ' + warnings.join(' ') + ' Дорога не відновлює сили.' + (s.atCamp ? '' : ' Стару ділянку буде втрачено.'), warnings.length ? 'Усе одно вирушити' : 'Вирушити', depart);
 }
 export function initCamp() {
   $('restHome').onclick = () => {
@@ -94,3 +100,4 @@ export function initCamp() {
   $('finish').onclick = confirmDeparture;
   $('startTrip').onclick = confirmDeparture;
 }
+

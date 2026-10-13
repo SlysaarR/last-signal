@@ -60,6 +60,13 @@ export const locations = [{
   accent: '#edc57f',
   terrain: 'trail'
 }];
+// Appended IDs preserve every previously saved location.
+locations.push(
+ {name:'Лісова галявина',chance:10,rarity:'Незвичайна локація',potential:2,icon:'🌲',hint:'Коріння, побутові речі й поодинокі монети. Сигналів небагато.',kinds:[.56,.26,.04,.14],boost:[1,1.2,1.4,1.6],ground:['#4e6242','#203a2c'],accent:'#bacb96',terrain:'forest'},
+ {name:'Старий сад',chance:10,rarity:'Звичайна локація',potential:2,icon:'🌳',hint:'Дрібні монети та загублені речі між колишніми деревами.',kinds:[.53,.33,.08,.06],boost:[1,1.1,1.3,1.5],ground:['#718051','#364833'],accent:'#d5d8a4',terrain:'orchard'},
+ {name:'Річковий берег',chance:8,rarity:'Незвичайна локація',potential:3,icon:'〰️',hint:'Монети, прикраси та металеве сміття біля води.',kinds:[.57,.25,.15,.03],boost:[1,1.25,1.5,1.8],ground:['#6e7863','#334c42'],accent:'#a6d3cc',terrain:'river'}
+);
+
 export const legacyLocation = {
   name: 'Стара яблунева галявина',
   rarity: 'Попередній виїзд',
@@ -72,3 +79,4 @@ export const legacyLocation = {
   accent: '#c0d19d',
   terrain: 'grass'
 };
+

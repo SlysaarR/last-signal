@@ -1,16 +1,14 @@
 // world responsibilities for Last Signal.
-import { rarities, signalRanges, surveyCols, surveyRows } from '../data/balance.js?v=0.27.0';
-import { types } from '../data/items.js?v=0.27.0';
-import { legacyLocation, locations } from '../data/locations.js?v=0.27.0';
-import { rollCondition } from './rules.js?v=0.27.0';
-import { s, save } from './storage.js?v=0.27.0';
-export function rollLocation() {
-  let roll = Math.random() * 100;
-  for (let i = 0; i < locations.length; i++) {
-    roll -= locations[i].chance;
-    if (roll < 0) return i;
-  }
-  return locations.length - 1;
+import { rarities, signalRanges, surveyCols, surveyRows } from '../data/balance.js?v=0.30.0';
+import { types } from '../data/items.js?v=0.30.0';
+import { legacyLocation, locations } from '../data/locations.js?v=0.30.0';
+import { rollCondition } from './rules.js?v=0.30.0';
+import { s, save } from './storage.js?v=0.30.0';
+export function rollLocation(route = null) {
+  const pool = route ? route.pool : [0,1,2,3,4];
+  let roll = Math.random() * pool.reduce((sum,i)=>sum+locations[i].chance,0);
+  for (const i of pool) { roll -= locations[i].chance; if(roll<0)return i; }
+  return pool[pool.length-1];
 }
 export function currentLocation() {
   return s.emergency ? {
@@ -23,7 +21,7 @@ export function currentLocation() {
 export function itemWeight(t, id, loc) {
   let weight = rarities[t.rarity].weight * loc.boost[t.rarity];
   if (t.kind === 'coin') {
-    if (loc.terrain === 'beach' || loc.terrain === 'road') weight *= t.year >= 2018 ? 4 : 1;else if (['field', 'fair', 'trail'].includes(loc.terrain)) weight *= t.year >= 2018 ? .2 : 1.3;
+    if (['beach','road','river'].includes(loc.terrain)) weight *= t.year >= 2018 ? 4 : 1;else if (['field', 'fair', 'trail','forest','orchard'].includes(loc.terrain)) weight *= t.year >= 2018 ? .2 : 1.3;
   }
   if (loc.terrain === 'beach' && t.kind === 'trash') weight *= [8, 9, 10].includes(id) ? 3 : 1;
   return weight;
@@ -51,7 +49,7 @@ export function pickKind(loc) {
 }
 export function rollDepth(loc) {
   const r = Math.random(),
-    shallow = loc.terrain === 'beach' || loc.terrain === 'road' ? .6 : .3;
+    shallow = ['beach','road','river'].includes(loc.terrain) ? .6 : .3;
   return r < shallow ? 0 : r < .85 ? 1 : 2;
 }
 export function exploredPercent() {
@@ -98,3 +96,4 @@ export function generate() {
   }
   save();
 }
+

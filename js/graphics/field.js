@@ -1,8 +1,8 @@
 // field responsibilities for Last Signal.
-import { $ } from '../dom.js?v=0.27.0';
-import { signal } from '../search.js?v=0.27.0';
-import { s } from '../storage.js?v=0.27.0';
-import { currentLocation } from '../world.js?v=0.27.0';
+import { $ } from '../dom.js?v=0.30.0';
+import { signal } from '../search.js?v=0.30.0';
+import { s } from '../storage.js?v=0.30.0';
+import { currentLocation } from '../world.js?v=0.30.0';
 export const canvas = $('field'),
   ctx = canvas.getContext('2d');
 export function paintTerrain(ctx) {
@@ -102,6 +102,21 @@ export function paintTerrain(ctx) {
       ctx.arc(p[0], p[1], 95, 0, Math.PI * 2);
       ctx.fill();
     }
+  }
+  if (loc.terrain === 'forest' || loc.terrain === 'orchard') {
+    const points=loc.terrain==='orchard'?[[90,100],[390,90],[750,120],[80,600],[390,640],[750,590]]:[[20,90],[820,60],[850,610],[30,690]];
+    for(const [x,y] of points){
+      ctx.fillStyle='#132b2266';ctx.beginPath();ctx.ellipse(x+30,y+40,85,45,.4,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle='#9d997148';ctx.lineWidth=4;
+      for(let i=0;i<5;i++){const a=i*1.26;ctx.beginPath();ctx.moveTo(x,y);ctx.quadraticCurveTo(x+Math.cos(a)*35,y+Math.sin(a)*25,x+Math.cos(a)*72,y+Math.sin(a)*53);ctx.stroke();}
+      ctx.fillStyle='#263e2b';ctx.beginPath();ctx.arc(x,y,loc.terrain==='forest'?68:38,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle='#85966155';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x-8,y-5,loc.terrain==='forest'?53:26,3.5,5.9);ctx.stroke();
+    }
+  }
+  if (loc.terrain === 'river') {
+    ctx.fillStyle='#376b6e';ctx.beginPath();ctx.moveTo(0,555);ctx.bezierCurveTo(290,490,530,670,880,545);ctx.lineTo(880,720);ctx.lineTo(0,720);ctx.closePath();ctx.fill();
+    ctx.strokeStyle='#bfd2b965';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(0,550);ctx.bezierCurveTo(290,485,530,665,880,540);ctx.stroke();
+    ctx.strokeStyle='#d7e5cf28';ctx.lineWidth=2;for(let i=0;i<22;i++){const x=rand()*880,y=620+rand()*90;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+20+rand()*50,y-3);ctx.stroke();}
   }
   ctx.restore();
 
@@ -226,3 +241,4 @@ export function draw() {
   ctx.fill();
   ctx.restore();
 }
+

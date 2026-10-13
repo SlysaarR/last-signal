@@ -1,16 +1,18 @@
+import { renderJournal } from './journal.js?v=0.30.0';
+import { conditions } from '../data/expeditions.js?v=0.30.0';
 // Shared navigation, detector readout and quick sheets. Rendering functions never award items.
-import { renderCamp } from './camp.js?v=0.27.0';
-import { foods } from '../data/balance.js?v=0.27.0';
-import { types } from '../data/items.js?v=0.27.0';
-import { renderCollection } from './collection.js?v=0.27.0';
-import { $ } from './dom.js?v=0.27.0';
-import { draw } from './graphics/field.js?v=0.27.0';
-import { renderInventory } from './inventory.js?v=0.27.0';
-import { canLeave, emergencyAllowed, foodAmount, foodAvailable, foodFits, maxEnergy, minDig } from './rules.js?v=0.27.0';
-import { digInfo, signal } from './search.js?v=0.27.0';
-import { eatFood, renderShop } from './shop.js?v=0.27.0';
-import { s } from './storage.js?v=0.27.0';
-import { currentLocation } from './world.js?v=0.27.0';
+import { renderCamp } from './camp.js?v=0.30.0';
+import { foods } from '../data/balance.js?v=0.30.0';
+import { types } from '../data/items.js?v=0.30.0';
+import { renderCollection } from './collection.js?v=0.30.0';
+import { $ } from './dom.js?v=0.30.0';
+import { draw } from './graphics/field.js?v=0.30.0';
+import { renderInventory } from './inventory.js?v=0.30.0';
+import { canLeave, emergencyAllowed, foodAmount, foodAvailable, foodFits, maxEnergy, minDig, travelCost } from './rules.js?v=0.30.0';
+import { digInfo, signal } from './search.js?v=0.30.0';
+import { eatFood, renderShop } from './shop.js?v=0.30.0';
+import { s } from './storage.js?v=0.30.0';
+import { currentLocation } from './world.js?v=0.30.0';
 export function renderFieldChrome() {
   const choices = document.getElementById('quickFoodChoices');
   if (!choices) return;
@@ -49,21 +51,23 @@ export function busy() {
 }
 export function showTab(tab) {
   if (tab === 'search' && s.atCamp) tab = 'camp';
-  for (const id of ['camp', 'inventory', 'search', 'gear', 'collection']) $(id).hidden = id !== tab;
+  for (const id of ['camp', 'inventory', 'search', 'gear', 'collection', 'journal']) $(id).hidden = id !== tab;
   document.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   render();
 }
 export function render() {
   const loc = currentLocation();
   $('locationName').textContent = loc.name;
-  $('locationRarity').hidden = true;
+  $('locationRarity').hidden = false;
+  const soil = conditions[s.progress?.active?.condition] || conditions[0];
+  $('locationRarity').textContent = soil.name + (soil.factor===1?'':soil.factor<1?' · −10% сил':' · +20% сил');
   $('locationRarity').style.color = loc.accent;
   $('potential').hidden = true;
   $('potential').style.color = loc.accent;
   $('locationHint').textContent = 'Що приховує ця ділянка — дізнаєшся під час пошуку.';
   $('finish').disabled = !canLeave();
-  $('finish').textContent = emergencyAllowed() ? 'Аварійний виїзд · безкоштовно' : 'Нова локація · 25 купонів';
-  $('tripGate').textContent = canLeave() ? 'Залишену ділянку повернути не можна.' : foodAvailable() ? 'Бракує 25 купонів на дорогу. Можна продовжити пошук або повернутися додому.' : 'Бракує 25 купонів. Повернення додому безкоштовне.';
+  $('finish').textContent = emergencyAllowed() ? 'Аварійний виїзд · безкоштовно' : 'Нова ділянка · '+travelCost()+' купонів';
+  $('tripGate').textContent = canLeave() ? 'Залишену ділянку повернути не можна.' : foodAvailable() ? 'Бракує '+travelCost()+' купонів на дорогу. Можна продовжити пошук або повернутися додому.' : 'Бракує '+travelCost()+' купонів. Повернення додому безкоштовне.';
   const n = signal();
   $('energy').textContent = s.energy + ' / ' + maxEnergy();
   $('coins').textContent = s.coins;
@@ -81,6 +85,7 @@ export function render() {
   renderShop();
   renderInventory();
   renderCamp();
+  renderJournal();
   renderCollection();
   renderFieldChrome();
   draw();
@@ -105,3 +110,4 @@ export function initUI() {
   }).observe(document.getElementById('field'));
   renderFieldChrome();
 }
+

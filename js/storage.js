@@ -1,9 +1,10 @@
+import { routes, validProgress } from '../data/expeditions.js?v=0.30.0';
 // Save loading, legacy migration and persistence. Keep KEY and the version-1 envelope compatible.
-import { surveyCols, surveyRows } from '../data/balance.js?v=0.27.0';
-import { locations } from '../data/locations.js?v=0.27.0';
-import { $ } from './dom.js?v=0.27.0';
-import { bagCapacity, bagUsed, maxEnergy, rollCondition } from './rules.js?v=0.27.0';
-import { currentLocation, rollDepth, rollLocation } from './world.js?v=0.27.0';
+import { surveyCols, surveyRows } from '../data/balance.js?v=0.30.0';
+import { locations } from '../data/locations.js?v=0.30.0';
+import { $ } from './dom.js?v=0.30.0';
+import { bagCapacity, bagUsed, maxEnergy, rollCondition } from './rules.js?v=0.30.0';
+import { currentLocation, rollDepth, rollLocation } from './world.js?v=0.30.0';
 export const KEY = 'last-signal-v1';
 export function fresh() {
   return {
@@ -42,6 +43,8 @@ export function loadGame() {
     storage = false;
   }
   if (!Number.isInteger(s.location) || s.location < -1 || s.location >= locations.length) s.location = s.objects.length ? -1 : rollLocation();
+  if(s.progress && !validProgress(s.progress,locations.length)) delete s.progress;
+  if(s.route !== undefined && !routes.some(r=>r.id===s.route)) delete s.route;
   s.best = s.best || {};
   s.shovel = Number.isInteger(s.shovel) ? Math.max(1, Math.min(100, s.shovel)) : 1;
   s.food = Array.isArray(s.food) ? s.food.slice(0, 3).map(n => Number.isInteger(n) && n > 0 ? n : 0) : [0, 0, 0];
@@ -84,3 +87,4 @@ export function installBackupState(next, recoveryText) {
   s = next; // pagehide must save the imported state, never overwrite it with the old one.
   storage = true;
 }
+

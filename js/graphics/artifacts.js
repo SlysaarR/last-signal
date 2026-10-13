@@ -1,8 +1,8 @@
-import { paintUkrainianCoin, isUkrainianCoin } from './ukrainian-coins.js?v=0.27.0';
+import { paintUkrainianCoin, isUkrainianCoin } from './ukrainian-coins.js?v=0.30.0';
 // Procedural find artwork. Coin wreath reference: https://museum.mincult.gov.ua/collections/moneta-25-kopiyok-1992-r-125364
-import { types } from '../../data/items.js?v=0.27.0';
-import { $ } from '../dom.js?v=0.27.0';
-import { s } from '../storage.js?v=0.27.0';
+import { types } from '../../data/items.js?v=0.30.0';
+import { $ } from '../dom.js?v=0.30.0';
+import { s } from '../storage.js?v=0.30.0';
 export function seededArt(seed) {
   let n = Math.abs(seed | 0) + 1;
   return () => {
@@ -301,3 +301,4 @@ export function drawArtifact(type, target, condition, studio = false, side = 0) 
   }
   art.restore();
 }
+

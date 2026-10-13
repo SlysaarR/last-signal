@@ -1,7 +1,8 @@
+import { chosenRoute, conditions } from '../data/expeditions.js?v=0.30.0';
 // rules responsibilities for Last Signal.
-import { foods, rarities } from '../data/balance.js?v=0.27.0';
-import { types } from '../data/items.js?v=0.27.0';
-import { s } from './storage.js?v=0.27.0';
+import { foods, rarities } from '../data/balance.js?v=0.30.0';
+import { types } from '../data/items.js?v=0.30.0';
+import { s } from './storage.js?v=0.30.0';
 export function rollCondition() {
   return Math.floor(Math.random() * 101);
 }
@@ -19,7 +20,7 @@ export function shovelFactor(level = s.shovel) {
   return 1 - .3 * (level - 1) / 99;
 }
 export function digCost(base) {
-  return Math.round(base * shovelFactor() * 10) / 10;
+  return Math.round(base * shovelFactor() * (conditions[s.progress?.active?.condition]?.factor || 1) * 10) / 10;
 }
 export function minDig() {
   return digCost(5);
@@ -46,6 +47,8 @@ export function bagUsed() {
 export function emergencyAllowed() {
   return s.atCamp && s.coins < 25 && !s.pending;
 }
+export function travelCost() { return emergencyAllowed()?0:chosenRoute(s).cost; }
 export function canLeave() {
-  return !s.pending && (s.coins >= 25 || emergencyAllowed());
+  return !s.pending && (s.coins >= travelCost());
 }
+
