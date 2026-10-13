@@ -1,15 +1,15 @@
-import { artifactMarkup, renderArtifactThumbnails } from './graphics/thumbnails.js?v=0.42.0';
-import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.42.0';
+import { artifactMarkup, renderArtifactThumbnails } from './graphics/thumbnails.js?v=0.43.0';
+import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.43.0';
 // inventory responsibilities for Last Signal.
-import { foods } from '../data/balance.js?v=0.42.0';
-import { types } from '../data/items.js?v=0.42.0';
-import { modal } from './dialogs.js?v=0.42.0';
-import { $ } from './dom.js?v=0.42.0';
-import { bagCapacity, bagUsed, foodAmount, foodFits, maxEnergy, priceFor } from './rules.js?v=0.42.0';
-import { eatFood, transferFood } from './shop.js?v=0.42.0';
-import { s, save } from './storage.js?v=0.42.0';
-import { inventoryEntries, inventorySummary, sortedInventory, bulkPlan, samePlan } from './inventory-plan.js?v=0.42.0';
-import { busy, render } from './ui.js?v=0.42.0';
+import { foods } from '../data/balance.js?v=0.43.0';
+import { types } from '../data/items.js?v=0.43.0';
+import { modal } from './dialogs.js?v=0.43.0';
+import { $ } from './dom.js?v=0.43.0';
+import { bagCapacity, bagUsed, foodAmount, foodFits, maxEnergy, priceFor } from './rules.js?v=0.43.0';
+import { eatFood, transferFood } from './shop.js?v=0.43.0';
+import { s, save } from './storage.js?v=0.43.0';
+import { inventoryEntries, inventorySummary, sortedInventory, bulkPlan, samePlan } from './inventory-plan.js?v=0.43.0';
+import { busy, render } from './ui.js?v=0.43.0';
 export let inventoryRenderKey = '';
 export const INVENTORY_PAGE_SIZE=24,REVIEW_PAGE_SIZE=40;
 let returnedItem = null, review = null;
@@ -96,7 +96,7 @@ export function inventoryAction(action, place, i) {
       if(!s.atCamp||busy()||s[place][i]!==item||item.type!==entry.type||item.condition!==entry.condition)return;
       s.coins+=entry.value;s[place].splice(i,1);
       albumNotice(`Продано: ${types[item.type].name} · ${item.condition}%. Отримано ${entry.value} купонів.`);
-      save();render();
+      save();render();$('inventoryNotice').scrollIntoView?.({block:'nearest'});
     };
     if(entry.status==='new'||entry.status==='upgrade')modal('ПОТРІБНО ДЛЯ АЛЬБОМУ', '○', types[item.type].name, `Це найкраща наявна копія ${item.condition}%, яка ${entry.old===undefined?'ще не додана до альбому':'покращує альбом зі стану '+entry.old+'%'}. Продати її за ${entry.value} купонів?`, 'Усе одно продати', sell);
     else sell();

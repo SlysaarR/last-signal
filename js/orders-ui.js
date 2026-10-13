@@ -1,9 +1,10 @@
-import { orderOffers } from '../data/orders.js?v=0.42.0';
-import { $ } from './dom.js?v=0.42.0';
-import { s } from './storage.js?v=0.42.0';
-import { activeOrder, orderReady, acceptOrder, cancelOrder, claimOrder } from './orders.js?v=0.42.0';
-import { modal } from './dialogs.js?v=0.42.0';
-import { busy, render } from './ui.js?v=0.42.0';
+import { orderOffers } from '../data/orders.js?v=0.43.0';
+import { detectorFeatures } from '../data/gear.js?v=0.43.0';
+import { $ } from './dom.js?v=0.43.0';
+import { s } from './storage.js?v=0.43.0';
+import { activeOrder, orderReady, acceptOrder, cancelOrder, claimOrder } from './orders.js?v=0.43.0';
+import { modal } from './dialogs.js?v=0.43.0';
+import { busy, render } from './ui.js?v=0.43.0';
 
 function progressText(order) {
   return order.needs.map((need,i)=>`${need.label}: ${s.orders.active.counts[i]} / ${need.count}`).join(' · ');
@@ -15,6 +16,13 @@ export function renderOrderSummary(place) {
     :'Обери одну з трьох цілей на наступні виїзди.';
   if(place==='search') {
     $('fieldOrder').hidden=!order;
+    $('fieldOrderSummary').hidden=!order;
+    $('fieldPanel').hidden=!order&&!detectorFeatures(s.level).pinpoint;
+    $('fieldOrderSummary').dataset.ready=String(ready);
+    if(order) {
+      const done=s.orders.active.counts.reduce((sum,n)=>sum+n,0),total=order.needs.reduce((sum,need)=>sum+need.count,0);
+      $('fieldOrderSummary').textContent=ready?'Замовлення ✓':'Замовлення · '+done+' / '+total;
+    }
     if(order)$('fieldOrderText').textContent=order.name+' · '+(ready?'Виконано — забери нагороду в таборі':progressText(order));
   }
 }

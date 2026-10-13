@@ -1,8 +1,8 @@
-import { siteDistance, createSiteLayout, siteGuide } from '../data/site-layout.js?v=0.42.0';
-import { currentLocation } from './world.js?v=0.42.0';
-import { s,save } from './storage.js?v=0.42.0';
-import { $ } from './dom.js?v=0.42.0';
-import { busy,render } from './ui.js?v=0.42.0';
+import { siteDistance, createSiteLayout, siteGuide } from '../data/site-layout.js?v=0.43.0';
+import { currentLocation } from './world.js?v=0.43.0';
+import { s,save } from './storage.js?v=0.43.0';
+import { $ } from './dom.js?v=0.43.0';
+import { busy,render } from './ui.js?v=0.43.0';
 export const MAX_FIELD_MARKS=8;
 export function nearbyMark() {
   return (s.fieldMarks||[]).findIndex(p=>siteDistance(p,s)<=.035);
@@ -21,7 +21,7 @@ export function toggleFieldMark() {
   else if(marks.length<MAX_FIELD_MARKS)s.fieldMarks=[...marks,{x:s.x,y:s.y}];
   else return false;
   save();render();
-  $('log').textContent=near>=0?'Позначку прибрано.':'Місце позначено. Повернутися до нього можна через «Мітки».';
+  $('log').textContent=near>=0?'Мітку '+(near+1)+' прибрано. Залишилося '+s.fieldMarks.length+' / '+MAX_FIELD_MARKS+'.':'Мітку '+s.fieldMarks.length+' збережено. Повернутися до неї можна через «Мітки».';
   return true;
 }
 export function renderFieldNotes() {
@@ -30,13 +30,13 @@ export function renderFieldNotes() {
 }
 export function initFieldNotes() {
   $('markSpot').onclick=toggleFieldMark;
-  $('openFieldNotes').onclick=()=>{if(s.atCamp||busy())return;renderFieldNotes();$('fieldNotes').showModal();};
+  $('openFieldNotes').onclick=()=>{if(s.atCamp||busy())return;$('fieldNotesStatus').textContent='';renderFieldNotes();$('fieldNotes').showModal();};
   $('fieldNoteList').addEventListener('click',e=>{
     if(!$('fieldNotes').open||s.atCamp||busy('fieldNotes'))return;
     const go=e.target.closest('[data-marker-go]'),remove=e.target.closest('[data-marker-remove]'),b=go||remove;
     if(!b)return;
     const index=Number(go?b.dataset.markerGo:b.dataset.markerRemove),mark=s.fieldMarks?.[index];if(!mark)return;
-    if(go){s.x=mark.x;s.y=mark.y;$('fieldNotes').close();save();render();$('field').focus?.({preventScroll:true});}
-    else{s.fieldMarks=s.fieldMarks.filter((_,i)=>i!==index);save();render();renderFieldNotes();}
+    if(go){s.x=mark.x;s.y=mark.y;$('fieldNotes').close();save();render();$('log').textContent='Котушка біля мітки '+(index+1)+'. Можна продовжувати пошук.';$('field').focus?.({preventScroll:true});}
+    else{s.fieldMarks=s.fieldMarks.filter((_,i)=>i!==index);save();render();renderFieldNotes();$('fieldNotesStatus').textContent='Мітку '+(index+1)+' прибрано. Залишилося '+s.fieldMarks.length+' / '+MAX_FIELD_MARKS+'.';$('fieldNotesStatus').focus?.({preventScroll:true});}
   });
 }

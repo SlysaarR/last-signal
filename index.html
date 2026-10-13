@@ -6,15 +6,15 @@
     <meta name="theme-color" content="#111f20">
     <title>Останній сигнал</title>
     <link rel="stylesheet" href="./css/base.css?v=0.40.0">
-    <link rel="stylesheet" href="./css/search.css?v=0.42.0">
+    <link rel="stylesheet" href="./css/search.css?v=0.43.0">
     <link rel="stylesheet" href="./css/excavation.css?v=0.40.0">
     <link rel="stylesheet" href="./css/inventory.css?v=0.42.0">
     <link rel="stylesheet" href="./css/workshop.css?v=0.40.0">
     <link rel="stylesheet" href="./css/camp.css?v=0.40.0">
     <link rel="stylesheet" href="./css/backup.css?v=0.40.0">
-    <link rel="stylesheet" href="./css/coin-art.css?v=0.40.0">
+    <link rel="stylesheet" href="./css/coin-art.css?v=0.43.0">
     <link rel="stylesheet" href="./css/journal.css?v=0.41.0">
-    <script type="module" src="./js/main.js?v=0.42.0">
+    <script type="module" src="./js/main.js?v=0.43.0">
     </script>
   </head>
   <body>
@@ -210,8 +210,6 @@
           <div id="signalTracePanel" hidden><canvas id="signalTrace" width="320" height="28" role="img" aria-label="Історія сили сигналу"></canvas></div>
           <div class="hint" id="hint">Сканування безкоштовне. Що ближче до предмета, то сильніший сигнал.</div>
         </div>
-        <details id="detectorModes" class="detector-controls" hidden><summary>Режими приладу</summary><div class="detector-mode-buttons"><button class="secondary" id="modeSearch" aria-pressed="true">Пошук</button><button class="secondary" id="modePinpoint" aria-pressed="false">Пінпойнт</button><button class="secondary" id="modeDeep" aria-pressed="false" hidden>Глибокий</button></div><button class="quiet" id="ironQuiet" aria-pressed="false" hidden>Залізо: звичайний звук</button></details>
-        <p id="detectorModeNote" class="detector-mode-note" hidden></p>
         <div class="actions">
           <button class="primary" id="dig">Копати</button>
           <button class="secondary" id="foodQuick" style="width:100%;margin-top:10px">Їжа</button>
@@ -220,10 +218,14 @@
         <div class="search-status">
           <p class="sub" id="fieldBag">
           </p>
-          <span class="build-tag">v0.42.0</span>
+          <span class="build-tag">v0.43.0</span>
         </div>
         <div class="log" id="log" aria-live="polite">Обстежуй ділянку — кількість сигналів невідома. Шукай найчіткіший сигнал.</div>
-        <div id="fieldOrder" class="field-order" hidden><span id="fieldOrderText"></span><button class="quiet" data-open="journal">Деталі замовлення →</button></div>
+        <details id="fieldPanel" class="field-panel" hidden>
+          <summary>Польова панель <span class="field-panel-status"><span id="fieldModeSummary" hidden></span><span id="fieldOrderSummary" hidden></span></span></summary>
+          <div id="detectorModes" class="detector-controls" role="group" aria-label="Режими приладу" hidden><div class="detector-mode-buttons"><button class="secondary" id="modeSearch" aria-pressed="true">Пошук</button><button class="secondary" id="modePinpoint" aria-pressed="false">Пінпойнт</button><button class="secondary" id="modeDeep" aria-pressed="false" hidden>Глибокий</button></div><button class="quiet" id="ironQuiet" aria-pressed="false" hidden>Залізо: звичайний звук</button><p id="detectorModeNote" class="detector-mode-note" hidden></p></div>
+          <div id="fieldOrder" class="field-order" hidden><span id="fieldOrderText"></span><button class="quiet" data-open="journal">Деталі замовлення →</button></div>
+        </details>
       </section>
       <section id="gear" hidden>
         <div class="eyebrow">ТАБІР / СПОРЯДЖЕННЯ</div>
@@ -292,7 +294,7 @@
           </div>
           <p class="sub" id="catalogNote">Натисни монету, щоб оглянути обидва боки та гурт. Рівні рідкості та ціни адаптовано для гри.</p>
         </section>
-        <footer>ПРОТОТИП 0.42.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
+        <footer>ПРОТОТИП 0.43.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
       </main>
       <dialog id="backupDialog" aria-labelledby="backupTitle">
         <h2 id="backupTitle">Відновити прогрес?</h2>
@@ -315,6 +317,7 @@
       <dialog id="fieldNotes" aria-labelledby="fieldNotesTitle">
         <div class="sheet-heading"><h2 id="fieldNotesTitle">Мітки ділянки</h2><button class="quiet" data-close="fieldNotes" aria-label="Закрити позначки">✕</button></div>
         <p id="siteGuide" class="camp-note"></p>
+        <p id="fieldNotesStatus" class="camp-note" role="status" aria-live="polite" tabindex="-1"></p>
         <p class="camp-note">До 8 власних позначок. Зберігаються до виходу з цієї ділянки. Кнопка «До мітки» повертає котушку на позначене місце.</p>
         <div id="fieldNoteList"></div>
       </dialog>
@@ -335,6 +338,8 @@
           <span class="find-rarity" id="packRarity">
           </span>
         </div>
+        <h2 id="packTitle" tabindex="-1" autofocus></h2>
+        <p id="packDescription"></p>
         <figure class="find-display">
           <div class="pack-art-stage"><canvas id="packArt" width="600" height="500" role="img" aria-label="Знайдений предмет">
           </canvas>
@@ -345,10 +350,6 @@
         </div>
           <figcaption>Один палець — обертання · два — масштаб і зсув</figcaption>
         </figure>
-        <h2 id="packTitle" tabindex="-1" autofocus>
-        </h2>
-        <p id="packDescription">
-        </p>
         <div class="find-facts">
           <div>
             <span>СТАН</span>

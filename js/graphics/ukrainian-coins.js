@@ -1,12 +1,13 @@
-import { conditionProfile, metalPalette, paintWear } from './condition.js?v=0.42.0';
-import { coinEdgeSpec } from '../../data/coin-art.js?v=0.42.0';
-import { paintCoinReference, onCoinImagesReady, coinFaceImageKey } from './coin-reference.js?v=0.42.0';
-import { paintLaterHryvniaPortrait } from './hryvnia-portraits.js?v=0.42.0';
-import { paintHryvniaPortrait } from './hryvnia.js?v=0.42.0';
+import { conditionProfile, metalPalette, paintWear } from './condition.js?v=0.43.0';
+import { coinEdgeSpec } from '../../data/coin-art.js?v=0.43.0';
+import { paintCoinReference, onCoinImagesReady, coinFaceImageKey } from './coin-reference.js?v=0.43.0';
+import { paintLaterHryvniaPortrait } from './hryvnia-portraits.js?v=0.43.0';
+import { paintHryvniaPortrait } from './hryvnia.js?v=0.43.0';
 // Original Canvas rendition of the 25-kopiyok reverse; not an exact mint-die reproduction.
 // References: museum.mincult.gov.ua/collections/moneta-25-kopiyok-1992-r-125364
 // commons.wikimedia.org/wiki/File:Ukraine-25-kopiyok-1992.jpg
-import { types } from '../../data/items.js?v=0.42.0';
+import { types } from '../../data/items.js?v=0.43.0';
+import { createLazyThumbnails } from './lazy-thumbnails.js?v=0.43.0';
 // Shared denomination-side artwork; mint die micro-varieties are intentionally not simulated.
 export function isUkrainianCoin(t) {
   return t?.country === 'Україна' && (t.unit?.startsWith('коп') || ([1,2,5,10].includes(t.value) && t.unit?.startsWith('гр')));
@@ -125,18 +126,21 @@ export function paintUkrainianCoin(c, item, condition = 75, side = 0) {
 }
 
 export function coinMarkup(type, condition, className='coin-thumb', side=0) {
-  return `<canvas class="${className}" width="260" height="260" data-coin-art="${type}" data-condition="${condition}" data-side="${side}" role="img" aria-label="${types[type].denom}, стан ${condition} зі 100"></canvas>`;
+  return `<canvas class="${className}" width="1" height="1" data-coin-art="${type}" data-condition="${condition}" data-side="${side}" role="img" aria-label="${types[type].denom}, стан ${condition} зі 100"></canvas>`;
 }
-export function renderCoinThumbnails() {
-  document.querySelectorAll('canvas[data-coin-art]').forEach(canvas => {
-    const key=canvas.dataset.coinArt+':'+canvas.dataset.condition+':'+canvas.dataset.side+':'+coinFaceImageKey(types[Number(canvas.dataset.coinArt)],Number(canvas.dataset.side));
-    if(canvas.dataset.rendered===key)return;
+const thumbnails=createLazyThumbnails({
+  selector:'canvas[data-coin-art]',
+  key:canvas=>canvas.dataset.coinArt+':'+canvas.dataset.condition+':'+canvas.dataset.side+':'+coinFaceImageKey(types[Number(canvas.dataset.coinArt)],Number(canvas.dataset.side)),
+  paint:canvas=>{
+    // CSS reserves the final footprint; allocate the bitmap only on first use.
+    if(canvas.width!==260)canvas.width=260;
+    if(canvas.height!==260)canvas.height=260;
     const c=canvas.getContext('2d');c.clearRect(0,0,260,260);c.save();c.translate(130,128);c.scale(.94,.94);
-    paintUkrainianCoin(c,types[Number(canvas.dataset.coinArt)],Number(canvas.dataset.condition),Number(canvas.dataset.side));c.restore();canvas.dataset.rendered=key;
-  });
-}
-let thumbnailsFrame=0;
-onCoinImagesReady(()=>{if(!thumbnailsFrame)thumbnailsFrame=requestAnimationFrame(()=>{thumbnailsFrame=0;renderCoinThumbnails();});});
+    paintUkrainianCoin(c,types[Number(canvas.dataset.coinArt)],Number(canvas.dataset.condition),Number(canvas.dataset.side));c.restore();
+  },
+});
+export function renderCoinThumbnails() { thumbnails.refresh(); }
+onCoinImagesReady(thumbnails.invalidate);
 
 // Schematic edge inspection, enlarged thickness for readability; sector reeding.
 export function coinEdgeType(item) { return coinEdgeSpec(item).kind; }

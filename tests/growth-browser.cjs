@@ -35,7 +35,7 @@ withBrowser(async(page,{version,screenshot})=>{
  await page.evaluate(async v=>{const {s}=await import('./js/storage.js?v='+v);s.level=2;s.atCamp=false;s.x=.5;s.y=.52;s.objects=[{x:.5,y:.52,type:6,depth:2,condition:65,dug:false}];(await import('./js/ui.js?v='+v)).showTab('search');},version);
  assert(await page.locator('#detectorModes').isHidden());
  await page.evaluate(async v=>{const {s}=await import('./js/storage.js?v='+v);s.level=3;(await import('./js/ui.js?v='+v)).render();},version);
- await page.locator('#detectorModes summary').click();assert(await page.locator('#modeDeep').isHidden());assert(await page.locator('#ironQuiet').isHidden());
+ await page.locator('#fieldPanel summary').click();assert(await page.locator('#modeDeep').isHidden());assert(await page.locator('#ironQuiet').isHidden());
  await page.locator('#modePinpoint').click();assert.equal(await page.locator('#modePinpoint').getAttribute('aria-pressed'),'true');
  assert.equal(await page.locator('#signalHeading').textContent(),'ЦЕНТРУВАННЯ');
  const rect=await page.locator('#field').boundingBox(),cdp=await page.context().newCDPSession(page),start=await page.evaluate(async v=>(await import('./js/storage.js?v='+v)).s.x,version);
@@ -49,10 +49,10 @@ withBrowser(async(page,{version,screenshot})=>{
  assert((await page.locator('#detectorModeNote').textContent()).includes('Залізні монети'));
  assert((await page.locator('#hint').textContent()).includes('см'));
  await page.locator('#field').press('ArrowRight');assert((await page.locator('#signalTrace').getAttribute('aria-label')).includes('Історія сили'));
- await page.locator('#detectorModes summary').click();await screenshot('search-expert-035');
- await page.reload();await page.locator('#detectorModes summary').click();assert.equal(await page.locator('#modeDeep').getAttribute('aria-pressed'),'true');assert.equal(await page.locator('#ironQuiet').getAttribute('aria-pressed'),'true');
+ await page.locator('#fieldPanel summary').click();await screenshot('search-expert-035');
+ await page.reload();await page.locator('#fieldPanel summary').click();assert.equal(await page.locator('#modeDeep').getAttribute('aria-pressed'),'true');assert.equal(await page.locator('#ironQuiet').getAttribute('aria-pressed'),'true');
  for(const expanded of [true,false])for(const [width,height]of [[320,568],[390,740],[412,915],[844,390]]){
-  const open=await page.locator('#detectorModes').getAttribute('open')!==null;if(open!==expanded)await page.locator('#detectorModes summary').click();
+  const open=await page.locator('#fieldPanel').getAttribute('open')!==null;if(open!==expanded)await page.locator('#fieldPanel summary').click();
   await page.setViewportSize({width,height});
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   const field=await page.locator('#field').boundingBox();assert(field.height>=170);

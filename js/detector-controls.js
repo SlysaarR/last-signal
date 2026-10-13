@@ -1,8 +1,8 @@
-import { detectorFeatures, detectorSettings, detectorLook } from '../data/gear.js?v=0.42.0';
-import { $ } from './dom.js?v=0.42.0';
-import { s, save } from './storage.js?v=0.42.0';
-import { busy, renderDetector } from './ui.js?v=0.42.0';
-import { draw } from './graphics/field.js?v=0.42.0';
+import { detectorFeatures, detectorSettings, detectorLook } from '../data/gear.js?v=0.43.0';
+import { $ } from './dom.js?v=0.43.0';
+import { s, save } from './storage.js?v=0.43.0';
+import { busy, renderDetector } from './ui.js?v=0.43.0';
+import { draw } from './graphics/field.js?v=0.43.0';
 let trail=[],trailScope=null;
 export function recordReading(reading,scope) {
   if(scope!==trailScope){trail=[];trailScope=scope;}
@@ -25,6 +25,8 @@ export function renderDetectorControls(reading) {
   $('detectorModel').textContent=look.name;
   $('signalHeading').textContent=settings.mode==='pinpoint'?'ЦЕНТРУВАННЯ':settings.mode==='deep'?'ГЛИБОКИЙ ПОШУК':'СИЛА СИГНАЛУ';
   $('detectorModes').hidden=!f.pinpoint;
+  $('fieldModeSummary').hidden=!f.pinpoint;
+  $('fieldModeSummary').textContent={search:'Пошук',pinpoint:'Пінпойнт',deep:'Глибокий'}[settings.mode]+(settings.ironQuiet?' · залізо тихіше':'');
   for(const [mode,id]of [['search','modeSearch'],['pinpoint','modePinpoint'],['deep','modeDeep']]){
     $(id).hidden=mode==='deep'&&!f.deep;
     $(id).setAttribute('aria-pressed',String(settings.mode===mode));
