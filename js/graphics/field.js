@@ -1,12 +1,15 @@
-import { drawDetector } from './detector-art.js?v=0.41.0';
+import { createSiteLayout } from '../../data/site-layout.js?v=0.42.0';
+import { paintSiteTerrain } from './site-terrain.js?v=0.42.0';
+import { drawDetector } from './detector-art.js?v=0.42.0';
 // field responsibilities for Last Signal.
-import { $ } from '../dom.js?v=0.41.0';
-import { signal } from '../search.js?v=0.41.0';
-import { s } from '../storage.js?v=0.41.0';
-import { currentLocation } from '../world.js?v=0.41.0';
+import { $ } from '../dom.js?v=0.42.0';
+import { signal } from '../search.js?v=0.42.0';
+import { s } from '../storage.js?v=0.42.0';
+import { currentLocation } from '../world.js?v=0.42.0';
 export const canvas = $('field'),
   ctx = canvas.getContext('2d');
 export function paintTerrain(ctx) {
+  if(s.site){paintSiteTerrain(ctx,currentLocation(),createSiteLayout(currentLocation().terrain,s.site.seed));return;}
   const loc = currentLocation(),
     w = 880,
     h = 720;
@@ -156,40 +159,42 @@ export function paintTerrain(ctx) {
   ctx.fillRect(0, 0, w, h);
 }
 export var terrainLayer, terrainKey;
+let groundLayer,groundKey='',holesRef,holesCount=-1,marksRef;
+function paintHoles(c,w,h) {
+  for(const hole of s.holes){
+    const x=hole.x*w,y=hole.y*h;
+    c.fillStyle='#162015';c.beginPath();c.ellipse(x,y,24,15,-.2,0,Math.PI*2);c.fill();
+    c.strokeStyle='#a2936466';c.lineWidth=4;c.stroke();
+    c.fillStyle='#080f0b77';c.beginPath();c.ellipse(x+2,y+3,17,9,-.2,0,Math.PI*2);c.fill();
+  }
+}
+function paintMarks(c,w,h) {
+  c.save();c.font='bold 20px ui-monospace,monospace';c.textAlign='center';c.textBaseline='middle';
+  for(const [index,mark] of (s.fieldMarks||[]).entries()){
+    const x=mark.x*w,y=mark.y*h,cx=Math.max(18,Math.min(w-18,x)),cy=Math.max(18,Math.min(h-18,y<56?y+32:y-32));
+    c.strokeStyle='#17251c';c.lineWidth=5;c.beginPath();c.moveTo(x,y);c.lineTo(cx,cy);c.stroke();
+    c.strokeStyle='#dfebae';c.lineWidth=2;c.stroke();
+    c.fillStyle='#dce9a6';c.beginPath();c.arc(cx,cy,16,0,Math.PI*2);c.fill();c.strokeStyle='#1b3023';c.lineWidth=3;c.stroke();
+    c.fillStyle='#203322';c.fillText(String(index+1),cx,cy+1);
+  }
+  c.restore();
+}
 export function draw() {
-  const key = s.day + ':' + s.location + ':' + s.emergency;
-  if (!terrainLayer || key !== terrainKey) {
-    terrainLayer = document.createElement('canvas');
-    terrainLayer.width = 880;
-    terrainLayer.height = 720;
-    paintTerrain(terrainLayer.getContext('2d'));
-    terrainKey = key;
+  const key=s.day+':'+s.location+':'+s.emergency+':'+(s.site?s.site.version+':'+s.site.seed:'legacy');
+  if(!terrainLayer||key!==terrainKey){
+    terrainLayer=terrainLayer||document.createElement('canvas');terrainLayer.width=880;terrainLayer.height=720;
+    paintTerrain(terrainLayer.getContext('2d'));terrainKey=key;
   }
-  const rect = canvas.getBoundingClientRect();
-  if (rect.width && rect.height) {
-    const height = Math.round(880 * rect.height / rect.width);
-    if (canvas.height !== height) canvas.height = height;
+  const rect=canvas.getBoundingClientRect();
+  if(rect.width&&rect.height){const height=Math.round(880*rect.height/rect.width);if(canvas.height!==height)canvas.height=height;}
+  const w=canvas.width,h=canvas.height,nextGroundKey=key+':'+w+':'+h;
+  // Holes append; marks are replaced on each edit. Restores replace references.
+  // No traversal/serialization of these lists during ordinary coil movement.
+  if(!groundLayer||groundKey!==nextGroundKey||holesRef!==s.holes||holesCount!==s.holes.length||marksRef!==s.fieldMarks){
+    groundLayer=groundLayer||document.createElement('canvas');groundLayer.width=w;groundLayer.height=h;
+    const c=groundLayer.getContext('2d');c.drawImage(terrainLayer,0,0,w,h);paintHoles(c,w,h);paintMarks(c,w,h);
+    groundKey=nextGroundKey;holesRef=s.holes;holesCount=s.holes.length;marksRef=s.fieldMarks;
   }
-  const w = canvas.width,
-    h = canvas.height;
-  ctx.drawImage(terrainLayer, 0, 0, w, h);
-  for (const hole of s.holes) {
-    const x = hole.x * w,
-      y = hole.y * h;
-    ctx.fillStyle = '#162015';
-    ctx.beginPath();
-    ctx.ellipse(x, y, 24, 15, -.2, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = '#a2936466';
-    ctx.lineWidth = 4;
-    ctx.stroke();
-    ctx.fillStyle = '#080f0b77';
-    ctx.beginPath();
-    ctx.ellipse(x + 2, y + 3, 17, 9, -.2, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  const n = signal(),
-    x = s.x * w,
-    y = s.y * h;
-  ctx.save();ctx.translate(x,y);drawDetector(ctx,s.level,n);ctx.restore();
+  ctx.drawImage(groundLayer,0,0,w,h);
+  const n=signal();ctx.save();ctx.translate(s.x*w,s.y*h);drawDetector(ctx,s.level,n);ctx.restore();
 }

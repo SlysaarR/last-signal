@@ -1,4 +1,4 @@
-import { detectorLook } from '../../data/gear.js?v=0.41.0';
+import { detectorLook } from '../../data/gear.js?v=0.42.0';
 // The same equipment is drawn in the field and the workshop. No hidden target coordinates.
 export function drawDetector(ctx,level,reading={}) {
   const look=detectorLook(level),stage=look.stage,rx=44+stage*4,ry=stage<1?33:stage<3?40:47;

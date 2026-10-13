@@ -1,4 +1,4 @@
-import { types } from './items.js?v=0.41.0';
+import { types } from './items.js?v=0.42.0';
 
 // Stable IDs: saves contain the offer ID and bounded counters, never a reward.
 export const fieldOrders = [

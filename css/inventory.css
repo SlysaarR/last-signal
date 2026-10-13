@@ -102,3 +102,7 @@
 .inventory-batch-actions[hidden],#inventoryFilterReset[hidden],.review-scrap[hidden],.camp-loot[hidden] { display:none }
 #inventoryReview input:focus-visible,#inventoryReview button:focus-visible,#inventory select:focus-visible { outline:2px solid #d5e9a3; outline-offset:3px }
 @media(max-width:360px) { .inventory-controls { padding:11px } .inventory-filters { grid-template-columns:minmax(0,1fr) } #inventoryReview { padding:18px } }
+.list-pager{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin:12px 0 22px}
+.list-pager[hidden]{display:none}.list-pager button{min-height:44px;font-size:11px;padding:8px;white-space:normal}
+.list-pager span{font-size:10px;color:#b8cda4;text-align:center;font-variant-numeric:tabular-nums}
+#reviewPager{margin:8px 0}.inventory-count{scroll-margin-top:14px}

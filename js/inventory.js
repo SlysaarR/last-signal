@@ -1,18 +1,27 @@
-import { artifactMarkup, renderArtifactThumbnails } from './graphics/thumbnails.js?v=0.41.0';
-import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.41.0';
+import { artifactMarkup, renderArtifactThumbnails } from './graphics/thumbnails.js?v=0.42.0';
+import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.42.0';
 // inventory responsibilities for Last Signal.
-import { foods } from '../data/balance.js?v=0.41.0';
-import { types } from '../data/items.js?v=0.41.0';
-import { modal } from './dialogs.js?v=0.41.0';
-import { $ } from './dom.js?v=0.41.0';
-import { bagCapacity, bagUsed, foodAmount, foodFits, maxEnergy, priceFor } from './rules.js?v=0.41.0';
-import { eatFood, transferFood } from './shop.js?v=0.41.0';
-import { s, save } from './storage.js?v=0.41.0';
-import { inventoryEntries, inventorySummary, sortedInventory, bulkPlan, samePlan } from './inventory-plan.js?v=0.41.0';
-import { busy, render } from './ui.js?v=0.41.0';
+import { foods } from '../data/balance.js?v=0.42.0';
+import { types } from '../data/items.js?v=0.42.0';
+import { modal } from './dialogs.js?v=0.42.0';
+import { $ } from './dom.js?v=0.42.0';
+import { bagCapacity, bagUsed, foodAmount, foodFits, maxEnergy, priceFor } from './rules.js?v=0.42.0';
+import { eatFood, transferFood } from './shop.js?v=0.42.0';
+import { s, save } from './storage.js?v=0.42.0';
+import { inventoryEntries, inventorySummary, sortedInventory, bulkPlan, samePlan } from './inventory-plan.js?v=0.42.0';
+import { busy, render } from './ui.js?v=0.42.0';
 export let inventoryRenderKey = '';
+export const INVENTORY_PAGE_SIZE=24,REVIEW_PAGE_SIZE=40;
 let returnedItem = null, review = null;
-export const inventoryView={sort:'album',filter:'all'};
+export const inventoryView={sort:'album',filter:'all',bagPage:0,stashPage:0};
+function pageControls(prefix,page,total,size) {
+  const pages=Math.max(1,Math.ceil(total/size));
+  $(prefix+'Pager').hidden=total<=size;
+  $(prefix+'Page').textContent=`Сторінка ${page+1} / ${pages}`;
+  $(prefix+'Prev').disabled=page===0;$(prefix+'Next').disabled=page>=pages-1;
+}
+function clampPage(page,total,size){return Math.max(0,Math.min(page,Math.max(0,Math.ceil(total/size)-1)));}
+function resetPages(){inventoryView.bagPage=0;inventoryView.stashPage=0;}
 function albumNotice(text, returned = null) {
   returnedItem = returned;
   $('inventoryNoticeText').textContent = text;
@@ -22,8 +31,9 @@ function albumNotice(text, returned = null) {
 export function itemLabel(item) {
   return [types[item.type].name, types[item.type].variant, item.condition + '%', priceFor(item.type, item.condition) + ' купонів'].filter(Boolean).join(' · ');
 }
-export function itemRows(list, place, entries=inventoryEntries(list===s[place]?s:{...s,[place]:list})) {
-  return sortedInventory(entries.filter(e=>e.place===place),inventoryView.sort,inventoryView.filter).map(entry => {
+export function itemRows(list, place, entries=inventoryEntries(list===s[place]?s:{...s,[place]:list}),pageEntries=null) {
+  const sorted=pageEntries||sortedInventory(entries.filter(e=>e.place===place),inventoryView.sort,inventoryView.filter).slice(inventoryView[place+'Page']*INVENTORY_PAGE_SIZE,(inventoryView[place+'Page']+1)*INVENTORY_PAGE_SIZE);
+  return sorted.map(entry => {
     const {item,index:i,value,old:best,status,keeper}=entry,t=types[item.type];
     const canAlbum=status==='new'||status==='upgrade';
     const button = (action, label, disabled = false) => `<button class="secondary" data-itemaction="${action}" data-place="${place}" data-index="${i}" ${disabled ? 'disabled' : ''}>${label}</button>`;
@@ -51,12 +61,14 @@ export function renderInventory() {
   $('reviewAlbum').disabled=!counts.new&&!counts.upgrade||!!s.pending;
   $('reviewSale').disabled=!counts.duplicate&&!counts.scrap||!!s.pending;
   for(const place of ['bag','stash']) {
-    const all=entries.filter(e=>e.place===place),shown=sortedInventory(all,inventoryView.sort,inventoryView.filter).length;
-    $(place==='bag'?'bagShown':'stashShown').textContent=`Показано ${shown} / ${all.length} знахідок`;
+    const all=entries.filter(e=>e.place===place),filtered=sortedInventory(all,inventoryView.sort,inventoryView.filter),total=filtered.length;
+    const page=inventoryView[place+'Page']=clampPage(inventoryView[place+'Page'],total,INVENTORY_PAGE_SIZE),start=page*INVENTORY_PAGE_SIZE;
+    const visible=filtered.slice(start,start+INVENTORY_PAGE_SIZE);
+    $(place==='bag'?'bagShown':'stashShown').textContent=total?`Показано ${start+1}–${start+visible.length} / ${total} за фільтром · усього ${all.length}`:`Показано 0 / ${all.length} знахідок`;
+    pageControls(place,page,total,INVENTORY_PAGE_SIZE);
+    $(place==='bag'?'bagItems':'warehouseItems').innerHTML=place==='stash'&&!s.atCamp?'':itemRows(s[place],place,entries,visible);
   }
-  $('bagItems').innerHTML = itemRows(s.bag, 'bag',entries);
   $('warehousePanel').hidden = !s.atCamp;
-  $('warehouseItems').innerHTML = s.atCamp ? itemRows(s.stash, 'stash',entries) : '';
   renderCoinThumbnails();renderArtifactThumbnails();
   $('bagFood').innerHTML = foods.flatMap((f, i) => s.food[i] ? '<div class="card">' + f.name + ' × ' + s.food[i] + ' <button class="secondary" data-foodaction="' + (s.atCamp ? 'unpack' : 'eat') + '" data-index="' + i + '" ' + (!s.food[i] || !s.atCamp && !foodFits(i) ? 'disabled' : '') + '>' + (s.atCamp ? 'До сховища' : 'З’їсти · +' + foodAmount(i)) + '</button>' + (!s.atCamp ? ' <button class="quiet" data-foodaction="discard" data-index="' + i + '" ' + (!s.food[i] ? 'disabled' : '') + '>Викинути</button>' : '') + '</div>' : []).join('') || '<p class="camp-note">Їжі в рюкзаку немає.</p>';
   $('pantryItems').innerHTML = foods.flatMap((f, i) => s.pantry[i] ? '<div class="card">' + f.name + ' × ' + s.pantry[i] + ' <button class="secondary" data-foodaction="pack" data-index="' + i + '" ' + (!s.pantry[i] || bagUsed() >= bagCapacity() ? 'disabled' : '') + '>У рюкзак</button></div>' : []).join('') || '<p class="camp-note">Домашні запаси порожні. Провізію можна купити в майстерні.</p>';
@@ -118,11 +130,13 @@ function renderReviewTotal() {
   $('reviewConfirm').textContent=review.mode==='sale'?`Продати · ${total} купонів`:`Додати до альбому · ${selected.length}`;
   $('reviewConfirm').disabled=!selected.length;
   $('reviewSelectAll').disabled=!review.entries.length;
-  $('reviewSelectAll').textContent=review.selected.size===review.entries.length?'Зняти вибір':'Вибрати всі';
+  $('reviewSelectAll').textContent=review.selected.size===review.entries.length?'Зняти весь вибір':'Вибрати всі · '+review.entries.length;
 }
 function renderReviewList() {
   if(!review)return;
-  $('reviewItems').innerHTML=sortedInventory(review.entries,'type').map(entry=>{
+  review.page=clampPage(review.page,review.entries.length,REVIEW_PAGE_SIZE);
+  pageControls('review',review.page,review.entries.length,REVIEW_PAGE_SIZE);
+  $('reviewItems').innerHTML=review.ordered.slice(review.page*REVIEW_PAGE_SIZE,(review.page+1)*REVIEW_PAGE_SIZE).map(entry=>{
     const t=types[entry.type],place=entry.place==='bag'?'Рюкзак':'Сховище';
     const effect=review.mode==='sale'?entry.value+' купонів':entry.old===undefined?'Нова позиція':`Альбом: ${entry.old}% → ${entry.condition}%; ${entry.old}% у сховище`;
     return `<label class="review-item"><input type="checkbox" data-review-key="${entry.key}" ${review.selected.has(entry.key)?'checked':''}><span><b>${t.name}</b>${t.variant?`<small>${t.variant}</small>`:''}<small>${place} · стан ${entry.condition}%</small><strong>${effect}</strong></span></label>`;
@@ -133,9 +147,9 @@ function refreshReview(mode,includeScrap=false,notice='',keepSelection=false) {
   const entries=bulkPlan(mode,includeScrap);
   const choices=new Map(keepSelection&&review?review.choices:[]);
   for(const entry of entries)if(!choices.has(entry.item))choices.set(entry.item,true);
-  review={mode,includeScrap,entries,choices,selected:new Set(entries.filter(e=>choices.get(e.item)).map(e=>e.key))};
+  review={mode,includeScrap,entries,ordered:sortedInventory(entries,'type'),page:keepSelection&&review?review.page:0,choices,selected:new Set(entries.filter(e=>choices.get(e.item)).map(e=>e.key))};
   $('reviewTitle').textContent=mode==='sale'?'Продаж знахідок':'Кращі до альбому';
-  $('reviewDescription').textContent=mode==='sale'?'Підбір з усього рюкзака та сховища. Найкраща копія для нової позиції або покращення альбому залишається у тебе. Зніми позначки з того, що хочеш зберегти.':'Найкраща наявна копія кожної позиції з рюкзака та сховища. Замінені екземпляри повернуться у сховище. Зніми позначки з того, що поки хочеш залишити.';
+  $('reviewDescription').textContent=(mode==='sale'?'Підбір з усього рюкзака та сховища. Найкраща копія для нової позиції або покращення альбому залишається у тебе. Зніми позначки з того, що хочеш зберегти.':'Найкраща наявна копія кожної позиції з рюкзака та сховища. Замінені екземпляри повернуться у сховище. Зніми позначки з того, що поки хочеш залишити.')+' Вибір і підсумок охоплюють усі сторінки.';
   $('reviewScrapOption').hidden=mode!=='sale';$('reviewIncludeScrap').checked=includeScrap;
   $('reviewNotice').textContent=notice;
   renderReviewList();
@@ -173,9 +187,16 @@ export function confirmInventoryReview() {
   save();render();$('inventoryNotice').scrollIntoView?.({block:'nearest',behavior:'smooth'});
 }
 export function initInventory() {
-  $('inventorySort').onchange=e=>{inventoryView.sort=e.target.value;renderInventory();};
-  $('inventoryFilter').onchange=e=>{inventoryView.filter=e.target.value;renderInventory();};
-  $('inventoryFilterReset').onclick=()=>{inventoryView.filter='all';renderInventory();};
+  $('inventorySort').onchange=e=>{inventoryView.sort=e.target.value;resetPages();renderInventory();};
+  $('inventoryFilter').onchange=e=>{inventoryView.filter=e.target.value;resetPages();renderInventory();};
+  $('inventoryFilterReset').onclick=()=>{inventoryView.filter='all';resetPages();renderInventory();};
+  for(const place of ['bag','stash'])for(const [suffix,delta] of [['Prev',-1],['Next',1]])$(place+suffix).onclick=()=>{
+    inventoryView[place+'Page']=Math.max(0,inventoryView[place+'Page']+delta);renderInventory();
+    $(place==='bag'?'bagShown':'stashShown').scrollIntoView?.({block:'start'});
+  };
+  for(const [suffix,delta] of [['Prev',-1],['Next',1]])$('review'+suffix).onclick=()=>{
+    if(!review)return;review.page+=delta;renderReviewList();$('reviewItems').scrollTop=0;
+  };
   $('reviewAlbum').onclick=()=>openInventoryReview('album');
   $('reviewSale').onclick=()=>openInventoryReview('sale');
   $('reviewIncludeScrap').onchange=()=>{if(review)refreshReview(review.mode,$('reviewIncludeScrap').checked,'',true);};
@@ -197,7 +218,10 @@ export function initInventory() {
   $('showReturnedItem').onclick = () => {
     const index = s.stash.indexOf(returnedItem);
     if (index < 0) return;
-    inventoryView.filter='all';renderInventory();
+    inventoryView.filter='all';
+    const ordered=sortedInventory(inventoryEntries().filter(e=>e.place==='stash'),inventoryView.sort,'all');
+    inventoryView.stashPage=Math.floor(ordered.findIndex(e=>e.item===returnedItem)/INVENTORY_PAGE_SIZE);
+    renderInventory();
     const card = $('warehouseItems').querySelector(`[data-item-place="stash"][data-item-index="${index}"]`);
     card?.scrollIntoView?.({block:'center', behavior:'smooth'});
     card?.setAttribute('tabindex', '-1');

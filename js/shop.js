@@ -1,12 +1,12 @@
-import { drawDetectorPreview } from './graphics/detector-art.js?v=0.41.0';
-import { MAX_GEAR_LEVEL, creditFor, detectorMilestones, detectorLook } from '../data/gear.js?v=0.41.0';
-import { chosenRoute } from '../data/expeditions.js?v=0.41.0';
+import { drawDetectorPreview } from './graphics/detector-art.js?v=0.42.0';
+import { MAX_GEAR_LEVEL, creditFor, detectorMilestones, detectorLook } from '../data/gear.js?v=0.42.0';
+import { chosenRoute } from '../data/expeditions.js?v=0.42.0';
 // shop responsibilities for Last Signal.
-import { foods } from '../data/balance.js?v=0.41.0';
-import { $ } from './dom.js?v=0.41.0';
-import { bagCapacity, bagUsed, detectorStats, foodAmount, foodFits, maxEnergy, shovelFactor, upgradeCost } from './rules.js?v=0.41.0';
-import { s, save } from './storage.js?v=0.41.0';
-import { busy, render } from './ui.js?v=0.41.0';
+import { foods } from '../data/balance.js?v=0.42.0';
+import { $ } from './dom.js?v=0.42.0';
+import { bagCapacity, bagUsed, detectorStats, foodAmount, foodFits, maxEnergy, shovelFactor, upgradeCost } from './rules.js?v=0.42.0';
+import { s, save } from './storage.js?v=0.42.0';
+import { busy, render } from './ui.js?v=0.42.0';
 export let shopRenderKey = '';
 export function purchaseBudgetNote(cost) {
   if(!s.atCamp||s.pending||cost>s.coins)return '';
@@ -76,7 +76,6 @@ export function renderShop() {
   $('workshopStatus').textContent = s.atCamp ? 'Твій бюджет: ' + s.coins + ' купонів. 10 ступенів: кожен змінює характеристики. Стрілка показує наступне покращення.' : 'Ти в полі. Характеристики можна переглядати, а покупки й покращення доступні в таборі.';
   $('foodBudget').textContent = 'Покупка → домашні запаси → рюкзак. Кожна порція займає одне місце. За виїзд можна з’їсти до 50% від максимальної енергії.';
   $('foodShop').innerHTML = foods.map((f, i) => `<article class="food-card"><div class="food-title"><h3>${f.name}</h3><strong>+${foodAmount(i)}<small> енергії</small></strong></div><p>${f.percent}% від максимуму · одноразова порція</p><div class="food-stock"><span>Вдома <b>${s.pantry[i]}</b></span><span>У рюкзаку <b>${s.food[i]}</b></span></div><div class="food-buttons"><button class="secondary" data-buy="${i}" ${!s.atCamp || s.coins < f.price || s.pending ? 'disabled' : ''}>Купити · ${f.price}</button><button class="secondary" data-packfood="${i}" ${!s.atCamp || !s.pantry[i] || bagUsed() >= bagCapacity() || s.pending ? 'disabled' : ''}>У рюкзак</button></div><small class="food-note">${!s.atCamp ? 'Магазин доступний у таборі.' : bagUsed() >= bagCapacity() ? 'Рюкзак повний. Покупка залишиться вдома.' : 'Ціна в купонах. Куплена порція з’явиться вдома.'}</small></article>`).join('');
-  $('fieldFood').textContent = 'Їжа: ' + s.food.reduce((a, b) => a + b, 0) + ' · спожито ' + s.foodUsed + '/50% за виїзд';
 }
 export function transferFood(i, toBag) {
   if (busy() || !s.atCamp || !foods[i]) return;

@@ -466,6 +466,11 @@ html { scroll-padding-bottom:calc(78px + env(safe-area-inset-bottom)); }
 .detector-controls [aria-pressed="true"] { border-color:#c0d69a; background:#354b30; color:#e1efc2; }
 .detector-mode-note { margin:0; font-size:10px; line-height:1.4; color:#b5c5a6; flex:none; }
 #ironQuiet { width:100%; font-size:11px; }
+.field-tools{display:grid;grid-template-columns:1fr auto;gap:8px;flex:none}
+.field-tools button{min-height:44px;font-size:11px;padding:8px 10px;white-space:normal}
+.field-note-row{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:center;margin-top:10px}
+.field-note-row button{min-height:44px;font-size:12px;white-space:normal}
+.field-note-number{display:grid;place-items:center;width:26px;height:26px;border:1px solid #d3dc9a;border-radius:50%;color:#e5ecc2;background:#33432b;font:600 13px ui-monospace,monospace}
 /* Open controls need real document space above the navigation on short screens. */
 body:has(#detectorModes[open]):has(#search:not([hidden])) main { height:auto; min-height:100dvh; }
 body:has(#detectorModes[open]) .field-stage { min-height:210px; }

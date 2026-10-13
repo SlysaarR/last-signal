@@ -6,15 +6,15 @@
     <meta name="theme-color" content="#111f20">
     <title>Останній сигнал</title>
     <link rel="stylesheet" href="./css/base.css?v=0.40.0">
-    <link rel="stylesheet" href="./css/search.css?v=0.40.0">
+    <link rel="stylesheet" href="./css/search.css?v=0.42.0">
     <link rel="stylesheet" href="./css/excavation.css?v=0.40.0">
-    <link rel="stylesheet" href="./css/inventory.css?v=0.40.0">
+    <link rel="stylesheet" href="./css/inventory.css?v=0.42.0">
     <link rel="stylesheet" href="./css/workshop.css?v=0.40.0">
     <link rel="stylesheet" href="./css/camp.css?v=0.40.0">
     <link rel="stylesheet" href="./css/backup.css?v=0.40.0">
     <link rel="stylesheet" href="./css/coin-art.css?v=0.40.0">
     <link rel="stylesheet" href="./css/journal.css?v=0.41.0">
-    <script type="module" src="./js/main.js?v=0.41.0">
+    <script type="module" src="./js/main.js?v=0.42.0">
     </script>
   </head>
   <body>
@@ -146,6 +146,7 @@
         <p id="bagShown" class="inventory-count"></p>
         <div id="bagItems">
         </div>
+        <div id="bagPager" class="list-pager" role="group" aria-label="Сторінки рюкзака" hidden><button id="bagPrev" class="secondary" aria-label="Попередня сторінка рюкзака">← Назад</button><span id="bagPage" aria-live="polite"></span><button id="bagNext" class="secondary" aria-label="Наступна сторінка рюкзака">Далі →</button></div>
         <h2>Провізія в рюкзаку</h2>
         <div id="bagFood">
         </div>
@@ -156,6 +157,7 @@
           <p id="stashShown" class="inventory-count"></p>
           <div id="warehouseItems">
           </div>
+          <div id="stashPager" class="list-pager" role="group" aria-label="Сторінки сховища" hidden><button id="stashPrev" class="secondary" aria-label="Попередня сторінка сховища">← Назад</button><span id="stashPage" aria-live="polite"></span><button id="stashNext" class="secondary" aria-label="Наступна сторінка сховища">Далі →</button></div>
           <h2>Запаси вдома</h2>
           <div id="pantryItems">
           </div>
@@ -163,7 +165,7 @@
       </section>
       <section id="search">
         <div class="field-stage">
-          <canvas id="field" width="880" height="720" tabindex="0" role="img" aria-label="Поле пошуку. Ведіть пальцем або стрілками клавіатури, пробіл — копати.">
+          <canvas id="field" width="880" height="720" tabindex="0" role="img" aria-label="Поле пошуку. Ведіть пальцем або стрілками клавіатури, пробіл — копати, M — позначити місце.">
           </canvas>
           <div class="field-hud">
             <div class="location">
@@ -190,6 +192,7 @@
             <span>ВІЛЬНИЙ ПОШУК</span>
           </div>
         </div>
+        <div class="field-tools"><button class="secondary" id="markSpot">Позначити місце</button><button class="quiet" id="openFieldNotes" aria-haspopup="dialog">Мітки · 0 / 8</button></div>
         <p id="locationHint" hidden>
         </p>
         <div class="instrument" id="instrument">
@@ -217,7 +220,7 @@
         <div class="search-status">
           <p class="sub" id="fieldBag">
           </p>
-          <span class="build-tag">v0.41.0</span>
+          <span class="build-tag">v0.42.0</span>
         </div>
         <div class="log" id="log" aria-live="polite">Обстежуй ділянку — кількість сигналів невідома. Шукай найчіткіший сигнал.</div>
         <div id="fieldOrder" class="field-order" hidden><span id="fieldOrderText"></span><button class="quiet" data-open="journal">Деталі замовлення →</button></div>
@@ -289,7 +292,7 @@
           </div>
           <p class="sub" id="catalogNote">Натисни монету, щоб оглянути обидва боки та гурт. Рівні рідкості та ціни адаптовано для гри.</p>
         </section>
-        <footer>ПРОТОТИП 0.41.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
+        <footer>ПРОТОТИП 0.42.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
       </main>
       <dialog id="backupDialog" aria-labelledby="backupTitle">
         <h2 id="backupTitle">Відновити прогрес?</h2>
@@ -308,6 +311,12 @@
         <button class="secondary" id="returnHome" style="width:100%">Повернутися до табору</button>
         <div class="sub" id="tripGate" aria-live="polite" style="margin-top:10px">
         </div>
+      </dialog>
+      <dialog id="fieldNotes" aria-labelledby="fieldNotesTitle">
+        <div class="sheet-heading"><h2 id="fieldNotesTitle">Мітки ділянки</h2><button class="quiet" data-close="fieldNotes" aria-label="Закрити позначки">✕</button></div>
+        <p id="siteGuide" class="camp-note"></p>
+        <p class="camp-note">До 8 власних позначок. Зберігаються до виходу з цієї ділянки. Кнопка «До мітки» повертає котушку на позначене місце.</p>
+        <div id="fieldNoteList"></div>
       </dialog>
       <dialog id="quickFood" aria-labelledby="quickFoodTitle">
         <div class="sheet-heading">
@@ -368,6 +377,7 @@
         <p id="reviewNotice" role="status" aria-live="polite"></p>
         <button id="reviewSelectAll" class="quiet">Зняти вибір</button>
         <div id="reviewItems"></div>
+        <div id="reviewPager" class="list-pager" role="group" aria-label="Сторінки розбору знахідок" hidden><button id="reviewPrev" class="secondary" aria-label="Попередня сторінка розбору">← Назад</button><span id="reviewPage" aria-live="polite"></span><button id="reviewNext" class="secondary" aria-label="Наступна сторінка розбору">Далі →</button></div>
         <div class="review-footer"><p id="reviewTotal" role="status" aria-live="polite"></p><button id="reviewConfirm" class="primary">Підтвердити</button><button id="reviewCancel" class="secondary">Скасувати</button></div>
       </dialog>
       <dialog id="modal">

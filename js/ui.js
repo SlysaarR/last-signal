@@ -1,26 +1,28 @@
-import { detectorFeatures, detectorSettings } from '../data/gear.js?v=0.41.0';
-import { initDetectorControls, renderDetectorControls } from './detector-controls.js?v=0.41.0';
-import { signalDescription } from './detector.js?v=0.41.0';
-import { renderOrders, renderOrderSummary } from './orders-ui.js?v=0.41.0';
-import { renderJournal } from './journal.js?v=0.41.0';
-import { conditions } from '../data/expeditions.js?v=0.41.0';
+import { detectorFeatures, detectorSettings } from '../data/gear.js?v=0.42.0';
+import { initDetectorControls, renderDetectorControls } from './detector-controls.js?v=0.42.0';
+import { signalDescription } from './detector.js?v=0.42.0';
+import { renderOrders, renderOrderSummary } from './orders-ui.js?v=0.42.0';
+import { renderMarkControls } from './field-notes.js?v=0.42.0';
+import { renderJournal } from './journal.js?v=0.42.0';
+import { conditions } from '../data/expeditions.js?v=0.42.0';
 // Shared navigation, detector readout and quick sheets. Rendering functions never award items.
-import { renderCamp } from './camp.js?v=0.41.0';
-import { foods } from '../data/balance.js?v=0.41.0';
-import { renderCollection } from './collection.js?v=0.41.0';
-import { $ } from './dom.js?v=0.41.0';
-import { draw } from './graphics/field.js?v=0.41.0';
-import { renderInventory } from './inventory.js?v=0.41.0';
-import { bagCapacity, bagUsed, canLeave, emergencyAllowed, foodAmount, foodAvailable, foodFits, maxEnergy, minDig, travelCost } from './rules.js?v=0.41.0';
-import { digInfo, signal } from './search.js?v=0.41.0';
-import { eatFood, renderShop } from './shop.js?v=0.41.0';
-import { s } from './storage.js?v=0.41.0';
-import { currentLocation } from './world.js?v=0.41.0';
+import { renderCamp } from './camp.js?v=0.42.0';
+import { foods } from '../data/balance.js?v=0.42.0';
+import { renderCollection } from './collection.js?v=0.42.0';
+import { $ } from './dom.js?v=0.42.0';
+import { draw } from './graphics/field.js?v=0.42.0';
+import { renderInventory } from './inventory.js?v=0.42.0';
+import { bagCapacity, bagUsed, canLeave, emergencyAllowed, foodAmount, foodAvailable, foodFits, maxEnergy, minDig, travelCost } from './rules.js?v=0.42.0';
+import { digInfo, signal } from './search.js?v=0.42.0';
+import { eatFood, renderShop } from './shop.js?v=0.42.0';
+import { s } from './storage.js?v=0.42.0';
+import { currentLocation } from './world.js?v=0.42.0';
 export function renderFieldChrome() {
   const choices = document.getElementById('quickFoodChoices');
   if (!choices) return;
   choices.replaceChildren();
   const count = s.food.reduce((a, b) => a + b, 0);
+  $('fieldFood').textContent = 'Їжа: ' + count + ' · спожито ' + s.foodUsed + '/50% за виїзд';
   document.getElementById('foodQuick').textContent = 'Їжа · ' + count;
   if (!count) {
     const p = document.createElement('p');
@@ -50,7 +52,7 @@ export function renderFieldChrome() {
   });
 }
 export function busy(except=null) {
-  return !!s.pending || ['modal','excavate','packDialog','tripMenu','quickFood','coinDetail','backupDialog','inventoryReview'].some(id => id!==except&&$(id).open);
+  return !!s.pending || ['modal','excavate','packDialog','tripMenu','quickFood','coinDetail','backupDialog','inventoryReview','fieldNotes'].some(id => id!==except&&$(id).open);
 }
 export function showTab(tab) {
   if (tab === 'search' && s.atCamp) tab = 'camp';
@@ -89,6 +91,7 @@ export function render() {
 }
 // Moving the coil must not rebuild inventory cards, shop controls or album art.
 export function renderDetector() {
+  renderMarkControls();
   const n = signal();
   const features=detectorFeatures(s.level),settings=detectorSettings(s);
   const meter=settings.mode==='pinpoint'?n.focus:n.power;

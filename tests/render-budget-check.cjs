@@ -17,6 +17,7 @@ const {newRun,root,assert}=require('./harness.cjs');
  assert.equal(writes,0,'full field updates do not rebuild hidden screens');
  assert.equal(el('fieldBag').textContent,'Рюкзак: 2 / 8','field bag status independent of shop rendering');
  assert.equal(el('coins').textContent,s.coins);s.stash=stash;
+ s.food=[1,0,0];s.foodUsed=20;ui.render();assert.equal(el('fieldFood').textContent,'Їжа: 1 · спожито 20/50% за виїзд','quick food summary does not depend on opening the shop');
  // Catch-up occurs on navigation, not in the field. Keep visual fixture small.
  s.stash=stash.slice(0,5);s.atCamp=true;
  ui.showTab('inventory');assert(el('warehouseItems').innerHTML.includes('data-item-place="stash"'));
