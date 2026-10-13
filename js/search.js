@@ -1,20 +1,23 @@
-import { sampleSignal } from './detector.js?v=0.34.0';
-import { recordDig } from './progression.js?v=0.34.0';
+import { detectorSettings } from '../data/gear.js?v=0.35.0';
+import { recordReading } from './detector-controls.js?v=0.35.0';
+import { sampleSignal } from './detector.js?v=0.35.0';
+import { recordDig } from './progression.js?v=0.35.0';
 // search responsibilities for Last Signal.
-import { depthLevels } from '../data/balance.js?v=0.34.0';
-import { beep } from './audio.js?v=0.34.0';
-import { $ } from './dom.js?v=0.34.0';
-import { openExcavation } from './excavation.js?v=0.34.0';
-import { canvas, draw } from './graphics/field.js?v=0.34.0';
-import { digCost, minDig } from './rules.js?v=0.34.0';
-import { s, save } from './storage.js?v=0.34.0';
-import { busy, render, renderDetector } from './ui.js?v=0.34.0';
-let moveFrame = 0, pointerId = null;
+import { depthLevels } from '../data/balance.js?v=0.35.0';
+import { beep } from './audio.js?v=0.35.0';
+import { $ } from './dom.js?v=0.35.0';
+import { openExcavation } from './excavation.js?v=0.35.0';
+import { canvas, draw } from './graphics/field.js?v=0.35.0';
+import { digCost, minDig } from './rules.js?v=0.35.0';
+import { s, save } from './storage.js?v=0.35.0';
+import { busy, render, renderDetector } from './ui.js?v=0.35.0';
+let moveFrame = 0, pointerId = null, pointerAnchor = null;
 function renderMovement() {
   if (moveFrame) return;
   moveFrame = requestAnimationFrame(() => {
     moveFrame = 0;
     if (s.atCamp || $('search').hidden || busy()) return;
+    recordReading(signal(),s.objects);
     renderDetector();
     draw();
   });
@@ -30,14 +33,15 @@ export function digInfo() {
     cost: digCost(info.cost)
   };
 }
-export function signal() { return sampleSignal(s.objects,s.x,s.y,s.level); }
+export function signal() { return sampleSignal(s.objects,s.x,s.y,s.level,{...detectorSettings(s),soil:s.progress?.active?.condition||0}); }
 export function nearest() { const {obj,d}=signal(); return {obj,d}; }
 export function move(e) {
   if (s.atCamp || busy()) return;
   const r = canvas.getBoundingClientRect();
   if (!r.width || !r.height) return;
-  s.x = Math.max(.02, Math.min(.98, (e.clientX - r.left) / r.width));
-  s.y = Math.max(.02, Math.min(.98, (e.clientY - r.top) / r.height));
+  const precise=detectorSettings(s).mode==='pinpoint'&&pointerAnchor;
+  s.x = Math.max(.02, Math.min(.98, precise?pointerAnchor.x+(e.clientX-pointerAnchor.clientX)/r.width*.45:(e.clientX-r.left)/r.width));
+  s.y = Math.max(.02, Math.min(.98, precise?pointerAnchor.y+(e.clientY-pointerAnchor.clientY)/r.height*.45:(e.clientY-r.top)/r.height));
   renderMovement();
   beep(signal());
 }
@@ -75,6 +79,7 @@ export function initSearch() {
     if (s.atCamp || busy() || dragging || (e.button !== undefined && e.button !== 0)) return;
     dragging = true;
     pointerId = e.pointerId;
+    pointerAnchor={x:s.x,y:s.y,clientX:e.clientX,clientY:e.clientY};
     canvas.setPointerCapture(e.pointerId);
     move(e);
   });
@@ -85,6 +90,7 @@ export function initSearch() {
     if (e.pointerId !== pointerId) return;
     dragging = false;
     pointerId = null;
+    pointerAnchor = null;
     save();
   });
   canvas.addEventListener('keydown', e => {
@@ -95,8 +101,10 @@ export function initSearch() {
         dig();
         return;
       }
-      s.x = Math.max(.02, Math.min(.98, s.x + (e.key === 'ArrowRight' ? .015 : e.key === 'ArrowLeft' ? -.015 : 0)));
-      s.y = Math.max(.02, Math.min(.98, s.y + (e.key === 'ArrowDown' ? .015 : e.key === 'ArrowUp' ? -.015 : 0)));
+      const step=detectorSettings(s).mode==='pinpoint'?.005:.015;
+      s.x = Math.max(.02, Math.min(.98, s.x + (e.key === 'ArrowRight' ? step : e.key === 'ArrowLeft' ? -step : 0)));
+      s.y = Math.max(.02, Math.min(.98, s.y + (e.key === 'ArrowDown' ? step : e.key === 'ArrowUp' ? -step : 0)));
+      recordReading(signal(),s.objects);
       renderDetector();
       draw();
       beep(signal());

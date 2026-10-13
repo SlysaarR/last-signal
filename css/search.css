@@ -450,3 +450,26 @@ body:has(#search:not([hidden])) footer {
 }
 html { scroll-padding-bottom:calc(78px + env(safe-area-inset-bottom)); }
 #dig { scroll-margin-bottom:calc(78px + env(safe-area-inset-bottom)); }
+.instrument { --device-accent:#d8eda3; }
+.instrument[data-stage="1"] { --device-accent:#a2d2b2; border-color:#527a62; }
+.instrument[data-stage="2"] { --device-accent:#dfbe78; border-color:#7b7051; background:linear-gradient(145deg,#343629,#1d291e); }
+.instrument[data-stage="3"] { --device-accent:#84cbd6; border-color:#456c78; background:linear-gradient(145deg,#20393a,#17262a); }
+.instrument[data-stage="4"] { --device-accent:#c6b8f2; border-color:#70678b; background:linear-gradient(145deg,#313246,#18252b); }
+.instrument .readout strong { color:var(--device-accent); }
+.instrument-model { font:8px ui-monospace,monospace; text-transform:uppercase; letter-spacing:1.5px; color:var(--device-accent); margin:0 0 5px; }
+#signalTrace { width:100%; height:28px; display:block; margin:0 0 6px; }
+#signalTracePanel[hidden],.detector-controls[hidden],.detector-mode-note[hidden] { display:none; }
+.detector-controls { flex:none; padding:0 3px; }
+.detector-controls summary { font-size:11px; color:#c5d4b4; cursor:pointer; min-height:24px; line-height:24px; }
+.detector-mode-buttons { display:flex; gap:6px; padding:5px 0; }
+.detector-mode-buttons button { flex:1; min-width:0; font-size:11px; padding:8px 5px; min-height:44px; }
+.detector-controls [aria-pressed="true"] { border-color:#c0d69a; background:#354b30; color:#e1efc2; }
+.detector-mode-note { margin:0; font-size:10px; line-height:1.4; color:#b5c5a6; flex:none; }
+#ironQuiet { width:100%; font-size:11px; }
+/* Open controls need real document space above the navigation on short screens. */
+body:has(#detectorModes[open]):has(#search:not([hidden])) main { height:auto; min-height:100dvh; }
+body:has(#detectorModes[open]) .field-stage { min-height:210px; }
+@media(max-height:740px) {
+  body:has(#search:not([hidden])) main { height:auto; min-height:100dvh; }
+  .field-stage { min-height:180px; }
+}

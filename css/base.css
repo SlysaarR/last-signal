@@ -292,7 +292,7 @@ progress {
   display:block;
   margin:12px 0
 }
-#excavate .secondary {
+#excavate .exc-footer .secondary {
   width:100%;
   margin-top:10px;
   font-size:12px

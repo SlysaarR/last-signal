@@ -238,7 +238,7 @@
   .find-display {
     margin:8px 0
   }
-  .find-display canvas {
+  .pack-art-stage {
     width:min(100%,38dvh);
     margin:auto
   }
@@ -251,3 +251,5 @@
 }
 
 .excavation.done #soil { pointer-events:none }
+
+.pack-art-stage { position:relative; margin:auto; }

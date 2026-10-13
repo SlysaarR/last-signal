@@ -1,10 +1,11 @@
-import { MAX_GEAR_LEVEL, creditFor } from '../data/gear.js?v=0.34.0';
+import { drawDetectorPreview } from './graphics/detector-art.js?v=0.35.0';
+import { MAX_GEAR_LEVEL, creditFor, detectorMilestones, detectorLook } from '../data/gear.js?v=0.35.0';
 // shop responsibilities for Last Signal.
-import { foods } from '../data/balance.js?v=0.34.0';
-import { $ } from './dom.js?v=0.34.0';
-import { bagCapacity, bagUsed, detectorStats, foodAmount, foodFits, maxEnergy, shovelFactor, upgradeCost } from './rules.js?v=0.34.0';
-import { s, save } from './storage.js?v=0.34.0';
-import { busy, render } from './ui.js?v=0.34.0';
+import { foods } from '../data/balance.js?v=0.35.0';
+import { $ } from './dom.js?v=0.35.0';
+import { bagCapacity, bagUsed, detectorStats, foodAmount, foodFits, maxEnergy, shovelFactor, upgradeCost } from './rules.js?v=0.35.0';
+import { s, save } from './storage.js?v=0.35.0';
+import { busy, render } from './ui.js?v=0.35.0';
 export let shopRenderKey = '';
 export function buyFood(i) {
   if (!foods[i] || busy() || !s.atCamp || s.coins < foods[i].price) return;
@@ -44,8 +45,13 @@ export function renderShop() {
   const detector=detectorStats(),next=detectorStats(nextDetector);
   $('level').textContent = 'Металошукач';
   $('detectorInfo').innerHTML = row('Бонус зони відгуку', '+'+fmt((detector.radius/.205-1)*100), s.level<MAX_GEAR_LEVEL?'+'+fmt((next.radius/.205-1)*100):null,'%') + row('Відгук глибокої цілі',fmt(detector.deepResponse*100),s.level<MAX_GEAR_LEVEL?fmt(next.deepResponse*100):null,'%') + row('Базова похибка індексу','±'+fmt(detector.noise),s.level<MAX_GEAR_LEVEL?'±'+fmt(next.noise):null);
-  const unlocks = [[2, 'Орієнтовний індекс металу'], [4, 'Орієнтовна глибина сигналу']];
-  $('detectorMilestones').innerHTML = unlocks.map(([level, text]) => `<li class="${s.level >= level ? 'unlocked' : ''}"><span>${s.level >= level ? '✓' : level}</span>${text}</li>`).join('');
+  const look=detectorLook(s.level);
+  $('detectorModelName').textContent=look.name;
+  $('detectorPreview').setAttribute('aria-label',look.name+' · вигляд металошукача на ступені '+s.level);
+  drawDetectorPreview($('detectorPreview'),s.level);
+  $('detectorMilestones').innerHTML = detectorMilestones.map(([level,name,description]) => `<li class="${s.level >= level ? 'unlocked' : ''}"><span>${s.level >= level ? '✓' : level}</span><div><b>${name}</b><small>${description}</small></div></li>`).join('');
+  const upcoming=detectorMilestones.find(([level])=>level>s.level);
+  $('detectorNextFeature').textContent=upcoming?'Ступінь '+upcoming[0]+' відкриє: '+upcoming[1]+'.':'Усі функції відкрито. Режими можна перемикати на екрані пошуку.';
   $('shovelLevel').textContent = 'Лопата';
   const saving = level => fmt((1 - shovelFactor(level)) * 100);
   $('shovelInfo').innerHTML = row('Економія енергії', saving(s.shovel), s.shovel < MAX_GEAR_LEVEL ? saving(nextShovel) : null, '%') + row('Ямка на 10 сил у звичайному ґрунті', fmt(Math.round(10 * shovelFactor() * 10) / 10), s.shovel < MAX_GEAR_LEVEL ? fmt(Math.round(10 * shovelFactor(nextShovel) * 10) / 10) : null);

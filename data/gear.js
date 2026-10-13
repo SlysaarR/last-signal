@@ -41,3 +41,30 @@ export function migrateGear(state) {
   state.gearVersion=GEAR_VERSION;
   return true;
 }
+
+// Functions unlock across the entire progression; every intermediate tier also improves stats.
+export const detectorMilestones = [
+  [2,'Індекс металу','Приблизна провідність допомагає порівнювати відгуки.'],
+  [3,'Пінпойнт','Точне наведення: повільніший рух котушки та шкала центрування.'],
+  [4,'Оцінка глибини','Розрізняє неглибокі, середні й глибокі сигнали.'],
+  [5,'Приглушення заліза','Можна зробити низькі залізні відгуки тихішими.'],
+  [6,'Баланс ґрунту','Автоматично зменшує шум від щільного ґрунту.'],
+  [7,'Історія відгуку','Графік останнього проходу котушки показує форму сигналу.'],
+  [8,'Глибина в сантиметрах','Приблизний діапазон глибини для чіткого відгуку.'],
+  [9,'Розділення цілей','Менший вплив сусіднього металу на індекс; індикатор перешкод.'],
+  [10,'Глибокий пошук','Окремий режим посилює слабкі цілі ціною додаткового шуму.']
+];
+export function detectorFeatures(level) {
+  return {id:level>=2,pinpoint:level>=3,depth:level>=4,ironQuiet:level>=5,ground:level>=6,trace:level>=7,depthRange:level>=8,separation:level>=9,deep:level>=10};
+}
+export function detectorSettings(state) {
+  const f=detectorFeatures(state.level),chosen=state.detectorSettings;
+  const mode=chosen?.mode;
+  return {mode:mode==='pinpoint'&&f.pinpoint||mode==='deep'&&f.deep?mode:'search',ironQuiet:!!chosen?.ironQuiet&&f.ironQuiet};
+}
+export function detectorLook(level) {
+  const stage=Math.floor((level-1)/2);
+  return {stage,name:'Сигнал '+String(level).padStart(2,'0'),
+    accent:['#c2cfa3','#a2d2b2','#dfbe78','#84cbd6','#b5a8ee'][stage],
+    shell:['#3b4933','#304e45','#544c34','#263e4b','#34354e'][stage]};
+}

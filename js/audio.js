@@ -1,5 +1,5 @@
 // audio responsibilities for Last Signal.
-import { $ } from './dom.js?v=0.34.0';
+import { $ } from './dom.js?v=0.35.0';
 export let audio = null,
   sound = false,
   lastBeep = 0;
@@ -7,7 +7,7 @@ export let audio = null,
 export function toneSettings(reading) {
   const r=typeof reading==='number'?{power:reading,id:55,tone:'mid',stability:80}:reading;
   return {power:r.power,frequency: r.tone==='low'?155+r.id*3:r.tone==='mid'?340+(r.id-35)*9:650+(r.id-65)*12,
-    interval:Math.max(95,540-r.power*4.4),gain:.008+r.power*.00024,
+    interval:Math.max(95,540-r.power*4.4),gain:(.008+r.power*.00024)*(r.quiet?.18:1),
     wave:r.tone==='low'?'triangle':'sine',duration:r.stability<40?.055:.095};
 }
 export function beep(reading) {

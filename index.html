@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
     <meta name="theme-color" content="#111f20">
     <title>Останній сигнал</title>
-    <link rel="stylesheet" href="./css/base.css?v=0.34.0">
-    <link rel="stylesheet" href="./css/search.css?v=0.34.0">
-    <link rel="stylesheet" href="./css/excavation.css?v=0.34.0">
-    <link rel="stylesheet" href="./css/inventory.css?v=0.34.0">
-    <link rel="stylesheet" href="./css/workshop.css?v=0.34.0">
-    <link rel="stylesheet" href="./css/camp.css?v=0.34.0">
-    <link rel="stylesheet" href="./css/backup.css?v=0.34.0">
-    <link rel="stylesheet" href="./css/coin-art.css?v=0.34.0">
-    <link rel="stylesheet" href="./css/journal.css?v=0.34.0">
-    <script type="module" src="./js/main.js?v=0.34.0">
+    <link rel="stylesheet" href="./css/base.css?v=0.35.0">
+    <link rel="stylesheet" href="./css/search.css?v=0.35.0">
+    <link rel="stylesheet" href="./css/excavation.css?v=0.35.0">
+    <link rel="stylesheet" href="./css/inventory.css?v=0.35.0">
+    <link rel="stylesheet" href="./css/workshop.css?v=0.35.0">
+    <link rel="stylesheet" href="./css/camp.css?v=0.35.0">
+    <link rel="stylesheet" href="./css/backup.css?v=0.35.0">
+    <link rel="stylesheet" href="./css/coin-art.css?v=0.35.0">
+    <link rel="stylesheet" href="./css/journal.css?v=0.35.0">
+    <script type="module" src="./js/main.js?v=0.35.0">
     </script>
   </head>
   <body>
@@ -81,7 +81,7 @@
       <div id="saveNote" hidden>У цьому браузері збереження недоступне. Прогрес зберігається лише до закриття гри.</div>
       <section id="camp" hidden>
         <div class="camp-heading"><div class="eyebrow">ДІМ / ПІДГОТОВКА</div><h2>Твій табір</h2><p id="campStatus"></p></div>
-        <div class="expedition-banner"><div class="eyebrow">ОНОВЛЕННЯ 0.34 / ВЧИСЯ ЧИТАТИ СИГНАЛ</div><h3>Кожен виїзд має свою історію</h3><p>8 місцевостей · 4 напрямки · 12 цілей</p><button class="secondary" data-open="journal">Відкрити щоденник →</button><small id="journalBadge"></small></div>
+        <div class="expedition-banner"><div class="eyebrow">ОНОВЛЕННЯ 0.35 / ПРИЛАД ЗРОСТАЄ З ТОБОЮ</div><h3>Кожен виїзд має свою історію</h3><p>8 місцевостей · 4 напрямки · 12 цілей</p><button class="secondary" data-open="journal">Відкрити щоденник →</button><small id="journalBadge"></small></div>
         <div class="camp-ready">
           <div class="camp-energy"><span>ЕНЕРГІЯ</span><strong id="campEnergy"></strong></div>
           <progress id="campEnergyBar" aria-label="Запас енергії" value="0" max="100"></progress>
@@ -170,10 +170,11 @@
         </div>
         <p id="locationHint" hidden>
         </p>
-        <div class="instrument">
+        <div class="instrument" id="instrument">
+          <div class="instrument-model" id="detectorModel"></div>
           <div class="readout">
             <div>
-              <div class="eyebrow">СИЛА СИГНАЛУ</div>
+              <div class="eyebrow" id="signalHeading">СИЛА СИГНАЛУ</div>
               <span class="sub" id="metal">Проведи пальцем по галявині</span>
             </div>
             <strong id="strength">00</strong>
@@ -181,8 +182,11 @@
           <div class="bars" id="bars">
           </div>
           <div class="signal-readings"><div><span>ІНДЕКС МЕТАЛУ</span><strong id="targetId">—</strong></div><div><span>ВІДГУК</span><strong id="signalStability">—</strong></div></div>
+          <div id="signalTracePanel" hidden><canvas id="signalTrace" width="320" height="28" role="img" aria-label="Історія сили сигналу"></canvas></div>
           <div class="hint" id="hint">Сканування безкоштовне. Що ближче до предмета, то сильніший сигнал.</div>
         </div>
+        <details id="detectorModes" class="detector-controls" hidden><summary>Режими приладу</summary><div class="detector-mode-buttons"><button class="secondary" id="modeSearch" aria-pressed="true">Пошук</button><button class="secondary" id="modePinpoint" aria-pressed="false">Пінпойнт</button><button class="secondary" id="modeDeep" aria-pressed="false" hidden>Глибокий</button></div><button class="quiet" id="ironQuiet" aria-pressed="false" hidden>Залізо: звичайний звук</button></details>
+        <p id="detectorModeNote" class="detector-mode-note" hidden></p>
         <div class="actions">
           <button class="primary" id="dig">Копати</button>
           <button class="secondary" id="foodQuick" style="width:100%;margin-top:10px">Їжа</button>
@@ -191,7 +195,7 @@
         <div class="search-status">
           <p class="sub" id="fieldBag">
           </p>
-          <span class="build-tag">v0.34.0</span>
+          <span class="build-tag">v0.35.0</span>
         </div>
         <div class="log" id="log" aria-live="polite">Обстежуй ділянку — кількість сигналів невідома. Шукай найчіткіший сигнал.</div>
       </section>
@@ -201,8 +205,10 @@
         <p id="workshopStatus" class="workshop-intro"></p>
         <article class="gear-card">
           <div class="gear-heading"><h2 id="level"></h2><span id="detectorBadge" class="gear-badge"></span></div>
+          <div class="detector-showcase"><canvas id="detectorPreview" width="600" height="250" role="img"></canvas><span id="detectorModelName"></span></div>
           <div id="detectorInfo" class="gear-stats"></div>
-          <ul id="detectorMilestones" class="gear-milestones"></ul>
+          <p id="detectorNextFeature" class="gear-note"></p>
+          <details class="gear-roadmap"><summary>Функції на всіх 10 ступенях</summary><ul id="detectorMilestones" class="gear-milestones"></ul></details>
           <button class="primary" id="upgrade"></button>
           <p id="detectorReason" class="upgrade-reason" aria-live="polite"></p>
         </article>
@@ -220,7 +226,7 @@
           <button class="primary" id="upgradeBackpack"></button>
           <p id="backpackReason" class="upgrade-reason" aria-live="polite"></p>
         </article>
-        <details class="signal-guide"><summary>Як читати сигнали</summary><p>Проведи котушкою навхрест. Сила залежить від відстані, розміру й глибини цілі: глибокий предмет може мати пік нижче 100.</p><p>Низький тон частіше дає залізо, середній і високий — кольорові метали. Індекс лише орієнтовний: фольга, язички та прикраси перекриваються. Стабільний відгук не гарантує цінності.</p><p>Детектор розширює зону відгуку й уточнює показники, лопата заощаджує енергію, рюкзак додає місця. Спорядження не змінює вміст ділянки.</p></details>
+        <details class="signal-guide"><summary>Як читати сигнали</summary><p>Проведи котушкою навхрест. Сила залежить від відстані, розміру й глибини цілі: глибокий предмет може мати пік нижче 100.</p><p>Низький тон частіше дає залізо, середній і високий — кольорові метали. Індекс лише орієнтовний: фольга, язички та прикраси перекриваються. Стабільний відгук не гарантує цінності.</p><p>Детектор розширює зону відгуку й уточнює показники, лопата заощаджує енергію, рюкзак додає місця. Спорядження не змінює вміст ділянки. Нові функції відкриваються аж до 10-го ступеня; повний розвиток детектора коштує 75 410 купонів.</p><p>У пінпойнті котушка рухається повільніше відносно пальця, стрілки клавіатури теж дають менший крок. Приглушення заліза зменшує звук, але залишає показники й можливість копати. Глибокий режим посилює відгук і шум.</p></details>
         <h2 class="food-shop-heading">Провізія</h2>
         <p id="foodBudget" class="workshop-intro"></p>
         <div id="foodShop"></div>
@@ -260,7 +266,7 @@
           </div>
           <p class="sub" id="catalogNote">Натисни комірку, щоб прочитати опис і відкрити джерело. Рівні рідкості та ціни адаптовано для гри. Монети намальовані схематично.</p>
         </section>
-        <footer>ПРОТОТИП 0.34.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
+        <footer>ПРОТОТИП 0.35.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
       </main>
       <dialog id="backupDialog" aria-labelledby="backupTitle">
         <h2 id="backupTitle">Відновити прогрес?</h2>
@@ -298,9 +304,9 @@
           </span>
         </div>
         <figure class="find-display">
-          <canvas id="packArt" width="600" height="500" role="img" aria-label="Знайдений предмет">
+          <div class="pack-art-stage"><canvas id="packArt" width="600" height="500" role="img" aria-label="Знайдений предмет">
           </canvas>
-          <button id="packFlip" class="secondary coin-flip" hidden aria-label="Початковий ракурс">↺</button>
+          <button id="packFlip" class="secondary coin-flip" hidden aria-label="Початковий ракурс">↺</button></div>
           <figcaption>Обертай знахідку пальцем</figcaption>
         </figure>
         <h2 id="packTitle" tabindex="-1" autofocus>

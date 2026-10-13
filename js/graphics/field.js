@@ -1,8 +1,9 @@
+import { drawDetector } from './detector-art.js?v=0.35.0';
 // field responsibilities for Last Signal.
-import { $ } from '../dom.js?v=0.34.0';
-import { signal } from '../search.js?v=0.34.0';
-import { s } from '../storage.js?v=0.34.0';
-import { currentLocation } from '../world.js?v=0.34.0';
+import { $ } from '../dom.js?v=0.35.0';
+import { signal } from '../search.js?v=0.35.0';
+import { s } from '../storage.js?v=0.35.0';
+import { currentLocation } from '../world.js?v=0.35.0';
 export const canvas = $('field'),
   ctx = canvas.getContext('2d');
 export function paintTerrain(ctx) {
@@ -190,55 +191,5 @@ export function draw() {
   const n = signal(),
     x = s.x * w,
     y = s.y * h;
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.rotate(-.2);
-  ctx.strokeStyle = '#d5e4b329';
-  ctx.lineWidth = 1;
-  ctx.setLineDash([4, 7]);
-  ctx.beginPath();
-  ctx.arc(0, 0, 66, 0, Math.PI * 2);
-  ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.shadowColor = '#0009';
-  ctx.shadowBlur = 12;
-  ctx.shadowOffsetY = 9;
-  ctx.strokeStyle = '#15231b';
-  ctx.lineWidth = 16;
-  ctx.beginPath();
-  ctx.moveTo(0, 20);
-  ctx.lineTo(55, 125);
-  ctx.stroke();
-  ctx.shadowBlur = 0;
-  ctx.shadowOffsetY = 0;
-  ctx.strokeStyle = '#899b83';
-  ctx.lineWidth = 5;
-  ctx.stroke();
-  ctx.lineWidth = 14;
-  ctx.strokeStyle = '#101d15';
-  ctx.beginPath();
-  ctx.ellipse(0, 0, 45, 32, 0, 0, Math.PI * 2);
-  ctx.stroke();
-  ctx.lineWidth = 3;
-  ctx.strokeStyle = n.pinpoint ? '#e2f3b0' : '#b8c6a1';
-  ctx.beginPath();
-  ctx.ellipse(0, 0, 47, 34, 0, 0, Math.PI * 2);
-  ctx.stroke();
-  ctx.lineWidth = 5;
-  ctx.strokeStyle = '#17251c';
-  ctx.beginPath();
-  ctx.moveTo(-38, 0);
-  ctx.lineTo(38, 0);
-  ctx.moveTo(0, -26);
-  ctx.lineTo(0, 26);
-  ctx.stroke();
-  ctx.lineWidth = 1;
-  ctx.strokeStyle = '#819373';
-  ctx.stroke();
-  ctx.fillStyle = n.pinpoint ? '#e4f6a7' : '#bdcf9c';
-  ctx.beginPath();
-  ctx.arc(0, 0, 4, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
+  ctx.save();ctx.translate(x,y);drawDetector(ctx,s.level,n);ctx.restore();
 }
-

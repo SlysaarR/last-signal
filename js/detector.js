@@ -1,5 +1,5 @@
-import { types } from '../data/items.js?v=0.34.0';
-import { detectorAt } from '../data/gear.js?v=0.34.0';
+import { types } from '../data/items.js?v=0.35.0';
+import { detectorAt, detectorFeatures } from '../data/gear.js?v=0.35.0';
 const clamp=(x,min,max)=>Math.max(min,Math.min(max,x));
 export const distanceTo=(o,x,y)=>Math.hypot(o.x-x,(o.y-y)*720/880);
 // Conductivity bands deliberately overlap: a bright tone never promises a valuable find.
@@ -11,28 +11,30 @@ export function targetProfile(type) {
   const values=profiles[t.shape] || (t.material==='aluminum'?[43,5,.9]:t.material==='zinc'?[58,5,.93]:[70,4,1]);
   return {id:values[0],rough:values[1],size:values[2]};
 }
-export function readTarget(obj,x,y,level=1,interference=0) {
+export function readTarget(obj,x,y,level=1,interference=0,options={}) {
   const d=distanceTo(obj,x,y),gear=detectorAt(level),profile=targetProfile(obj.type);
-  const radius=gear.radius*profile.size*(1-obj.depth*.13);
-  const response=obj.depth===2?gear.deepResponse:obj.depth===1?.84+(level-1)*.1/9:1;
+  const features=detectorFeatures(level),mode=options.mode==='deep'&&features.deep?'deep':options.mode==='pinpoint'&&features.pinpoint?'pinpoint':'search';
+  const radius=gear.radius*profile.size*(1-obj.depth*.13)*(mode==='deep'?1.18:mode==='pinpoint'?.75:1);
+  const response=mode==='deep'?1:obj.depth===2?gear.deepResponse:obj.depth===1?.84+(level-1)*.1/9:1;
   const power=Math.round(100*response*clamp(1-d/radius,0,1));
   const closeness=clamp(1-d/radius,0,1);
-  const spread=(gear.noise*(1-closeness*.78)+profile.rough*.45+obj.depth*3+interference*13);
+  const soilNoise=options.soil===2?5:options.soil===1?1:0;
+  const spread=gear.noise*(1-closeness*.78)+profile.rough*.45+obj.depth*3+interference*13*(features.separation?.3:1)+soilNoise*(features.ground?.25:1)+(mode==='deep'?3:0);
   const phase=obj.x*173+obj.y*131+obj.type*.7;
   const wave=Math.sin((x-obj.x)*96+phase)*.65+Math.sin((y-obj.y)*119-phase)*.35;
   const id=clamp(Math.round(profile.id+wave*spread),0,99);
   const stability=clamp(Math.round(98-spread*2.5-(1-closeness)*20),0,99);
-  return {obj,d,power,id,stability,pinpoint:d<=.035 && power>0,
+  return {obj,d,power,id,stability,mode,focus:Math.round(100*clamp(1-d/.07,0,1)),quiet:!!options.ironQuiet&&features.ironQuiet&&id<35&&stability>=35&&power>=20,pinpoint:d<=.035 && power>0,
     tone:id<35?'low':id<65?'mid':'high',
     depth:obj.depth,interference:interference>.3};
 }
-export function sampleSignal(objects,x,y,level=1) {
+export function sampleSignal(objects,x,y,level=1,options={}) {
   let obj=null,d=Infinity;
   for(const o of objects){if(o.dug)continue;const n=distanceTo(o,x,y);if(n<d){obj=o;d=n;}}
-  if(!obj)return {obj:null,d:Infinity,power:0,id:null,stability:0,pinpoint:false,tone:'none',interference:false};
+  if(!obj)return {obj:null,d:Infinity,power:0,id:null,stability:0,mode:options.mode||'search',focus:0,quiet:false,pinpoint:false,tone:'none',interference:false};
   let interference=0;
-  for(const other of objects){if(other===obj||other.dug)continue;const p=readTarget(other,x,y,level).power;if(p>15)interference=Math.max(interference,p/100);}
-  return readTarget(obj,x,y,level,interference);
+  for(const other of objects){if(other===obj||other.dug)continue;const p=readTarget(other,x,y,level,0,options).power;if(p>15)interference=Math.max(interference,p/100);}
+  return readTarget(obj,x,y,level,interference,options);
 }
 export function signalDescription(reading,level) {
   if(reading.power<5)return 'Проведи котушкою над ґрунтом';
