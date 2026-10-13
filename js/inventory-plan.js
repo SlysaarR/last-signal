@@ -1,6 +1,6 @@
-import { types } from '../data/items.js?v=0.40.0';
-import { priceFor } from './rules.js?v=0.40.0';
-import { s } from './storage.js?v=0.40.0';
+import { types } from '../data/items.js?v=0.41.0';
+import { priceFor } from './rules.js?v=0.41.0';
+import { s } from './storage.js?v=0.41.0';
 
 // Presentation records retain the original array index and object identity.
 // Sorting these records never reorders the save or redirects an item action.
@@ -24,9 +24,26 @@ export function inventoryEntries(state=s) {
   }
   return entries;
 }
-export function inventorySummary(entries=inventoryEntries()) {
-  const counts={new:0,upgrade:0,duplicate:0,scrap:0,total:entries.length};
-  for(const entry of entries)counts[entry.status]++;
+export function inventorySummary(entries) {
+  const counts={new:0,upgrade:0,duplicate:0,scrap:0,total:0};
+  if(entries){
+    counts.total=entries.length;
+    for(const entry of entries)counts[entry.status]++;
+    return counts;
+  }
+  // Camp needs counts only: retain one condition per catalogue type, with no
+  // price calculations or presentation records for every item in a large stash.
+  const bestHeld=new Map();
+  for(const list of [s.bag,s.stash])for(const item of list){
+    counts.total++;
+    if(types[item.type].kind==='trash'){counts.scrap++;continue;}
+    counts.duplicate++;
+    if(!bestHeld.has(item.type)||item.condition>bestHeld.get(item.type))bestHeld.set(item.type,item.condition);
+  }
+  for(const [type,condition] of bestHeld){
+    if(s.best[type]===undefined){counts.new++;counts.duplicate--;}
+    else if(condition>s.best[type]){counts.upgrade++;counts.duplicate--;}
+  }
   return counts;
 }
 export function sortedInventory(entries,sort='album',filter='all') {

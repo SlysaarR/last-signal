@@ -1,13 +1,14 @@
-import { recordFind } from './progression.js?v=0.40.0';
-import { setupInspection, clearInspection } from './coin-flip.js?v=0.40.0';
+import { recordFind } from './progression.js?v=0.41.0';
+import { orderReady } from './orders.js?v=0.41.0';
+import { setupInspection, clearInspection } from './coin-flip.js?v=0.41.0';
 // Revealed-find card and the take/swap/leave decision.
-import { foods, rarities } from '../data/balance.js?v=0.40.0';
-import { types } from '../data/items.js?v=0.40.0';
-import { $ } from './dom.js?v=0.40.0';
-import { itemLabel } from './inventory.js?v=0.40.0';
-import { bagCapacity, bagUsed, conditionLabel, priceFor } from './rules.js?v=0.40.0';
-import { s, save } from './storage.js?v=0.40.0';
-import { render } from './ui.js?v=0.40.0';
+import { foods, rarities } from '../data/balance.js?v=0.41.0';
+import { types } from '../data/items.js?v=0.41.0';
+import { $ } from './dom.js?v=0.41.0';
+import { itemLabel } from './inventory.js?v=0.41.0';
+import { bagCapacity, bagUsed, conditionLabel, priceFor } from './rules.js?v=0.41.0';
+import { s, save } from './storage.js?v=0.41.0';
+import { render } from './ui.js?v=0.41.0';
 export function openPacking() {
   if (!s.pending) return;
   const item = s.pending,
@@ -43,13 +44,14 @@ export function resolvePacking(action, index) {
     s.food[index]--;
     s.bag.push(item);
   } else if (action !== 'leave') return;
-  recordFind(item, action !== 'leave');
+  const orderAdvanced=recordFind(item, action !== 'leave');
   s.pending = null;
   s.found = (s.found || 0) + 1;
   save();
   $('packDialog').close();
   render();
   $('log').textContent = action === 'leave' ? 'Знахідку залишено на ділянці.' : types[item.type].name + ' у рюкзаку. Продати чи додати в альбом можна вдома.';
+  if(orderAdvanced)$('log').textContent+=orderReady()?' Замовлення виконано — нагорода чекає в таборі.':' +1 до польового замовлення.';
 }
 export function initPacking() {
   $('packDialog').addEventListener('close',()=>clearInspection($('packArt')));

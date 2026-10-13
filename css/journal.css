@@ -11,3 +11,16 @@
 .goal-status{display:block;font-size:11px;line-height:1.5;color:#a7bb98;padding:4px 0}
 .goal-card.ready .goal-status,#goalSummary{color:#d1e2aa}
 #goalSummary:focus{outline:none}
+
+.camp-order{padding:18px;margin:0 0 18px;border:1px solid #61754b;border-radius:16px;background:#233322}
+.camp-order h3{margin:10px 0;color:#e5edd4;font-size:19px}
+.camp-order p,.field-order{font-size:12px;line-height:1.7;color:#c3d3b0}
+.camp-order button,.field-order button,.order-card button{min-height:44px}
+.camp-order button{width:100%;white-space:normal}
+.field-order{padding:14px;border:1px solid #485e3b;border-radius:12px;margin-top:12px;background:#1c2e23}
+.field-order span{display:block}.field-order button{font-size:12px;margin-top:5px;white-space:normal}
+.order-need>span{display:block;font-size:11px;color:#c6d5b5;margin:0 0 7px;line-height:1.5}
+.order-card .goal-meter{margin-bottom:15px}.order-card button{margin-top:auto}
+#orderCards>.order-card:only-child{grid-column:1/-1}
+#orderNotice{font-size:12px;line-height:1.6;color:#d8e7b2}
+#orderSummary:focus{outline:2px solid #bcd393;outline-offset:4px}

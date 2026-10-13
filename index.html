@@ -13,8 +13,8 @@
     <link rel="stylesheet" href="./css/camp.css?v=0.40.0">
     <link rel="stylesheet" href="./css/backup.css?v=0.40.0">
     <link rel="stylesheet" href="./css/coin-art.css?v=0.40.0">
-    <link rel="stylesheet" href="./css/journal.css?v=0.40.0">
-    <script type="module" src="./js/main.js?v=0.40.0">
+    <link rel="stylesheet" href="./css/journal.css?v=0.41.0">
+    <script type="module" src="./js/main.js?v=0.41.0">
     </script>
   </head>
   <body>
@@ -83,6 +83,7 @@
         <div class="camp-heading"><div class="eyebrow">ДІМ / ПІДГОТОВКА</div><h2>Твій табір</h2><p id="campStatus"></p></div>
         <div id="campLoot" class="camp-loot" hidden><h3>Розбери знахідки</h3><p id="campLootSummary"></p><button class="secondary" data-open="inventory">До рюкзака й сховища →</button></div>
         <div class="expedition-banner"><div class="eyebrow">ПОЛЬОВИЙ ЩОДЕННИК</div><h3>Кожен виїзд має свою історію</h3><p>8 місцевостей · 4 напрямки · 12 цілей</p><button class="secondary" data-open="journal">Відкрити щоденник →</button><small id="journalBadge"></small></div>
+        <div class="camp-order"><div class="eyebrow">МЕТА НА ВИЇЗД</div><h3>Польові замовлення</h3><p id="campOrderSummary"></p><button class="secondary" data-open="journal">До замовлень →</button></div>
         <div class="camp-ready">
           <div class="camp-energy"><span>ЕНЕРГІЯ</span><strong id="campEnergy"></strong></div>
           <progress id="campEnergyBar" aria-label="Запас енергії" value="0" max="100"></progress>
@@ -110,6 +111,12 @@
       <section id="journal" hidden>
         <div class="journal-heading"><div class="eyebrow">ЗАВДАННЯ / СТАТИСТИКА</div><h2>Польовий щоденник</h2></div>
         <p id="journalNotice" role="status" aria-live="polite"></p>
+        <h2>Польові замовлення</h2>
+        <p class="camp-note">Одне активне замовлення, без терміну виконання. Зараховуються лише нові знахідки, забрані в рюкзак після прийняття. Їх можна зберегти, додати в альбом або продати — прогрес залишиться. Нагороду забирай у таборі.</p>
+        <p id="orderSummary" class="camp-note" tabindex="-1"></p>
+        <p id="orderNotice" role="status" aria-live="polite"></p>
+        <div id="orderCards" class="goal-grid"></div>
+        <p id="orderCompleted" class="camp-note"></p>
         <h2>Цілі колекціонера</h2>
         <p id="goalSummary" class="camp-note" tabindex="-1"></p>
         <div id="goalCards" class="goal-grid"></div>
@@ -210,9 +217,10 @@
         <div class="search-status">
           <p class="sub" id="fieldBag">
           </p>
-          <span class="build-tag">v0.40.0</span>
+          <span class="build-tag">v0.41.0</span>
         </div>
         <div class="log" id="log" aria-live="polite">Обстежуй ділянку — кількість сигналів невідома. Шукай найчіткіший сигнал.</div>
+        <div id="fieldOrder" class="field-order" hidden><span id="fieldOrderText"></span><button class="quiet" data-open="journal">Деталі замовлення →</button></div>
       </section>
       <section id="gear" hidden>
         <div class="eyebrow">ТАБІР / СПОРЯДЖЕННЯ</div>
@@ -281,7 +289,7 @@
           </div>
           <p class="sub" id="catalogNote">Натисни монету, щоб оглянути обидва боки та гурт. Рівні рідкості та ціни адаптовано для гри.</p>
         </section>
-        <footer>ПРОТОТИП 0.40.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
+        <footer>ПРОТОТИП 0.41.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
       </main>
       <dialog id="backupDialog" aria-labelledby="backupTitle">
         <h2 id="backupTitle">Відновити прогрес?</h2>
