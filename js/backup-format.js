@@ -1,7 +1,7 @@
-import { routes, validProgress } from '../data/expeditions.js?v=0.30.0';
+import { routes, validProgress } from '../data/expeditions.js?v=0.31.0';
 // Strict validation for portable backups. Reading a file never changes game state.
-import { types } from '../data/items.js?v=0.30.0';
-import { locations } from '../data/locations.js?v=0.30.0';
+import { types } from '../data/items.js?v=0.31.0';
+import { locations } from '../data/locations.js?v=0.31.0';
 export const MAX_BACKUP_SIZE = 4 * 1024 * 1024;
 const object = v => v !== null && typeof v === 'object' && !Array.isArray(v);
 const number = (v, min = 0, max = Number.MAX_SAFE_INTEGER) => typeof v === 'number' && Number.isFinite(v) && v >= min && v <= max;
@@ -24,6 +24,7 @@ export function validateBackupState(s) {
   if (s.bag.length + s.food.reduce((a,b) => a+b, 0) > 8 + Math.floor((s.backpack - 1) * 32 / 99)) fail();
   if (!array(s.objects, v => item(v) && point(v) && integer(v.depth, 0, 2) && typeof v.dug === 'boolean', 100) || !array(s.holes, point) || !array(s.survey, n => integer(n, 0, 319), 320)) fail();
   if (s.pending != null && (!item(s.pending) || !number(s.pending.spent, 0, 200) || (s.pending.revealed !== undefined && typeof s.pending.revealed !== 'boolean') || s.atCamp)) fail();
+  if (s.pending?.cleanedCells !== undefined && (!array(s.pending.cleanedCells, n => integer(n, 0, 255), 256) || new Set(s.pending.cleanedCells).size !== s.pending.cleanedCells.length)) fail();
   if (s.lastTrip != null && (!object(s.lastTrip) || !['found','brought','value','travel','food'].every(k => number(s.lastTrip[k])))) fail();
   if(s.progress !== undefined && !validProgress(s.progress,locations.length)) fail();
   if(s.route !== undefined && !routes.some(r=>r.id===s.route)) fail();
@@ -33,7 +34,7 @@ export function createBackup(state, createdAt = new Date().toISOString()) {
   state = JSON.parse(JSON.stringify(state));
   for (const key of ['earned', 'found']) if (state[key] === undefined) state[key] = 0;
   validateBackupState(state);
-  const text = JSON.stringify({format:'last-signal-backup',backupVersion:1,saveVersion:1,gameVersion:'0.30.0',createdAt,state});
+  const text = JSON.stringify({format:'last-signal-backup',backupVersion:1,saveVersion:1,gameVersion:'0.31.0',createdAt,state});
   if (text.length > MAX_BACKUP_SIZE) throw new Error('Прогрес завеликий для цього формату копії.');
   return text;
 }

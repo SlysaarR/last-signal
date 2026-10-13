@@ -1,18 +1,18 @@
-import { renderJournal } from './journal.js?v=0.30.0';
-import { conditions } from '../data/expeditions.js?v=0.30.0';
+import { renderJournal } from './journal.js?v=0.31.0';
+import { conditions } from '../data/expeditions.js?v=0.31.0';
 // Shared navigation, detector readout and quick sheets. Rendering functions never award items.
-import { renderCamp } from './camp.js?v=0.30.0';
-import { foods } from '../data/balance.js?v=0.30.0';
-import { types } from '../data/items.js?v=0.30.0';
-import { renderCollection } from './collection.js?v=0.30.0';
-import { $ } from './dom.js?v=0.30.0';
-import { draw } from './graphics/field.js?v=0.30.0';
-import { renderInventory } from './inventory.js?v=0.30.0';
-import { canLeave, emergencyAllowed, foodAmount, foodAvailable, foodFits, maxEnergy, minDig, travelCost } from './rules.js?v=0.30.0';
-import { digInfo, signal } from './search.js?v=0.30.0';
-import { eatFood, renderShop } from './shop.js?v=0.30.0';
-import { s } from './storage.js?v=0.30.0';
-import { currentLocation } from './world.js?v=0.30.0';
+import { renderCamp } from './camp.js?v=0.31.0';
+import { foods } from '../data/balance.js?v=0.31.0';
+import { types } from '../data/items.js?v=0.31.0';
+import { renderCollection } from './collection.js?v=0.31.0';
+import { $ } from './dom.js?v=0.31.0';
+import { draw } from './graphics/field.js?v=0.31.0';
+import { renderInventory } from './inventory.js?v=0.31.0';
+import { canLeave, emergencyAllowed, foodAmount, foodAvailable, foodFits, maxEnergy, minDig, travelCost } from './rules.js?v=0.31.0';
+import { digInfo, signal } from './search.js?v=0.31.0';
+import { eatFood, renderShop } from './shop.js?v=0.31.0';
+import { s } from './storage.js?v=0.31.0';
+import { currentLocation } from './world.js?v=0.31.0';
 export function renderFieldChrome() {
   const choices = document.getElementById('quickFoodChoices');
   if (!choices) return;
@@ -47,7 +47,7 @@ export function renderFieldChrome() {
   });
 }
 export function busy() {
-  return !!s.pending || $('modal').open || $('excavate').open || $('packDialog').open || $('tripMenu').open || $('quickFood').open;
+  return !!s.pending || ['modal','excavate','packDialog','tripMenu','quickFood','coinDetail','backupDialog'].some(id => $(id).open);
 }
 export function showTab(tab) {
   if (tab === 'search' && s.atCamp) tab = 'camp';
@@ -68,27 +68,31 @@ export function render() {
   $('finish').disabled = !canLeave();
   $('finish').textContent = emergencyAllowed() ? 'Аварійний виїзд · безкоштовно' : 'Нова ділянка · '+travelCost()+' купонів';
   $('tripGate').textContent = canLeave() ? 'Залишену ділянку повернути не можна.' : foodAvailable() ? 'Бракує '+travelCost()+' купонів на дорогу. Можна продовжити пошук або повернутися додому.' : 'Бракує '+travelCost()+' купонів. Повернення додому безкоштовне.';
-  const n = signal();
   $('energy').textContent = s.energy + ' / ' + maxEnergy();
   $('coins').textContent = s.coins;
   $('day').textContent = String(s.day).padStart(2, '0');
-  $('strength').textContent = String(n.power).padStart(2, '0');
-  $('metal').hidden = s.level < 10;
-  $('metal').textContent = n.obj && n.power > 50 ? types[n.obj.type].metal === 'iron' ? 'Чорний метал' : 'Кольоровий метал' : 'Метал: наблизься до сигналу';
-  [...$('bars').children].forEach((b, i) => b.style.background = i < n.power / 5 ? n.power > 80 ? '#d2e58e' : '#81ad84' : '#2b403a');
-  const info = digInfo();
-  $('dig').textContent = s.level >= 50 ? 'Копати · до ' + info.cost + ' сил' : 'Копати';
-  $('hint').textContent = s.energy < minDig() ? 'Сили вичерпано. Час завершити виїзд.' : n.power > 84 ? 'Чіткий сигнал. Копати чи шукати далі?' : n.power > 35 ? 'Метал поруч. Шукай пік сигналу.' : 'Веди металошукачем і слухай сигнал.';
-  if (s.energy >= minDig() && s.energy < info.cost) $('hint').textContent = 'На цю розкопку бракує енергії. Перевір їжу або пошукай інший сигнал.';
-  $('dig').disabled = s.energy < info.cost || !!s.pending;
-  if (s.level >= 25 && n.obj && n.power > 35) $('hint').textContent += ' ' + (s.level >= 50 ? info.name : ['Неглибокий сигнал.', 'Середня глибина.', 'Глибокий сигнал.'][n.obj.depth]);
+  renderDetector();
   renderShop();
   renderInventory();
   renderCamp();
   renderJournal();
   renderCollection();
   renderFieldChrome();
-  draw();
+  if (!$('search').hidden) draw();
+}
+// Moving the coil must not rebuild inventory cards, shop controls or album art.
+export function renderDetector() {
+  const n = signal();
+  $('strength').textContent = String(n.power).padStart(2, '0');
+  $('metal').hidden = s.level < 10;
+  $('metal').textContent = n.obj && n.power > 50 ? types[n.obj.type].metal === 'iron' ? 'Чорний метал' : 'Кольоровий метал' : 'Метал: наблизься до сигналу';
+  [...$('bars').children].forEach((b, i) => b.style.background = i < n.power / 5 ? n.d <= .035 ? '#d2e58e' : '#81ad84' : '#2b403a');
+  const info = digInfo();
+  $('dig').textContent = s.level >= 50 ? 'Копати · ' + info.cost + ' сил' : 'Копати';
+  $('hint').textContent = s.energy < minDig() ? 'Сили вичерпано. Час завершити виїзд.' : n.d <= .035 ? 'Пік сигналу. Можна копати.' : n.power > 35 ? 'Метал поруч. Шукай пік сигналу.' : 'Веди металошукачем і слухай сигнал.';
+  if (s.energy >= minDig() && s.energy < info.cost) $('hint').textContent = 'На цю розкопку бракує енергії. Перевір їжу або пошукай інший сигнал.';
+  $('dig').disabled = s.energy < info.cost || !!s.pending;
+  if (s.level >= 25 && n.obj && n.power > 35) $('hint').textContent += ' ' + (s.level >= 50 ? info.name : ['Неглибокий сигнал.', 'Середня глибина.', 'Глибокий сигнал.'][n.obj.depth]);
 }
 export function initUI() {
   document.querySelectorAll('[data-open]').forEach(b => b.onclick = () => showTab(b.dataset.open));

@@ -1,8 +1,8 @@
-import { chosenRoute, conditions } from '../data/expeditions.js?v=0.30.0';
+import { chosenRoute, conditions } from '../data/expeditions.js?v=0.31.0';
 // rules responsibilities for Last Signal.
-import { foods, rarities } from '../data/balance.js?v=0.30.0';
-import { types } from '../data/items.js?v=0.30.0';
-import { s } from './storage.js?v=0.30.0';
+import { foods, rarities } from '../data/balance.js?v=0.31.0';
+import { types } from '../data/items.js?v=0.31.0';
+import { s } from './storage.js?v=0.31.0';
 export function rollCondition() {
   return Math.floor(Math.random() * 101);
 }

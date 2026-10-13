@@ -137,8 +137,10 @@ dialog {
   border-color:#596b49;
   box-shadow:0 24px 90px #0009;
   max-height:88dvh;
-  overflow:auto
+  overflow:auto;
+  overscroll-behavior:contain
 }
+#saveNote { flex:none; font-size:12px; line-height:1.5; overflow-wrap:anywhere }
 dialog::backdrop {
   background:#050c09b8;
   backdrop-filter:blur(5px)

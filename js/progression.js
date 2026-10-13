@@ -1,6 +1,6 @@
-import { goals, emptyProgress } from '../data/expeditions.js?v=0.30.0';
-import { types } from '../data/items.js?v=0.30.0';
-import { s, save } from './storage.js?v=0.30.0';
+import { goals, emptyProgress } from '../data/expeditions.js?v=0.31.0';
+import { types } from '../data/items.js?v=0.31.0';
+import { s, save } from './storage.js?v=0.31.0';
 export function progress(){return s.progress||emptyProgress();}
 function writable(){return s.progress||(s.progress=emptyProgress());}
 export function goalValue(goal){

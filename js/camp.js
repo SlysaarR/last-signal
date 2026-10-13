@@ -1,16 +1,16 @@
-import { chosenRoute, conditions } from '../data/expeditions.js?v=0.30.0';
-import { startLeg,endLeg } from './progression.js?v=0.30.0';
+import { chosenRoute, conditions } from '../data/expeditions.js?v=0.31.0';
+import { startLeg,endLeg } from './progression.js?v=0.31.0';
 // camp responsibilities for Last Signal.
-import { modal } from './dialogs.js?v=0.30.0';
-import { $ } from './dom.js?v=0.30.0';
-import { bagCapacity, bagUsed, canLeave, emergencyAllowed, maxEnergy, priceFor, travelCost } from './rules.js?v=0.30.0';
-import { s, save } from './storage.js?v=0.30.0';
-import { busy, render, showTab } from './ui.js?v=0.30.0';
-import { currentLocation, generate, rollLocation } from './world.js?v=0.30.0';
+import { modal } from './dialogs.js?v=0.31.0';
+import { $ } from './dom.js?v=0.31.0';
+import { bagCapacity, bagUsed, canLeave, emergencyAllowed, maxEnergy, priceFor, travelCost } from './rules.js?v=0.31.0';
+import { s, save } from './storage.js?v=0.31.0';
+import { busy, render, showTab } from './ui.js?v=0.31.0';
+import { currentLocation, generate, rollLocation } from './world.js?v=0.31.0';
 export function returnHome() {
   if (s.atCamp || s.pending) return;
   s.lastTrip = {
-    found: s.found,
+    found: s.found || 0,
     brought: s.bag.length,
     value: s.bag.reduce((sum, item) => sum + priceFor(item.type, item.condition), 0),
     travel: s.travelSpent,
@@ -78,7 +78,7 @@ export function renderCamp() {
   $('startTrip').textContent = s.coins < 25 ? 'На узбіччя · безкоштовно' : 'Вирушити · '+travelCost()+' купонів';
   $('departureNote').textContent = s.coins < 25 ? 'Коли купонів менше 25, доступне бідне узбіччя. Дорога не відновлює енергію.' : (canLeave() ? chosenRoute(s).name + '. Після оплати залишиться ' + (s.coins - travelCost()) + ' купонів.' : 'Бракує купонів. Обери дешевший напрямок або продай знахідки.') + ' Дорога не відновлює енергію.';
   const trip = s.lastTrip;
-  $('tripSummary').innerHTML = trip ? `<div class="trip-grid"><div><span>Знайдено</span><strong>${trip.found}</strong></div><div><span>Принесено предметів</span><strong>${trip.brought}</strong></div><div><span>Оцінка здобичі</span><strong>${trip.value}<small> купонів</small></strong></div><div><span>Витрати на виїзд</span><strong>${trip.travel + trip.food}<small> купонів</small></strong></div></div><p class="camp-note">Дорога: ${trip.travel} · з’їдена їжа: ${trip.food} купонів. Оцінка здобичі — вартість на момент повернення, а не отриманий дохід. Для продажу відкрий рюкзак.</p>` : '<p class="camp-note">Тут з’являться знахідки й витрати після першого повернення з поля.</p>';
+  $('tripSummary').innerHTML = trip ? `<div class="trip-grid"><div><span>Оглянуто за виїзд</span><strong>${trip.found}</strong></div><div><span>Предметів у рюкзаку</span><strong>${trip.brought}</strong></div><div><span>Вартість рюкзака</span><strong>${trip.value}<small> купонів</small></strong></div><div><span>Витрати на виїзд</span><strong>${trip.travel + trip.food}<small> купонів</small></strong></div></div><p class="camp-note">Дорога: ${trip.travel} · з’їдена їжа: ${trip.food} купонів. Вартість рюкзака включає всі принесені предмети, зокрема взяті з дому. Купони нараховуються після продажу.</p>` : '<p class="camp-note">Тут з’являться знахідки й витрати після першого повернення з поля.</p>';
 }
 export function confirmDeparture() {
   if (!canLeave() || busy()) return;

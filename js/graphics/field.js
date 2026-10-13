@@ -1,8 +1,8 @@
 // field responsibilities for Last Signal.
-import { $ } from '../dom.js?v=0.30.0';
-import { signal } from '../search.js?v=0.30.0';
-import { s } from '../storage.js?v=0.30.0';
-import { currentLocation } from '../world.js?v=0.30.0';
+import { $ } from '../dom.js?v=0.31.0';
+import { signal } from '../search.js?v=0.31.0';
+import { s } from '../storage.js?v=0.31.0';
+import { currentLocation } from '../world.js?v=0.31.0';
 export const canvas = $('field'),
   ctx = canvas.getContext('2d');
 export function paintTerrain(ctx) {
@@ -220,7 +220,7 @@ export function draw() {
   ctx.ellipse(0, 0, 45, 32, 0, 0, Math.PI * 2);
   ctx.stroke();
   ctx.lineWidth = 3;
-  ctx.strokeStyle = n.power > 84 ? '#e2f3b0' : '#b8c6a1';
+  ctx.strokeStyle = n.d <= .035 ? '#e2f3b0' : '#b8c6a1';
   ctx.beginPath();
   ctx.ellipse(0, 0, 47, 34, 0, 0, Math.PI * 2);
   ctx.stroke();
@@ -235,7 +235,7 @@ export function draw() {
   ctx.lineWidth = 1;
   ctx.strokeStyle = '#819373';
   ctx.stroke();
-  ctx.fillStyle = n.power > 84 ? '#e4f6a7' : '#bdcf9c';
+  ctx.fillStyle = n.d <= .035 ? '#e4f6a7' : '#bdcf9c';
   ctx.beginPath();
   ctx.arc(0, 0, 4, 0, Math.PI * 2);
   ctx.fill();

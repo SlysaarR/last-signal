@@ -1,11 +1,11 @@
-import { setupCoinFlip } from './coin-flip.js?v=0.30.0';
-import { canFlipCoin } from './graphics/ukrainian-coins.js?v=0.30.0';
+import { setupCoinFlip } from './coin-flip.js?v=0.31.0';
+import { canFlipCoin } from './graphics/ukrainian-coins.js?v=0.31.0';
 // Soil canvas, finger cleaning, dust and reveal progress.
-import { types } from '../data/items.js?v=0.30.0';
-import { $ } from './dom.js?v=0.30.0';
-import { drawArtifact, seededArt } from './graphics/artifacts.js?v=0.30.0';
-import { openPacking } from './packing.js?v=0.30.0';
-import { s, save } from './storage.js?v=0.30.0';
+import { types } from '../data/items.js?v=0.31.0';
+import { $ } from './dom.js?v=0.31.0';
+import { drawArtifact, seededArt } from './graphics/artifacts.js?v=0.31.0';
+import { openPacking } from './packing.js?v=0.31.0';
+import { s, save } from './storage.js?v=0.31.0';
 export const soil = $('soil'),
   dirt = soil.getContext('2d'),
   art = $('artifact').getContext('2d');
@@ -13,6 +13,7 @@ export let swept = new Set(),
   brushDown = false,
   lastBrush = null,
   phaseDone = false;
+let brushPointer = null;
 export function paintSoil() {
   dirt.globalCompositeOperation = 'source-over';
   dirt.clearRect(0, 0, 600, 500);
@@ -100,11 +101,17 @@ export function openExcavation() {
   if (!s.pending) return;
   $('excFlip').hidden = true;
   $('artifact').onclick = null;
+  $('artifact').onkeydown = null;
+  $('artifact').tabIndex = -1;
+  $('artifact').setAttribute('role', 'img');
+  $('artifact').setAttribute('aria-label', 'Предмет під шаром ґрунту');
+  soil.coinFlip = null;
   soil.onclick = null;
   drawArtifact(s.pending.type);
-  swept = new Set();
+  swept = new Set(s.pending.cleanedCells || []);
   phaseDone = false;
   brushDown = false;
+  brushPointer = null;
   lastBrush = null;
   $('excavate').querySelector('.excavation').classList.remove('done');
   $('excPercent').textContent = '0%';
@@ -116,6 +123,11 @@ export function openExcavation() {
   $('excNext').disabled = true;
   $('excNext').textContent = 'Спочатку прибери землю';
   paintSoil();
+  // Restore the cleared central area; the same cells drive the progress meter.
+  for (const cell of swept) {
+    dirt.clearRect(172 + (cell % 16) * 16, 122 + Math.floor(cell / 16) * 16, 16, 16);
+  }
+  updateCleaning();
   if (!$('excavate').open) $('excavate').showModal();
 }
 export function brushAt(x, y) {
@@ -135,6 +147,10 @@ export function brushAt(x, y) {
       gy = 130 + row * 16;
     if (Math.hypot(gx - x, gy - y) <= radius - 7) swept.add(row * 16 + col);
   }
+  s.pending.cleanedCells = [...swept];
+  updateCleaning();
+}
+function updateCleaning() {
   const progress = Math.min(100, Math.round(swept.size / 256 / .78 * 100));
   $('excProgress').value = progress;
   $('excPercent').textContent = progress + '%';
@@ -153,11 +169,13 @@ export function brushAt(x, y) {
     soil.onpointerdown = null;
     if (canFlipCoin(types[s.pending.type])) $('excHint').textContent = 'Торкнись монети або кнопки, щоб перевернути її.';
     soil.coinFlip = flip;
+    save();
   }
 }
 export function brushMove(e) {
-  const r = soil.getBoundingClientRect(),
-    p = {
+  const r = soil.getBoundingClientRect();
+  if (!r.width || !r.height) return;
+  const p = {
       x: (e.clientX - r.left) * 600 / r.width,
       y: (e.clientY - r.top) * 500 / r.height
     };
@@ -169,6 +187,7 @@ export function brushMove(e) {
 export function collectPending() {
   if (!s.pending) return;
   s.pending.revealed = true;
+  delete s.pending.cleanedCells;
   save();
   $('excavate').close();
   openPacking();
@@ -178,16 +197,21 @@ export function initExcavation() {
     if (phaseDone) { soil.coinFlip?.(); return; }
     if (brushDown) return;
     brushDown = true;
+    brushPointer = e.pointerId;
     soil.setPointerCapture(e.pointerId);
     lastBrush = null;
     brushMove(e);
   });
   soil.addEventListener('pointermove', e => {
-    if (brushDown) brushMove(e);
+    if (brushDown && brushPointer === e.pointerId) brushMove(e);
   });
-  for (const event of ['pointerup', 'pointercancel', 'lostpointercapture']) soil.addEventListener(event, () => {
+  for (const event of ['pointerup', 'pointercancel', 'lostpointercapture']) soil.addEventListener(event, e => {
+    if (brushPointer !== e.pointerId) return;
+    const wasCleaning = brushDown;
     brushDown = false;
+    brushPointer = null;
     lastBrush = null;
+    if (wasCleaning) save();
   });
   $('excNext').onclick = () => {
     if (phaseDone && s.pending) collectPending();

@@ -1,13 +1,23 @@
-import { recordDig } from './progression.js?v=0.30.0';
+import { recordDig } from './progression.js?v=0.31.0';
 // search responsibilities for Last Signal.
-import { depthLevels } from '../data/balance.js?v=0.30.0';
-import { beep } from './audio.js?v=0.30.0';
-import { $ } from './dom.js?v=0.30.0';
-import { openExcavation } from './excavation.js?v=0.30.0';
-import { canvas } from './graphics/field.js?v=0.30.0';
-import { digCost, minDig } from './rules.js?v=0.30.0';
-import { s, save } from './storage.js?v=0.30.0';
-import { busy, render } from './ui.js?v=0.30.0';
+import { depthLevels } from '../data/balance.js?v=0.31.0';
+import { beep } from './audio.js?v=0.31.0';
+import { $ } from './dom.js?v=0.31.0';
+import { openExcavation } from './excavation.js?v=0.31.0';
+import { canvas, draw } from './graphics/field.js?v=0.31.0';
+import { digCost, minDig } from './rules.js?v=0.31.0';
+import { s, save } from './storage.js?v=0.31.0';
+import { busy, render, renderDetector } from './ui.js?v=0.31.0';
+let moveFrame = 0, pointerId = null;
+function renderMovement() {
+  if (moveFrame) return;
+  moveFrame = requestAnimationFrame(() => {
+    moveFrame = 0;
+    if (s.atCamp || $('search').hidden || busy()) return;
+    renderDetector();
+    draw();
+  });
+}
 export function digInfo() {
   const n = signal(),
     info = n.obj && n.power > 35 ? depthLevels[n.obj.depth] : {
@@ -45,15 +55,16 @@ export function signal() {
 export function move(e) {
   if (s.atCamp || busy()) return;
   const r = canvas.getBoundingClientRect();
+  if (!r.width || !r.height) return;
   s.x = Math.max(.02, Math.min(.98, (e.clientX - r.left) / r.width));
   s.y = Math.max(.02, Math.min(.98, (e.clientY - r.top) / r.height));
-  render();
+  renderMovement();
   beep(signal().power);
 }
 export let dragging = false;
 export function dig() {
   const info = digInfo();
-  if (s.atCamp || s.energy < info.cost || $('modal').open || $('excavate').open || s.pending) return;
+  if (s.atCamp || s.energy < info.cost || busy()) return;
   const n = nearest(),
     spent = info.cost;
   recordDig(!!n.obj && n.d <= .035);
@@ -81,19 +92,19 @@ export function dig() {
 export function initSearch() {
   for (let i = 0; i < 20; i++) $('bars').appendChild(document.createElement('i'));
   canvas.addEventListener('pointerdown', e => {
+    if (s.atCamp || busy() || dragging || (e.button !== undefined && e.button !== 0)) return;
     dragging = true;
+    pointerId = e.pointerId;
     canvas.setPointerCapture(e.pointerId);
     move(e);
   });
   canvas.addEventListener('pointermove', e => {
-    if (dragging || e.pointerType === 'mouse') move(e);
+    if ((dragging && e.pointerId === pointerId) || (!dragging && e.pointerType === 'mouse')) move(e);
   });
-  canvas.addEventListener('pointerup', () => {
+  for (const event of ['pointerup', 'pointercancel', 'lostpointercapture']) canvas.addEventListener(event, e => {
+    if (e.pointerId !== pointerId) return;
     dragging = false;
-    save();
-  });
-  canvas.addEventListener('pointercancel', () => {
-    dragging = false;
+    pointerId = null;
     save();
   });
   canvas.addEventListener('keydown', e => {
@@ -106,7 +117,8 @@ export function initSearch() {
       }
       s.x = Math.max(.02, Math.min(.98, s.x + (e.key === 'ArrowRight' ? .015 : e.key === 'ArrowLeft' ? -.015 : 0)));
       s.y = Math.max(.02, Math.min(.98, s.y + (e.key === 'ArrowDown' ? .015 : e.key === 'ArrowUp' ? -.015 : 0)));
-      render();
+      renderDetector();
+      draw();
       beep(signal().power);
     }
   });

@@ -1,12 +1,12 @@
-import { setupCoinFlip } from './coin-flip.js?v=0.30.0';
-import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.30.0';
-import { drawArtifact } from './graphics/artifacts.js?v=0.30.0';
+import { setupCoinFlip } from './coin-flip.js?v=0.31.0';
+import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.31.0';
+import { drawArtifact } from './graphics/artifacts.js?v=0.31.0';
 // collection responsibilities for Last Signal.
-import { rarities } from '../data/balance.js?v=0.30.0';
-import { collectible, types } from '../data/items.js?v=0.30.0';
-import { $ } from './dom.js?v=0.30.0';
-import { priceFor } from './rules.js?v=0.30.0';
-import { s } from './storage.js?v=0.30.0';
+import { rarities } from '../data/balance.js?v=0.31.0';
+import { collectible, types } from '../data/items.js?v=0.31.0';
+import { $ } from './dom.js?v=0.31.0';
+import { priceFor } from './rules.js?v=0.31.0';
+import { s } from './storage.js?v=0.31.0';
 export let collectionCategory = 'coin',
   denomFilter = 'all',
   yearFilter = 'all',
@@ -72,16 +72,19 @@ export function showItem(id) {
   if (t.source) $('detailSource').href = t.source;
   $('detailFlip').hidden = true;
   $('detailArt').onclick = null;
-  $('detailArt').hidden = !isUkrainianCoin(t);
+  $('detailArt').hidden = false;
   $('wearExamples').hidden = !isUkrainianCoin(t);
+  const condition = found ? s.best[id] : 75;
+  drawArtifact(id, $('detailArt').getContext('2d'), condition, true);
+  setupCoinFlip($('detailArt'), $('detailFlip'), id, condition);
   if (isUkrainianCoin(t)) {
     $('detailArt').setAttribute('aria-label', 'Зображення: ' + t.denom);
-    drawArtifact(id, $('detailArt').getContext('2d'), found ? s.best[id] : 75, true);
     const drawExamples = (side=0) => { $('wearExamples').innerHTML = '<p>Порівняння ігрового стану · це зразки, не нові знахідки</p><div class="wear-grid">' + [20,60,95,100].map(c => '<figure>' + coinMarkup(id,c,'coin-thumb',side) + '<figcaption>' + c + ' / 100</figcaption></figure>').join('') + '</div>';
     renderCoinThumbnails(); };
     drawExamples();
     setupCoinFlip($('detailArt'), $('detailFlip'), id, found ? s.best[id] : 75, true, drawExamples);
   }
+  if (!found) $('detailText').textContent += '\n\nЗображення — зразок для огляду, не знайдений предмет.';
   $('coinDetail').showModal();
 }
 export const denominations = [...new Set(collectible.filter(t => t.kind === 'coin').map(t => t.denom))];
