@@ -1,11 +1,12 @@
-import { setupInspection } from './coin-flip.js?v=0.32.0';
-import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.32.0';
+import { artifactMarkup, renderArtifactThumbnails } from './graphics/thumbnails.js?v=0.33.0';
+import { setupInspection } from './coin-flip.js?v=0.33.0';
+import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.33.0';
 // collection responsibilities for Last Signal.
-import { rarities } from '../data/balance.js?v=0.32.0';
-import { collectible, types } from '../data/items.js?v=0.32.0';
-import { $ } from './dom.js?v=0.32.0';
-import { priceFor } from './rules.js?v=0.32.0';
-import { s } from './storage.js?v=0.32.0';
+import { rarities } from '../data/balance.js?v=0.33.0';
+import { collectible, types } from '../data/items.js?v=0.33.0';
+import { $ } from './dom.js?v=0.33.0';
+import { priceFor } from './rules.js?v=0.33.0';
+import { s } from './storage.js?v=0.33.0';
 export let collectionCategory = 'coin',
   denomFilter = 'all',
   yearFilter = 'all',
@@ -43,7 +44,7 @@ export function renderCollection() {
   }).join('');
   const list = categoryItems();
   $('categoryCount').textContent = collectionCategory === 'coin' ? 'Альбом: ' + yearFound.size + ' / ' + yearTotal.size + ' років за номіналами · Показано ' + list.length + ' позицій' : 'Знайдено: ' + list.filter(t => owned.has(t.id)).length + ' / ' + list.length;
-  $('catalogNote').textContent = collectionCategory === 'coin' ? 'Кожен номінал і рік — окрема ціль. Будь-який знайдений різновид зараховує рік; різновиди зберігаються окремо. Натисни монету, щоб відкрити джерело. Ігрові ціни, стан і шанси умовні; малюнки схематичні.' : collectionCategory === 'legacy' ? 'Тут збережено умовні монети з ранніх версій.' : 'У колекції залишається найкращий стан кожного виду.';
+  $('catalogNote').textContent = collectionCategory === 'coin' ? 'Кожен номінал і рік — окрема ціль. Будь-який знайдений різновид зараховує рік; різновиди зберігаються окремо. Натисни монету, щоб оглянути її та порівняти стан. Ігрові ціни, стан і шанси умовні; малюнки схематичні.' : collectionCategory === 'legacy' ? 'Тут збережено умовні монети з ранніх версій.' : 'У колекції залишається найкращий стан кожного виду.';
   let previous = '';
   $('items').innerHTML = list.map(t => {
     const has = owned.has(t.id),
@@ -53,9 +54,9 @@ export function renderCollection() {
       previous = t.denom;
       heading = '<h3 class="album-heading">' + t.denom + '<small>За роками випуску</small></h3>';
     }
-    return heading + `<button class="collect ${has ? 'owned' : 'unfound'}" data-item="${t.id}"><small class="ownership">${has ? '✓ В альбомі' : 'Не знайдено'}</small>${has && isUkrainianCoin(t) ? coinMarkup(t.id, s.best[t.id]) : `<span class="collection-symbol" aria-hidden="true">${has ? t.icon : '○'}</span>`}<b>${t.country ? t.year + ' рік' : t.name}</b>${t.country ? '<small>' + t.denom + '</small>' : ''}${t.variant ? '<small class="coin-variant">' + t.variant + '</small>' : ''}${t.issue === 'set' ? '<small>Наборний випуск</small>' : ''}<small class="rarity" style="color:${r.color}">${r.name}</small><small class="collection-condition">${has ? 'Стан ' + s.best[t.id] + '/100' : 'Вільне місце в альбомі'}</small>${has ? '<small>' + priceFor(t.id, s.best[t.id]) + ' купонів</small>' : ''}</button>`;
+    return heading + `<button class="collect ${has ? 'owned' : 'unfound'}" data-item="${t.id}"><small class="ownership">${has ? '✓ В альбомі' : 'Не знайдено'}</small>${has && isUkrainianCoin(t) ? coinMarkup(t.id, s.best[t.id]) : has ? artifactMarkup(t.id, s.best[t.id]) : '<span class="collection-symbol" aria-hidden="true">○</span>'}<b>${t.country ? t.year + ' рік' : t.name}</b>${t.country ? '<small>' + t.denom + '</small>' : ''}${t.variant ? '<small class="coin-variant">' + t.variant + '</small>' : ''}${t.issue === 'set' ? '<small>Наборний випуск</small>' : ''}<small class="rarity" style="color:${r.color}">${r.name}</small><small class="collection-condition">${has ? 'Стан ' + s.best[t.id] + '/100' : 'Вільне місце в альбомі'}</small>${has ? '<small>' + priceFor(t.id, s.best[t.id]) + ' купонів</small>' : ''}</button>`;
   }).join('') || '<p class="sub">За цими фільтрами позицій немає.</p>';
-  renderCoinThumbnails();
+  renderCoinThumbnails();renderArtifactThumbnails();
 }
 export function showItem(id) {
   const t = types[id];
@@ -76,7 +77,7 @@ export function showItem(id) {
   const slider=$('conditionPreview'), label=$('conditionPreviewValue');
   slider.value=condition;
   $('conditionPreviewReset').textContent=found?'Повернути стан знахідки':'Повернути початковий зразок';
-  const updateLabel=()=>{label.textContent=slider.value+'%';$('conditionPreviewNote').textContent=Number(slider.value)===condition ? (found ? 'Стан твоєї знахідки' : 'Зразок для огляду') : 'Порівняння вигляду · стан знахідки не змінюється';};
+  const updateLabel=()=>{$('conditionPreviewReset').hidden=Number(slider.value)===condition;label.textContent=slider.value+'%';$('conditionPreviewNote').textContent=Number(slider.value)===condition ? (found ? 'Стан твоєї знахідки' : 'Зразок для огляду') : 'Порівняння вигляду · стан знахідки не змінюється';};
   updateLabel();
   slider.oninput=()=>{viewer.setCondition(Number(slider.value));updateLabel();};
   $('conditionPreviewReset').onclick=()=>{slider.value=condition;viewer.setCondition(condition);updateLabel();};

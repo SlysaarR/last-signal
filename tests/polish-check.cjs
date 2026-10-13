@@ -95,10 +95,10 @@ const ns=(run,name)=>run.modules.get(root+'/js/'+name+'.js').namespace;
   for(let id=0;id<catalog.length;id++){
     const t=catalog[id];if(t.kind==='trash')continue;
     collection.showItem(id);assert.equal(canvasArt.hidden,false);
-    assert.equal(button.hidden,false);
+    assert.equal(button.hidden,true);
     canvasArt.onkeydown({key:'ArrowRight',preventDefault(){}});art.flushFrames();
-    assert(Number(canvasArt.dataset.yaw)>0);
-    button.onclick();art.flushFrames();assert.equal(Number(canvasArt.dataset.yaw),0);
+    assert(Number(canvasArt.dataset.yaw)>0);assert.equal(button.hidden,false);
+    button.onclick();art.flushFrames();assert.equal(Number(canvasArt.dataset.yaw),0);assert.equal(button.hidden,true);
     art.elements.get('coinDetail').close();
   }
   assert.equal(JSON.stringify(art.state()),snapshot,'inspection cannot award items or alter saved collection');

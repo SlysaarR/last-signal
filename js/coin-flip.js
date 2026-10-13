@@ -1,5 +1,5 @@
-import { types } from '../data/items.js?v=0.32.0';
-import { createInspectionModel, drawInspection } from './graphics/inspection.js?v=0.32.0';
+import { types } from '../data/items.js?v=0.33.0';
+import { createInspectionModel, drawInspection } from './graphics/inspection.js?v=0.33.0';
 const viewers=new WeakMap();
 export function clearInspection(canvas) {
   viewers.get(canvas)?.dispose();viewers.delete(canvas);
@@ -9,7 +9,7 @@ export function setupInspection(canvas,button,type,condition,studio=true) {
   clearInspection(canvas);
   const item=types[type];let model=createInspectionModel(item,condition),dirty=false;
   let yaw=0,pitch=0,pointer=null,last=null,frame=0,disposed=false;
-  button.hidden=false;button.textContent='↺ Початковий ракурс';
+  button.hidden=true;button.textContent='↺';button.title='Початковий ракурс';
   button.setAttribute('aria-label','Повернути початковий ракурс знахідки');
   canvas.onclick=null;canvas.tabIndex=0;canvas.setAttribute('role','img');
   canvas.style.touchAction='none';canvas.style.cursor='grab';
@@ -18,10 +18,11 @@ export function setupInspection(canvas,button,type,condition,studio=true) {
     frame=0;if(disposed)return;
     if(dirty){model=createInspectionModel(item,condition);dirty=false;}
     drawInspection(canvas.getContext('2d'),model,yaw,pitch,studio,canvas.width,canvas.height);
+    button.hidden=Math.abs(Math.sin(yaw/2))+Math.abs(Math.sin(pitch/2))<.001;
     canvas.dataset.yaw=String(yaw);canvas.dataset.pitch=String(pitch);
   };
   const schedule=()=>{if(!frame)frame=requestAnimationFrame(render);};
-  const reset=()=>{yaw=0;pitch=0;schedule();};
+  const reset=()=>{yaw=0;pitch=0;canvas.focus?.({preventScroll:true});schedule();};
   const end=e=>{
     if(e.pointerId!==pointer)return;
     if(canvas.hasPointerCapture?.(pointer))canvas.releasePointerCapture(pointer);

@@ -18,7 +18,7 @@
 .find-metrics progress { height:5px; margin:6px 0 0 }
 .find-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px }
 .find-actions button { min-height:44px; padding:10px 7px; font-size:12px; line-height:1.35; margin:0 }
-.find-actions button:first-child { grid-column:1/-1; border-color:#718253; color:#d9e6be }
+.find-actions button[data-itemaction="album"],.find-actions button:only-child { grid-column:1/-1; border-color:#718253; color:#d9e6be }
 .empty-state { padding:22px 18px; border:1px dashed #46533d; border-radius:16px; background:#142118; margin:14px 0 }
 .empty-state b { font-size:14px; color:#ccd7ba }
 .empty-state p { font-size:12px; line-height:1.6; color:#9eaf98; margin:8px 0 0 }

@@ -1,6 +1,6 @@
-import { renderMesh } from './inspection-gl.js?v=0.32.0';
-import { paintUkrainianCoin, isUkrainianCoin, coinEdgeType } from './ukrainian-coins.js?v=0.32.0';
-import { conditionProfile, metalPalette, paintWear } from './condition.js?v=0.32.0';
+import { renderMesh } from './inspection-gl.js?v=0.33.0';
+import { paintUkrainianCoin, isUkrainianCoin, coinEdgeType } from './ukrainian-coins.js?v=0.33.0';
+import { conditionProfile, metalPalette, paintWear } from './condition.js?v=0.33.0';
 
 const TAU=Math.PI*2;
 const sub=(a,b)=>a.map((v,i)=>v-b[i]);
@@ -38,8 +38,8 @@ export function createInspectionModel(item, condition) {
   function quad(a,b,c,d,mat=base,uv) {
     tri(a,b,c,mat,uv&&[uv[0],uv[1],uv[2]]);tri(a,c,d,mat,uv&&[uv[0],uv[2],uv[3]]);
   }
-  function disc(radius,depth,front=base,back=base,edge=base,offset=[0,0,0],rotation=0,ripple=0) {
-    const segments=96, transform=p=>rotatePoint(p,0,rotation).map((v,i)=>v+offset[i]);
+  function disc(radius,depth,front=base,back=base,edge=base,offset=[0,0,0],rotation=0,ripple=0,segments=96) {
+    const transform=p=>rotatePoint(p,0,rotation).map((v,i)=>v+offset[i]);
     for(let i=0;i<segments;i++) {
       const a=i/segments*TAU,b=(i+1)/segments*TAU;
       const r1=radius*(1+ripple*Math.cos(a*16)),r2=radius*(1+ripple*Math.cos(b*16));
@@ -54,8 +54,15 @@ export function createInspectionModel(item, condition) {
   }
   function torus(radius,tube,sx=1,sy=1,offset=[0,0,0],tilt=0,mat=base) {
     const segments=radius<.3?24:48,rings=8;
-    const point=(i,j)=>{const a=i/segments*TAU,b=j/rings*TAU;return rotatePoint([(radius+tube*Math.cos(b))*Math.cos(a)*sx,(radius+tube*Math.cos(b))*Math.sin(a)*sy,tube*Math.sin(b)],tilt,0).map((v,k)=>v+offset[k]);};
+    const point=(i,j)=>{const a=i/segments*TAU,b=j/rings*TAU;return rotatePoint([(radius+tube*Math.cos(b))*Math.cos(a)*sx,(radius+tube*Math.cos(b))*Math.sin(a)*sy,tube*Math.sin(b)],0,tilt).map((v,k)=>v+offset[k]);};
     for(let i=0;i<segments;i++)for(let j=0;j<rings;j++)quad(point(i,j),point(i+1,j),point(i+1,j+1),point(i,j+1),mat);
+  }
+  // Flat metal bands with a small bevel; a washer is not a torus.
+  function band(outer,inner,depth,{sx=1,sy=1,bend=()=>0,offset=[0,0,0],pose=[0,0],ripple=0}={}) {
+    const bevel=Math.min(.014,depth/4),segments=72;
+    const section=[[inner+bevel,depth/2],[outer-bevel,depth/2],[outer,depth/2-bevel],[outer,-depth/2+bevel],[outer-bevel,-depth/2],[inner+bevel,-depth/2],[inner,-depth/2+bevel],[inner,depth/2-bevel]];
+    const point=(i,j)=>{const a=i/segments*TAU,[r,z]=section[j%section.length],radius=r+ripple*Math.cos(a*21),x=radius*Math.cos(a)*sx,y=radius*Math.sin(a)*sy;return rotatePoint([x,y,z+bend(x,y)],...pose).map((v,k)=>v+offset[k]);};
+    for(let i=0;i<segments;i++)for(let j=0;j<section.length;j++)quad(point(i,j),point(i,j+1),point(i+1,j+1),point(i+1,j));
   }
   function box(x,y,z,w,h,d) {
     const p=[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]].map(([a,b,c])=>[x+a*w/2,y+b*h/2,z+c*d/2]);
@@ -76,10 +83,29 @@ export function createInspectionModel(item, condition) {
       if(kind==='lettered') {c.fillStyle=p.dark;c.font='bold 40px Georgia';c.textAlign='center';c.fillText('ОДНА · ГРИВНЯ',0,14,244);}
     }));
     disc(1,.13,front,back,edge);
-  } else if(['ring','gemring','bracelet','earring','washer','tab'].includes(shape)) {
-    torus(shape==='tab'?.55:.76,shape==='washer'?.17:.1,shape==='earring'?.73:1,shape==='ring'||shape==='gemring'?1.1:1);
-    if(shape==='gemring'||item.name==='Срібний перстень')gem();
-    if(shape==='tab')box(0,0,0,.88,.14,.13);
+  } else if(shape==='washer') {
+    band(.93,.43,.065,{bend:(x,y)=>.19*x*x+.3*Math.max(0,x-.12)+.025*Math.sin(y*4),pose:[-.18,.3]});
+  } else if(shape==='tab') {
+    band(.62,.4,.055,{sx:.77,sy:1.12});
+    box(0,-.2,0,.85,.16,.055);disc(.085,.07,base,base,base,[0,-.25,.025]);
+  } else if(shape==='cap') {
+    disc(.79,.035,base,base,base,[0,0,.105]);
+    band(.87,.78,.24,{ripple:.025});
+  } else if(['ring','gemring','bracelet','earring'].includes(shape)) {
+    if(shape==='earring') {
+      torus(.73,.048,.72,1);box(0,.73,0,.08,.17,.09);
+      disc(.075,.065,base,base,base,[0,.76,.04]);
+    } else if(shape==='bracelet') {
+      band(.88,.81,.17,{sx:1.12,sy:.8,pose:[.1,.18]});
+      box(.96,0,.02,.1,.23,.2);
+    } else {
+      band(.8,.68,shape==='gemring'?.16:.25,{sy:1.03});
+      if(shape==='gemring')gem();
+      else if(item.name==='Срібний перстень') {
+        const seal=material(metalTexture(item,condition,seed+17,(c,p)=>{c.strokeStyle=p.dark;c.lineWidth=4;c.beginPath();c.moveTo(-45,30);c.lineTo(0,-35);c.lineTo(45,30);c.stroke();}));
+        disc(.23,.12,seal,base,base,[0,.73,.15]);
+      }
+    }
   } else if(shape==='chain'||shape==='wire') {
     if(shape==='chain')for(let i=0;i<7;i++)torus(.18,.045,1.3,.75,[-.96+i*.32,Math.sin(i*.75)*.18,0],i%2?1.05:0);
     else {
@@ -88,17 +114,28 @@ export function createInspectionModel(item, condition) {
       for(let i=0;i<32;i++)for(let j=0;j<8;j++)quad(point(i,j+1),point(i+1,j+1),point(i+1,j),point(i,j));
     }
   } else if(shape==='nail'||shape==='bolt') {
-    box(0,-.05,0,.15,1.65,.15);box(0,.8,0,.55,.12,.36);
-    if(shape==='bolt')for(let i=0;i<9;i++)box(0,-.75+i*.13,0,.21,.035,.21);
+    if(shape==='nail') {
+      disc(.055,1.5,base,base,base,[0,.02,0],Math.PI/2);
+      disc(.26,.065,base,base,base,[0,.78,0],Math.PI/2);
+      for(let i=0;i<12;i++){const a=i/12*TAU,b=(i+1)/12*TAU;tri([.055*Math.cos(a),-.73,.055*Math.sin(a)],[.055*Math.cos(b),-.73,.055*Math.sin(b)],[0,-1,0]);}
+    }else{
+      disc(.115,1.45,base,base,base,[0,-.03,0],Math.PI/2);
+      disc(.34,.24,base,base,base,[0,.77,0],Math.PI/2,0,6);
+      const point=(i,j)=>{const a=i/16*TAU,b=j/4*TAU,r=.12+.018*Math.cos(b);return [r*Math.cos(a),-.75+i/160*1.37+.018*Math.sin(b),r*Math.sin(a)];};
+      for(let i=0;i<160;i++)for(let j=0;j<4;j++)quad(point(i,j+1),point(i+1,j+1),point(i+1,j),point(i,j));
+    }
   } else if(shape==='key') {
-    torus(.3,.09,1,1,[0,.65,0]);box(0,-.2,0,.13,1.2,.14);box(.19,-.62,0,.4,.15,.14);box(.16,-.37,0,.33,.13,.14);
+    band(.32,.21,.11,{offset:[0,.65,0]});box(0,-.2,0,.13,1.2,.14);box(.19,-.62,0,.4,.15,.14);box(.16,-.37,0,.33,.13,.14);
   } else if(shape==='can') {
-    disc(.53,1.45,base,base,base,[0,0,0],Math.PI/2);
+    const lid=material(metalTexture(item,condition,seed+9,(c,p)=>{c.strokeStyle=p.dark;c.lineWidth=3;for(const r of [92,110]){c.beginPath();c.arc(0,0,r,0,TAU);c.stroke();}c.lineWidth=9;c.beginPath();c.ellipse(0,0,22,38,0,0,TAU);c.stroke();}));
+    disc(.53,1.45,base,lid,base,[0,0,0],Math.PI/2);
+    for(const y of [-.73,.73])band(.55,.51,.035,{offset:[0,y,0],pose:[0,Math.PI/2]});
   } else if(shape==='foil'||shape==='sheet') {
-    const point=(x,y,z)=>[x/4*1.7-.85,y/4*1.6-.8,(Math.sin(x*2+y)*.09+Math.cos(y*3)*.07)*(shape==='foil'?1:.35)+z];
-    for(let x=0;x<4;x++)for(let y=0;y<4;y++){
-      quad(point(x,y,.015),point(x+1,y,.015),point(x+1,y+1,.015),point(x,y+1,.015));
-      quad(point(x,y+1,-.015),point(x+1,y+1,-.015),point(x+1,y,-.015),point(x,y,-.015));
+    const size=6,foil=shape==='foil';
+    const point=(x,y,z)=>[(x/size*1.7-.85)*(1+.06*Math.sin(y*3)),(y/size*1.6-.8)*(1+.06*Math.cos(x*4)),(Math.sin(x*2+y)*.2+Math.cos(y*3-x)*.16)*(foil?1:.2)+z];
+    for(let x=0;x<size;x++)for(let y=0;y<size;y++){
+      quad(point(x,y,.012),point(x+1,y,.012),point(x+1,y+1,.012),point(x,y+1,.012));
+      quad(point(x,y+1,-.012),point(x+1,y+1,-.012),point(x+1,y,-.012),point(x,y,-.012));
     }
   } else {
     const face=material(metalTexture(item,condition,seed,(c,p)=>{
@@ -109,9 +146,9 @@ export function createInspectionModel(item, condition) {
         for(let i=0;i<12;i++){const a=i/12*TAU;c.beginPath();c.moveTo(Math.sin(a)*84,Math.cos(a)*84);c.lineTo(Math.sin(a)*96,Math.cos(a)*96);c.stroke();}
         c.lineWidth=5;c.beginPath();c.moveTo(-40,-34);c.lineTo(0,0);c.lineTo(42,-56);c.stroke();
       }else if(shape==='button') {
-        for(const x of [-21,21])for(const y of [-21,21]){c.beginPath();c.arc(x,y,11,0,TAU);c.fill();}
+        for(let i=0;i<12;i++){const a=i/12*TAU;c.beginPath();c.ellipse(Math.cos(a)*79,Math.sin(a)*79,7,15,a,0,TAU);c.stroke();}for(const x of [-21,21])for(const y of [-21,21]){c.beginPath();c.arc(x,y,11,0,TAU);c.fill();}
       }else if(shape==='coin') {
-        c.font='bold 70px Georgia';c.fillText(item.value||'?',0,5);c.font='21px Georgia';c.fillText(item.unit||'МОНЕТА',0,43);
+        c.font='bold 70px Georgia';c.fillText(item.value||(/п’ятак/.test(item.name)?5:/10/.test(item.name)?10:/півтинник/.test(item.name)?50:'✦'),0,5);c.font='21px Georgia';c.fillText(item.unit||(/п’ятак|10|півтинник/.test(item.name)?'КОПІЙОК':'МОНЕТА'),0,43);
       }else if(shape==='pendant') {c.font='85px Georgia';c.fillText('✦',0,30);}
     }));
     disc(shape==='pendant'?.72:.86,shape==='watch'?.2:.12,face,base,base,[0,0,0],0,shape==='cap'?.055:0);

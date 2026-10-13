@@ -1,0 +1,28 @@
+const {newRun,root,assert}=require('./harness.cjs');
+(async()=>{
+ const r=await newRun(),ns=n=>r.modules.get(root+'/js/'+n+'.js').namespace;
+ const s=ns('storage').s,journal=ns('journal'),data=r.modules.get(root+'/data/expeditions.js').namespace;
+ s.progress=data.emptyProgress();s.progress.finds=29;
+ const id=JSON.parse(r.catalog()).findIndex(t=>t.country);s.collection=[id];s.best={[id]:100};
+ const before=JSON.stringify(s);journal.renderJournal();
+ assert.equal(journal.journalGoals()[0].id,'perfect','a completed late-catalogue goal must be first');
+ assert.equal(journal.journalGoals()[1].id,'find30','closest unfinished goal follows ready rewards');
+ assert.equal(JSON.stringify(s),before,'sorting must not change progress or award a reward');
+ assert(r.elements.get('goalCards').innerHTML.includes('data-claim="perfect"'));
+ s.atCamp=false;journal.renderJournal();assert(!r.elements.get('goalCards').innerHTML.includes('data-claim='));assert(r.elements.get('goalCards').innerHTML.includes('забрати в таборі'));
+ assert(!ns('progression').claimGoal('perfect'));
+ s.atCamp=true;const money=s.coins;assert(ns('progression').claimGoal('perfect'));journal.renderJournal();
+ assert.equal(s.coins,money+140);assert.equal(journal.journalGoals().at(-1).id,'perfect');
+ assert(!r.elements.get('goalCards').innerHTML.includes('data-goal="perfect"'));assert(r.elements.get('completedGoalCards').innerHTML.includes('data-goal="perfect"'));
+ assert(!ns('progression').claimGoal('perfect'));assert.equal(s.coins,money+140);
+ const reload=await newRun(r.store.get('last-signal-v1'));assert.equal(reload.modules.get(root+'/js/journal.js').namespace.journalGoals().at(-1).id,'perfect');
+ const inv=ns('inventory');assert(!inv.itemRows([{type:12,condition:27}],'bag').includes('data-itemaction="album"'));
+ inv.renderInventory();assert(!r.elements.get('bagFood').innerHTML.includes('<button'));assert(!r.elements.get('pantryItems').innerHTML.includes('<button'));
+ assert(inv.itemRows([{type:12,condition:27}],'bag').includes('data-artifact="12"'));
+ ns('collection').showItem(id);const reset=r.elements.get('conditionPreviewReset');assert.equal(reset.hidden,true);
+ const slider=r.elements.get('conditionPreview');slider.value=99;slider.oninput();assert.equal(reset.hidden,false);reset.onclick();assert.equal(reset.hidden,true);
+ r.elements.get('coinDetail').close();s.atCamp=false;ns('camp').renderCamp();assert.equal(r.elements.get('startTrip').disabled,false);assert.equal(r.elements.get('startTrip').textContent,'Повернутися до табору');
+ r.elements.get('startTrip').onclick();r.elements.get('modalCancel').onclick();assert.equal(s.atCamp,false,'return can be cancelled');
+ r.elements.get('startTrip').onclick();r.elements.get('modalClose').onclick();assert.equal(s.atCamp,true);assert.equal(s.coins,money+140);
+ console.log('PASS ready rewards first, claimed rewards archived/reloaded, one-time payment, preview reset visibility, useful inventory actions and contextual return');
+})().catch(e=>{console.error(e);process.exit(1)});

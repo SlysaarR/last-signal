@@ -1,6 +1,6 @@
 .coin-thumb { width:68px; height:68px; flex:none; display:block }
 #items .coin-thumb { width:90px; height:90px; margin:4px 0 }
-#detailArt { display:block; width:100%; height:auto; border:1px solid #52633f; border-radius:16px; margin:14px 0 }
+#detailArt { display:block; width:100%; height:auto; border:1px solid #52633f; border-radius:16px; margin:0 }
 #detailArt[hidden], #wearExamples[hidden] { display:none }
 .inspection-hint { text-align:center; color:#aebe9e; font-size:11px; line-height:1.5; margin:6px 0 16px }
 .condition-preview { padding:14px; border:1px solid #425539; border-radius:14px; background:#102016 }
@@ -13,8 +13,17 @@
 #packArt,#detailArt { touch-action:none }
 #packArt:focus-visible,#detailArt:focus-visible,#artifact:focus-visible { outline:2px solid #d5e9a3; outline-offset:-4px }
 
-.coin-flip { display:block; width:100%; margin:8px 0 12px; min-height:44px }
+.coin-flip { position:absolute; top:9px; right:9px; z-index:4; display:block; width:44px; height:44px; min-height:44px; padding:0; margin:0; border-radius:50%; font-size:24px; line-height:1; color:#deebc9; background:#102016e8; border:1px solid #728565; box-shadow:0 2px 8px #0003 }
 .coin-flip[hidden] { display:none }
 canvas[role="button"]:focus-visible { outline:2px solid #d5e9a3; outline-offset:3px }
 
 #detailTitle:focus,#packTitle:focus { outline:none }
+
+.inspection-stage { position:relative; margin:14px 0 }
+.inspection-heading { display:flex; align-items:center; gap:10px; justify-content:space-between; position:sticky; top:-26px; padding:10px 0; background:#19291f; z-index:5 }
+.inspection-heading h2 { font-size:22px; line-height:1.2; margin:0; min-width:0 }
+.inspection-heading button { flex:none; width:44px; height:44px; padding:0; margin:0; font-size:19px }
+.condition-preview .quiet[hidden] { display:none }
+.artifact-thumb { object-fit:contain; border-radius:10px }
+
+#items .artifact-thumb,.artifact-thumb { height:auto; aspect-ratio:8 / 7 }

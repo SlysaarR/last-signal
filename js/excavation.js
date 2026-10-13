@@ -1,10 +1,10 @@
-import { setupInspection, clearInspection } from './coin-flip.js?v=0.32.0';
+import { setupInspection, clearInspection } from './coin-flip.js?v=0.33.0';
 // Soil canvas, finger cleaning, dust and reveal progress.
-import { types } from '../data/items.js?v=0.32.0';
-import { $ } from './dom.js?v=0.32.0';
-import { drawArtifact, seededArt } from './graphics/artifacts.js?v=0.32.0';
-import { openPacking } from './packing.js?v=0.32.0';
-import { s, save } from './storage.js?v=0.32.0';
+import { types } from '../data/items.js?v=0.33.0';
+import { $ } from './dom.js?v=0.33.0';
+import { drawArtifact, seededArt } from './graphics/artifacts.js?v=0.33.0';
+import { openPacking } from './packing.js?v=0.33.0';
+import { s, save } from './storage.js?v=0.33.0';
 export const soil = $('soil'),
   dirt = soil.getContext('2d'),
   art = $('artifact').getContext('2d');
@@ -119,6 +119,7 @@ export function openExcavation() {
   $('excHint').textContent = 'Проведи пальцем по центру, щоб обережно відкрити предмет.';
   $('excProgress').value = 0;
   $('excStatus').textContent = 'Землю прибрано: 0%';
+  $('excSkip').hidden = false;
   $('excNext').disabled = true;
   $('excNext').textContent = 'Спочатку прибери землю';
   paintSoil();
@@ -163,7 +164,8 @@ function updateCleaning() {
     $('excHint').textContent = 'Оглянь знахідку та виріши, чи взяти її із собою.';
     $('excNext').disabled = false;
     $('excNext').textContent = 'Оглянути знахідку';
-    $('excStatus').textContent = 'Очищення завершено.';
+    $('excStatus').textContent = 'Очищення завершено. Обертай знахідку пальцем.';
+    $('excSkip').hidden = true;
     setupInspection($('artifact'), $('excFlip'), s.pending.type, s.pending.condition, false);
     save();
   }

@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
     <meta name="theme-color" content="#111f20">
     <title>Останній сигнал</title>
-    <link rel="stylesheet" href="./css/base.css?v=0.32.0">
-    <link rel="stylesheet" href="./css/search.css?v=0.32.0">
-    <link rel="stylesheet" href="./css/excavation.css?v=0.32.0">
-    <link rel="stylesheet" href="./css/inventory.css?v=0.32.0">
-    <link rel="stylesheet" href="./css/workshop.css?v=0.32.0">
-    <link rel="stylesheet" href="./css/camp.css?v=0.32.0">
-    <link rel="stylesheet" href="./css/backup.css?v=0.32.0">
-    <link rel="stylesheet" href="./css/coin-art.css?v=0.32.0">
-    <link rel="stylesheet" href="./css/journal.css?v=0.32.0">
-    <script type="module" src="./js/main.js?v=0.32.0">
+    <link rel="stylesheet" href="./css/base.css?v=0.33.0">
+    <link rel="stylesheet" href="./css/search.css?v=0.33.0">
+    <link rel="stylesheet" href="./css/excavation.css?v=0.33.0">
+    <link rel="stylesheet" href="./css/inventory.css?v=0.33.0">
+    <link rel="stylesheet" href="./css/workshop.css?v=0.33.0">
+    <link rel="stylesheet" href="./css/camp.css?v=0.33.0">
+    <link rel="stylesheet" href="./css/backup.css?v=0.33.0">
+    <link rel="stylesheet" href="./css/coin-art.css?v=0.33.0">
+    <link rel="stylesheet" href="./css/journal.css?v=0.33.0">
+    <script type="module" src="./js/main.js?v=0.33.0">
     </script>
   </head>
   <body>
@@ -81,7 +81,7 @@
       <div id="saveNote" hidden>У цьому браузері збереження недоступне. Прогрес зберігається лише до закриття гри.</div>
       <section id="camp" hidden>
         <div class="camp-heading"><div class="eyebrow">ДІМ / ПІДГОТОВКА</div><h2>Твій табір</h2><p id="campStatus"></p></div>
-        <div class="expedition-banner"><div class="eyebrow">ОНОВЛЕННЯ 0.32 / СТАН І ОБЕРТАННЯ</div><h3>Кожен виїзд має свою історію</h3><p>8 місцевостей · 4 напрямки · 12 цілей</p><button class="secondary" data-open="journal">Відкрити щоденник →</button><small id="journalBadge"></small></div>
+        <div class="expedition-banner"><div class="eyebrow">ОНОВЛЕННЯ 0.33 / ПОРЯДОК У ДЕТАЛЯХ</div><h3>Кожен виїзд має свою історію</h3><p>8 місцевостей · 4 напрямки · 12 цілей</p><button class="secondary" data-open="journal">Відкрити щоденник →</button><small id="journalBadge"></small></div>
         <div class="camp-ready">
           <div class="camp-energy"><span>ЕНЕРГІЯ</span><strong id="campEnergy"></strong></div>
           <progress id="campEnergyBar" aria-label="Запас енергії" value="0" max="100"></progress>
@@ -94,7 +94,7 @@
           <button data-open="gear"><b>Майстерня та провізія</b><small>Спорядження · їжа на виїзд</small><span aria-hidden="true">→</span></button>
           <button data-open="collection"><b>Твоя колекція</b><small>Переглянути альбоми знахідок</small><span aria-hidden="true">→</span></button>
         </div>
-        <details class="route-panel"><summary><span class="eyebrow">НАПРЯМОК ВИЇЗДУ</span><b id="routeName"></b><small>Натисни, щоб обрати</small></summary><div id="routeCards"></div><p class="camp-note">Доступ відкривається за кількістю різних позицій у твоєму альбомі. Будь-який напрямок може виявитися бідним на знахідки.</p></details>
+        <details class="route-panel"><summary><span class="eyebrow">НАПРЯМОК ВИЇЗДУ</span><b id="routeName"></b><small id="routeHint">Натисни, щоб обрати</small></summary><div id="routeCards"></div><p class="camp-note">Доступ відкривається за кількістю різних позицій у твоєму альбомі. Будь-який напрямок може виявитися бідним на знахідки.</p></details>
         <div class="camp-departure"><button class="primary" id="startTrip">Вирушити · 25 купонів</button><p id="departureNote" class="camp-note"></p></div>
         <div class="camp-summary"><div class="eyebrow">ПОЛЬОВИЙ ЩОДЕННИК</div><h2>Минулий виїзд</h2><div id="tripSummary"></div></div>
         <details class="backup-panel"><summary>Збереження та резервні копії</summary>
@@ -107,11 +107,14 @@
         </details>
       </section>
       <section id="journal" hidden>
-        <div class="journal-heading"><div class="eyebrow">ТВОЯ ІСТОРІЯ / ПОЛЬОВИЙ ЩОДЕННИК</div><h2>Нові горизонти</h2><p>Збирай власну колекцію, відкривай напрямки й повертайся за наступною знахідкою.</p><button class="secondary" data-open="camp">← До табору</button></div>
-        <div id="careerStats" class="trip-grid"></div>
-        <p class="camp-note">Польова статистика рахується з оновлення 0.30. Твій попередній альбом уже врахований у цілях і доступі до напрямків.</p>
+        <div class="journal-heading"><div class="eyebrow">ЗАВДАННЯ / СТАТИСТИКА</div><h2>Польовий щоденник</h2></div>
         <p id="journalNotice" role="status" aria-live="polite"></p>
-        <h2>Цілі колекціонера</h2><p class="camp-note">Без таймерів і серій входу. Кожну нагороду можна отримати один раз у таборі; предмети залишаються в альбомі.</p><div id="goalCards"></div>
+        <h2>Цілі колекціонера</h2>
+        <p id="goalSummary" class="camp-note" tabindex="-1"></p>
+        <div id="goalCards" class="goal-grid"></div>
+        <details id="completedGoals" class="journal-panel" hidden><summary>Нагороди отримано <span id="completedGoalCount"></span></summary><div id="completedGoalCards" class="goal-grid"></div></details>
+        <h2>Польова статистика</h2><div id="careerStats" class="trip-grid"></div>
+        <p class="camp-note">Польова статистика рахується з оновлення 0.30. Попередній альбом враховано. Кожну нагороду можна отримати один раз у таборі.</p>
         <details class="journal-panel"><summary>Атлас місцевостей <span>8 місць</span></summary><div id="visitedPlaces"></div></details>
         <details class="journal-panel" open><summary>Історія виїздів <span>останні 12</span></summary><div id="tripHistory"></div></details>
       </section>
@@ -187,7 +190,7 @@
         <div class="search-status">
           <p class="sub" id="fieldBag">
           </p>
-          <span class="build-tag">v0.32.0</span>
+          <span class="build-tag">v0.33.0</span>
         </div>
         <div class="log" id="log" aria-live="polite">Обстежуй ділянку — кількість сигналів невідома. Шукай найчіткіший сигнал.</div>
       </section>
@@ -255,7 +258,7 @@
           </div>
           <p class="sub" id="catalogNote">Натисни комірку, щоб прочитати опис і відкрити джерело. Рівні рідкості та ціни адаптовано для гри. Монети намальовані схематично.</p>
         </section>
-        <footer>ПРОТОТИП 0.32.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
+        <footer>ПРОТОТИП 0.33.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
       </main>
       <dialog id="backupDialog" aria-labelledby="backupTitle">
         <h2 id="backupTitle">Відновити прогрес?</h2>
@@ -295,9 +298,9 @@
         <figure class="find-display">
           <canvas id="packArt" width="600" height="500" role="img" aria-label="Знайдений предмет">
           </canvas>
+          <button id="packFlip" class="secondary coin-flip" hidden aria-label="Початковий ракурс">↺</button>
           <figcaption>Обертай знахідку пальцем</figcaption>
         </figure>
-        <button id="packFlip" class="secondary coin-flip" hidden>Початковий ракурс</button>
         <h2 id="packTitle" tabindex="-1" autofocus>
         </h2>
         <p id="packDescription">
@@ -346,8 +349,8 @@
           </canvas>
           <canvas id="dustOverlay" width="600" height="500" aria-hidden="true">
           </canvas>
+          <button id="excFlip" class="secondary coin-flip" hidden aria-label="Початковий ракурс">↺</button>
         </div>
-        <button id="excFlip" class="secondary coin-flip" hidden>Початковий ракурс</button>
         <div class="exc-progress-row">
           <span>ОЧИЩЕННЯ ПРЕДМЕТА</span>
           <strong id="excPercent">0%</strong>
@@ -362,10 +365,9 @@
       </dialog>
       <dialog id="coinDetail" aria-labelledby="detailTitle">
         <div class="eyebrow">КАРТКА КОЛЕКЦІЇ</div>
-        <h2 id="detailTitle" tabindex="-1" autofocus>
-        </h2>
-        <canvas id="detailArt" width="600" height="500" role="img" aria-label="Зображення монети" hidden></canvas>
-        <button id="detailFlip" class="secondary coin-flip" hidden>Початковий ракурс</button>
+        <div class="inspection-heading"><h2 id="detailTitle" tabindex="-1" autofocus></h2><button id="detailClose" class="quiet" aria-label="Закрити огляд знахідки">✕</button></div>
+        <div class="inspection-stage"><canvas id="detailArt" width="600" height="500" role="img" aria-label="Зображення монети" hidden></canvas>
+        <button id="detailFlip" class="secondary coin-flip" hidden aria-label="Початковий ракурс">↺</button></div>
         <p class="inspection-hint">Обертай пальцем або мишею · на клавіатурі — стрілками</p>
         <div id="wearExamples" class="condition-preview" hidden>
           <label for="conditionPreview">Порівняти стан <output id="conditionPreviewValue" for="conditionPreview">75%</output></label>
@@ -377,7 +379,6 @@
         <p id="detailText">
         </p>
         <a id="detailSource" target="_blank" rel="noopener noreferrer">Відкрити статтю каталогу</a>
-        <button class="primary" id="detailClose" style="margin-top:18px">До колекції</button>
       </dialog>
     </body>
   </html>

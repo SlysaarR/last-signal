@@ -14,10 +14,11 @@ export function mixMetal(a, b, amount) {
 export function metalPalette(item, condition) {
   const { wear } = conditionProfile(condition);
   const gold = item.material === 'yellow' || /Золот/.test(item.name);
-  const silver = item.material && item.material !== 'yellow' || /Сріб|Алюм/.test(item.name) || ['watch', 'foil', 'tab', 'can'].includes(item.shape);
-  const bright = gold ? [235,205,126] : silver ? [211,224,229] : [184,138,86];
-  const tarnish = gold ? [101,94,54] : silver ? [91,103,104] : [102,65,40];
-  return { gold, silver, light: mixMetal(bright, tarnish, wear * .66), mid: mixMetal(bright.map(v=>v*.78), tarnish, wear*.65), dark: mixMetal(bright.map(v=>v*.43), tarnish.map(v=>v*.7), wear), corrosion: gold ? '50,72,48' : silver ? '54,65,67' : '108,52,25' };
+  const iron = item.metal === 'iron' && !item.country;
+  const silver = !!(item.material && item.material !== 'yellow' || /Сріб|Алюм/.test(item.name) || ['watch', 'foil', 'tab', 'can', 'gemring'].includes(item.shape));
+  const bright = gold ? [235,205,126] : iron ? [170,177,176] : silver ? [211,224,229] : [184,138,86];
+  const tarnish = gold ? [101,94,54] : iron ? [99,78,62] : silver ? [91,103,104] : [102,65,40];
+  return { gold, silver, iron, light: mixMetal(bright, tarnish, wear * .66), mid: mixMetal(bright.map(v=>v*.78), tarnish, wear*.65), dark: mixMetal(bright.map(v=>v*.43), tarnish.map(v=>v*.7), wear), corrosion: gold ? (item.material==='yellow'?'50,72,48':'96,78,44') : iron ? '126,65,32' : silver ? '54,65,67' : '75,91,57' };
 }
 // Coordinates are in the existing artwork's -126…126 space; caller clips to the object.
 export function paintWear(c, item, condition, seed = 1) {
