@@ -1,12 +1,18 @@
-import { drawDetectorPreview } from './graphics/detector-art.js?v=0.37.0';
-import { MAX_GEAR_LEVEL, creditFor, detectorMilestones, detectorLook } from '../data/gear.js?v=0.37.0';
+import { drawDetectorPreview } from './graphics/detector-art.js?v=0.38.0';
+import { MAX_GEAR_LEVEL, creditFor, detectorMilestones, detectorLook } from '../data/gear.js?v=0.38.0';
+import { chosenRoute } from '../data/expeditions.js?v=0.38.0';
 // shop responsibilities for Last Signal.
-import { foods } from '../data/balance.js?v=0.37.0';
-import { $ } from './dom.js?v=0.37.0';
-import { bagCapacity, bagUsed, detectorStats, foodAmount, foodFits, maxEnergy, shovelFactor, upgradeCost } from './rules.js?v=0.37.0';
-import { s, save } from './storage.js?v=0.37.0';
-import { busy, render } from './ui.js?v=0.37.0';
+import { foods } from '../data/balance.js?v=0.38.0';
+import { $ } from './dom.js?v=0.38.0';
+import { bagCapacity, bagUsed, detectorStats, foodAmount, foodFits, maxEnergy, shovelFactor, upgradeCost } from './rules.js?v=0.38.0';
+import { s, save } from './storage.js?v=0.38.0';
+import { busy, render } from './ui.js?v=0.38.0';
 export let shopRenderKey = '';
+export function purchaseBudgetNote(cost) {
+  if(!s.atCamp||s.pending||cost>s.coins)return '';
+  const remaining=s.coins-cost,fare=chosenRoute(s).cost;
+  return 'Після покупки: '+remaining+' купонів. '+(remaining<25?'Доступне безкоштовне бідне узбіччя.':remaining<fare?'На вибраний напрямок бракуватиме '+(fare-remaining)+'. Дешевша дорога коштує 25.':'На вибраний виїзд залишиться '+fare+' купонів і ще '+(remaining-fare)+'.');
+}
 export function buyFood(i) {
   if (!foods[i] || busy() || !s.atCamp || s.coins < foods[i].price) return;
   s.coins -= foods[i].price;
@@ -36,7 +42,7 @@ export function upgradeGear(kind) {
   render();
 }
 export function renderShop() {
-  const key = JSON.stringify([s.level, s.shovel, s.backpack, s.atCamp, s.coins, s.energy, s.food, s.pantry, s.foodUsed, s.bag.length, s.gearCredit, !!s.pending]);
+  const key = JSON.stringify([s.level, s.shovel, s.backpack, s.atCamp, s.coins, s.energy, s.food, s.pantry, s.foodUsed, s.bag.length, s.gearCredit, s.route, s.collection.length, !!s.pending]);
   if (key === shopRenderKey) return;
   shopRenderKey = key;
   const fmt = n => Number(n.toFixed(1)).toLocaleString('uk-UA');
@@ -58,13 +64,14 @@ export function renderShop() {
   $('shovelNote').textContent = 'Кожен ступінь зменшує витрати на всі глибини. Щільність ґрунту також впливає на копання.';
   $('backpackLevel').textContent = 'Рюкзак';
   $('backpackInfo').innerHTML = row('Місткість', bagCapacity(), s.backpack < MAX_GEAR_LEVEL ? bagCapacity(nextBag) : null, 'місць');
-  $('backpackNote').textContent = s.backpack === MAX_GEAR_LEVEL ? 'Максимальна місткість досягнута.' : 'Наступне покращення: +'+(bagCapacity(nextBag)-bagCapacity())+' місця для знахідок або їжі.';
+  $('backpackNote').textContent = (s.backpack === MAX_GEAR_LEVEL ? 'Максимальна місткість досягнута.' : 'Наступне покращення: +'+(bagCapacity(nextBag)-bagCapacity())+' місця для знахідок або їжі.')+' Великий рюкзак корисний для кількох ділянок за один виїзд.';
   for (const [kind, id, level] of [['detector', 'upgrade', s.level], ['shovel', 'upgradeShovel', s.shovel], ['backpack', 'upgradeBackpack', s.backpack]]) {
     const cost = upgradeCost(kind), credit=creditFor(s,kind);
     $(kind + 'Badge').textContent = 'Ступінь ' + level + ' / '+MAX_GEAR_LEVEL;
     $(id).textContent = level === MAX_GEAR_LEVEL ? 'Максимальний ступінь' : 'Покращити · ' + cost + ' купонів';
     $(id).disabled = !s.atCamp || level >= MAX_GEAR_LEVEL || s.coins < cost || !!s.pending;
     $(kind + 'Reason').textContent = (level === MAX_GEAR_LEVEL ? 'Усі покращення відкриті.' : !s.atCamp ? 'Покращення доступні в таборі.' : s.pending ? 'Спершу заверши розкопку.' : s.coins < cost ? 'Бракує ' + (cost - s.coins) + ' купонів' : 'Перехід на ступінь ' + (level + 1)) + (credit?' · Враховано '+credit+' купонів попередніх покращень.':'');
+    if(level<MAX_GEAR_LEVEL&&s.coins>=cost)$(kind+'Reason').textContent+=' '+purchaseBudgetNote(cost);
   }
   $('workshopStatus').textContent = s.atCamp ? 'Твій бюджет: ' + s.coins + ' купонів. 10 ступенів: кожен змінює характеристики. Стрілка показує наступне покращення.' : 'Ти в полі. Характеристики можна переглядати, а покупки й покращення доступні в таборі.';
   $('foodBudget').textContent = 'Покупка → домашні запаси → рюкзак. Кожна порція займає одне місце. За виїзд можна з’їсти до 50% від максимальної енергії.';

@@ -1,9 +1,9 @@
-import { routes, goals, conditions, chosenRoute } from '../data/expeditions.js?v=0.37.0';
-import { locations } from '../data/locations.js?v=0.37.0';
-import { $ } from './dom.js?v=0.37.0';
-import { s,save } from './storage.js?v=0.37.0';
-import { progress,goalValue,claimGoal } from './progression.js?v=0.37.0';
-import { render,busy } from './ui.js?v=0.37.0';
+import { routes, goals, conditions, chosenRoute } from '../data/expeditions.js?v=0.38.0';
+import { locations } from '../data/locations.js?v=0.38.0';
+import { $ } from './dom.js?v=0.38.0';
+import { s,save } from './storage.js?v=0.38.0';
+import { progress,goalValue,claimGoal } from './progression.js?v=0.38.0';
+import { render,busy } from './ui.js?v=0.38.0';
 let key='';
 export function journalGoals(){
  const claimed=progress().claimed;

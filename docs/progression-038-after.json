@@ -1,0 +1,232 @@
+{
+  "seed": 3881,
+  "cohortPerScenario": 24,
+  "totalUpgradeCost": 206430,
+  "assumptions": [
+    "24 deterministic runs per route/policy; at most 4000 trips",
+    "Free rest between trips; start with zero coins; actual route locks, poor sites, soil and travel fares",
+    "88–97% coverage, 80% centring success before pinpoint and 95% thereafter are assumptions, not measured skill",
+    "One attempt per target; failed digs consume energy; no sale-value or rarity oracle before excavation",
+    "Optional 20%+30% food, paid on purchase; unused supplies persist and occupy bag slots; 50% meal cap",
+    "Only found items ranked for bag capacity; album entries retained, duplicates/returned copies sold; goals claimed once",
+    "Cheapest next upgrade bought with a fare reserve; no idle time estimate or guarantee of player income"
+  ],
+  "results": [
+    {
+      "route": "wander",
+      "albumPolicy": "keep first copy, sell duplicates",
+      "completed": 24,
+      "cohort": 24,
+      "fullGearTrips": {
+        "p10": 822,
+        "median": 857,
+        "p90": 887
+      },
+      "allGearTierMedian": {
+        "2": 9,
+        "3": 19,
+        "4": 33,
+        "5": 55,
+        "6": 99,
+        "7": 174,
+        "8": 306,
+        "9": 543,
+        "10": 857
+      },
+      "medianEmergencyTrips": 2,
+      "medianAlbum": 189,
+      "medianFoodSpent": 3626,
+      "medianTravelSpent": 21375,
+      "medianLossTrips": 134
+    },
+    {
+      "route": "wander",
+      "albumPolicy": "keep improvements, sell returned copy",
+      "completed": 24,
+      "cohort": 24,
+      "fullGearTrips": {
+        "p10": 865,
+        "median": 890,
+        "p90": 908
+      },
+      "allGearTierMedian": {
+        "2": 10,
+        "3": 21,
+        "4": 35,
+        "5": 60,
+        "6": 104,
+        "7": 179,
+        "8": 325,
+        "9": 561,
+        "10": 890
+      },
+      "medianEmergencyTrips": 2,
+      "medianAlbum": 189,
+      "medianFoodSpent": 3824,
+      "medianTravelSpent": 22200,
+      "medianLossTrips": 136
+    },
+    {
+      "route": "rural",
+      "albumPolicy": "keep first copy, sell duplicates",
+      "completed": 24,
+      "cohort": 24,
+      "fullGearTrips": {
+        "p10": 1182,
+        "median": 1252,
+        "p90": 1289
+      },
+      "allGearTierMedian": {
+        "2": 13,
+        "3": 24,
+        "4": 43,
+        "5": 72,
+        "6": 132,
+        "7": 246,
+        "8": 440,
+        "9": 768,
+        "10": 1252
+      },
+      "medianEmergencyTrips": 3,
+      "medianAlbum": 184,
+      "medianFoodSpent": 1724,
+      "medianTravelSpent": 43705,
+      "medianLossTrips": 285
+    },
+    {
+      "route": "rural",
+      "albumPolicy": "keep improvements, sell returned copy",
+      "completed": 24,
+      "cohort": 24,
+      "fullGearTrips": {
+        "p10": 1226,
+        "median": 1291,
+        "p90": 1319
+      },
+      "allGearTierMedian": {
+        "2": 12,
+        "3": 25,
+        "4": 43,
+        "5": 76,
+        "6": 140,
+        "7": 260,
+        "8": 474,
+        "9": 810,
+        "10": 1291
+      },
+      "medianEmergencyTrips": 4,
+      "medianAlbum": 185,
+      "medianFoodSpent": 1730,
+      "medianTravelSpent": 44980,
+      "medianLossTrips": 290
+    },
+    {
+      "route": "water",
+      "albumPolicy": "keep first copy, sell duplicates",
+      "completed": 24,
+      "cohort": 24,
+      "fullGearTrips": {
+        "p10": 501,
+        "median": 531,
+        "p90": 555
+      },
+      "allGearTierMedian": {
+        "2": 9,
+        "3": 15,
+        "4": 23,
+        "5": 35,
+        "6": 61,
+        "7": 104,
+        "8": 192,
+        "9": 330,
+        "10": 531
+      },
+      "medianEmergencyTrips": 2,
+      "medianAlbum": 185,
+      "medianFoodSpent": 5724,
+      "medianTravelSpent": 18510,
+      "medianLossTrips": 80
+    },
+    {
+      "route": "water",
+      "albumPolicy": "keep improvements, sell returned copy",
+      "completed": 24,
+      "cohort": 24,
+      "fullGearTrips": {
+        "p10": 521,
+        "median": 547,
+        "p90": 584
+      },
+      "allGearTierMedian": {
+        "2": 9,
+        "3": 16,
+        "4": 25,
+        "5": 39,
+        "6": 66,
+        "7": 114,
+        "8": 200,
+        "9": 347,
+        "10": 547
+      },
+      "medianEmergencyTrips": 2,
+      "medianAlbum": 185,
+      "medianFoodSpent": 5976,
+      "medianTravelSpent": 19080,
+      "medianLossTrips": 81
+    },
+    {
+      "route": "distant",
+      "albumPolicy": "keep first copy, sell duplicates",
+      "completed": 24,
+      "cohort": 24,
+      "fullGearTrips": {
+        "p10": 843,
+        "median": 892,
+        "p90": 944
+      },
+      "allGearTierMedian": {
+        "2": 10,
+        "3": 20,
+        "4": 32,
+        "5": 54,
+        "6": 100,
+        "7": 185,
+        "8": 319,
+        "9": 560,
+        "10": 892
+      },
+      "medianEmergencyTrips": 2,
+      "medianAlbum": 186,
+      "medianFoodSpent": 3742,
+      "medianTravelSpent": 44175,
+      "medianLossTrips": 218
+    },
+    {
+      "route": "distant",
+      "albumPolicy": "keep improvements, sell returned copy",
+      "completed": 24,
+      "cohort": 24,
+      "fullGearTrips": {
+        "p10": 846,
+        "median": 923,
+        "p90": 976
+      },
+      "allGearTierMedian": {
+        "2": 10,
+        "3": 21,
+        "4": 33,
+        "5": 59,
+        "6": 111,
+        "7": 199,
+        "8": 345,
+        "9": 580,
+        "10": 923
+      },
+      "medianEmergencyTrips": 3,
+      "medianAlbum": 187,
+      "medianFoodSpent": 3820,
+      "medianTravelSpent": 45525,
+      "medianLossTrips": 227
+    }
+  ]
+}

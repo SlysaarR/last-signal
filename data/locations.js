@@ -18,7 +18,7 @@ export const locations = [{
   potential: 2,
   icon: '🌾',
   hint: 'Ранні українські випуски й ґудзики серед грудок землі. Варто прислухатись до кольорових сигналів.',
-  kinds: [.48, .35, .05, .12],
+  kinds: [.43, .38, .05, .14],
   boost: [1, 1.15, 1.3, 1.4],
   ground: ['#796046', '#433c2c'],
   accent: '#d5c49b',
@@ -30,7 +30,7 @@ export const locations = [{
   potential: 3,
   icon: '🏖️',
   hint: 'Бляшанки та фольга, сучасні монети. Тут частіше гублять каблучки й ланцюжки.',
-  kinds: [.5, .22, .27, .01],
+  kinds: [.57, .23, .19, .01],
   boost: [1, 1.3, 1.8, 2],
   ground: ['#a38b5c', '#655638'],
   accent: '#f1dfad',
@@ -62,9 +62,9 @@ export const locations = [{
 }];
 // Appended IDs preserve every previously saved location.
 locations.push(
- {name:'Лісова галявина',chance:10,rarity:'Незвичайна локація',potential:2,icon:'🌲',hint:'Коріння, побутові речі й поодинокі монети. Сигналів небагато.',kinds:[.56,.26,.04,.14],boost:[1,1.2,1.4,1.6],ground:['#4e6242','#203a2c'],accent:'#bacb96',terrain:'forest'},
- {name:'Старий сад',chance:10,rarity:'Звичайна локація',potential:2,icon:'🌳',hint:'Дрібні монети та загублені речі між колишніми деревами.',kinds:[.53,.33,.08,.06],boost:[1,1.1,1.3,1.5],ground:['#718051','#364833'],accent:'#d5d8a4',terrain:'orchard'},
- {name:'Річковий берег',chance:8,rarity:'Незвичайна локація',potential:3,icon:'〰️',hint:'Монети, прикраси та металеве сміття біля води.',kinds:[.57,.25,.15,.03],boost:[1,1.25,1.5,1.8],ground:['#6e7863','#334c42'],accent:'#a6d3cc',terrain:'river'}
+ {name:'Лісова галявина',chance:10,rarity:'Незвичайна локація',potential:2,icon:'🌲',hint:'Коріння, побутові речі й поодинокі монети. Сигналів небагато.',kinds:[.49,.30,.04,.17],boost:[1,1.2,1.4,1.6],ground:['#4e6242','#203a2c'],accent:'#bacb96',terrain:'forest'},
+ {name:'Старий сад',chance:10,rarity:'Звичайна локація',potential:2,icon:'🌳',hint:'Дрібні монети та загублені речі між колишніми деревами.',kinds:[.46,.37,.08,.09],boost:[1,1.1,1.3,1.5],ground:['#718051','#364833'],accent:'#d5d8a4',terrain:'orchard'},
+ {name:'Річковий берег',chance:8,rarity:'Незвичайна локація',potential:3,icon:'〰️',hint:'Монети, прикраси та металеве сміття біля води.',kinds:[.60,.25,.12,.03],boost:[1,1.25,1.5,1.8],ground:['#6e7863','#334c42'],accent:'#a6d3cc',terrain:'river'}
 );
 
 export const legacyLocation = {

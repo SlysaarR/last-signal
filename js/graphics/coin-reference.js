@@ -1,6 +1,6 @@
-import { coinDesign, coinDesignKey } from '../../data/coin-art.js?v=0.37.0';
-import { conditionProfile, metalPalette, paintWear } from './condition.js?v=0.37.0';
-import { wornCoinFace } from './coin-surface.js?v=0.37.0';
+import { coinDesign, coinDesignKey } from '../../data/coin-art.js?v=0.38.0';
+import { conditionProfile, metalPalette, paintWear } from './condition.js?v=0.38.0';
+import { wornCoinFace } from './coin-surface.js?v=0.38.0';
 const images=new Map(),faces=new Map(),listeners=new Set();
 let revision=0;
 export const coinImageRevision=()=>revision;
@@ -11,7 +11,7 @@ function photo(key,side) {
     const entry={image:new Image(),ready:false};images.set(path,entry);
     entry.image.onload=()=>{entry.ready=true;revision++;for(const fn of listeners)fn();};
     entry.image.onerror=()=>{entry.failed=true;};
-    entry.image.src='assets/coins/'+path+'.webp?v=0.37.0';
+    entry.image.src='assets/coins/'+path+'.webp?v=0.38.0';
   }
   const entry=images.get(path);return entry?.ready?entry.image:null;
 }

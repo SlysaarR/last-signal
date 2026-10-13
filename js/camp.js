@@ -1,12 +1,12 @@
-import { chosenRoute, conditions } from '../data/expeditions.js?v=0.37.0';
-import { startLeg,endLeg } from './progression.js?v=0.37.0';
+import { chosenRoute, conditions } from '../data/expeditions.js?v=0.38.0';
+import { startLeg,endLeg } from './progression.js?v=0.38.0';
 // camp responsibilities for Last Signal.
-import { modal } from './dialogs.js?v=0.37.0';
-import { $ } from './dom.js?v=0.37.0';
-import { bagCapacity, bagUsed, canLeave, emergencyAllowed, maxEnergy, priceFor, travelCost } from './rules.js?v=0.37.0';
-import { s, save } from './storage.js?v=0.37.0';
-import { busy, render, showTab } from './ui.js?v=0.37.0';
-import { currentLocation, generate, rollLocation } from './world.js?v=0.37.0';
+import { modal } from './dialogs.js?v=0.38.0';
+import { $ } from './dom.js?v=0.38.0';
+import { bagCapacity, bagUsed, canLeave, emergencyAllowed, maxEnergy, priceFor, travelCost } from './rules.js?v=0.38.0';
+import { s, save } from './storage.js?v=0.38.0';
+import { busy, render, showTab } from './ui.js?v=0.38.0';
+import { currentLocation, generate, rollLocation } from './world.js?v=0.38.0';
 export function returnHome() {
   if (s.atCamp || s.pending) return;
   s.lastTrip = {

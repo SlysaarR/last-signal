@@ -1,16 +1,16 @@
-import { detectorSettings } from '../data/gear.js?v=0.37.0';
-import { recordReading } from './detector-controls.js?v=0.37.0';
-import { sampleSignal } from './detector.js?v=0.37.0';
-import { recordDig } from './progression.js?v=0.37.0';
+import { detectorSettings } from '../data/gear.js?v=0.38.0';
+import { recordReading } from './detector-controls.js?v=0.38.0';
+import { sampleSignal, nearestTarget } from './detector.js?v=0.38.0';
+import { recordDig } from './progression.js?v=0.38.0';
 // search responsibilities for Last Signal.
-import { depthLevels } from '../data/balance.js?v=0.37.0';
-import { beep } from './audio.js?v=0.37.0';
-import { $ } from './dom.js?v=0.37.0';
-import { openExcavation } from './excavation.js?v=0.37.0';
-import { canvas, draw } from './graphics/field.js?v=0.37.0';
-import { digCost, minDig } from './rules.js?v=0.37.0';
-import { s, save } from './storage.js?v=0.37.0';
-import { busy, render, renderDetector } from './ui.js?v=0.37.0';
+import { depthLevels } from '../data/balance.js?v=0.38.0';
+import { beep } from './audio.js?v=0.38.0';
+import { $ } from './dom.js?v=0.38.0';
+import { openExcavation } from './excavation.js?v=0.38.0';
+import { canvas, draw } from './graphics/field.js?v=0.38.0';
+import { digCost, minDig } from './rules.js?v=0.38.0';
+import { s, save } from './storage.js?v=0.38.0';
+import { busy, render, renderDetector } from './ui.js?v=0.38.0';
 let moveFrame = 0, pointerId = null, pointerAnchor = null;
 function renderMovement() {
   if (moveFrame) return;
@@ -23,8 +23,11 @@ function renderMovement() {
   });
 }
 export function digInfo() {
-  const n = signal(),
-    info = n.obj && (n.pinpoint || n.power > 35) ? depthLevels[n.obj.depth] : {
+  const n = signal(), underCoil=nearest(),
+    // Cost and recovered item must refer to the same physical hole even when
+    // a stronger neighbouring signal dominates the detector display.
+    target=underCoil.obj&&underCoil.d<=.035?underCoil.obj:n.power>35?n.obj:null,
+    info = target ? depthLevels[target.depth] : {
       name: 'Глибина невідома · пробна ямка',
       cost: 10
     };
@@ -34,7 +37,7 @@ export function digInfo() {
   };
 }
 export function signal() { return sampleSignal(s.objects,s.x,s.y,s.level,{...detectorSettings(s),soil:s.progress?.active?.condition||0}); }
-export function nearest() { const {obj,d}=signal(); return {obj,d}; }
+export function nearest() { return nearestTarget(s.objects,s.x,s.y); }
 export function move(e) {
   if (s.atCamp || busy()) return;
   const r = canvas.getBoundingClientRect();
