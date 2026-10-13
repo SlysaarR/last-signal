@@ -23,12 +23,34 @@ const event=(x,y,id=1)=>({clientX:x,clientY:y,pointerId:id,button:0,preventDefau
   canvas.onpointerdown(event(100,100));canvas.onpointermove(event(120,110));
   ns(run,'collection').showItem(4);assert.equal(run.frames.size,0,'opening another item cancels the old queued frame');
   assert.equal(Number(canvas.dataset.yaw),0);
+  const get=id=>run.elements.get('detailArt'+id);
+  canvas.onpointerdown(event(100,100));canvas.onpointerdown(event(200,100,2));
+  canvas.onpointermove(event(240,100,2));run.flushFrames();
+  assert.equal(Number(canvas.dataset.yaw),0,'pinch cannot rotate');
+  assert(Math.abs(Number(canvas.dataset.zoom)-1.4)<1e-8,'pinch follows distance');
+  assert(Number(canvas.dataset.pan.split(',')[0])>0,'two fingers can move enlarged detail');
+  canvas.onpointerdown(event(20,20,3));canvas.onpointermove(event(500,500,3));run.flushFrames();
+  assert(Math.abs(Number(canvas.dataset.zoom)-1.4)<1e-8,'third finger ignored');
+  canvas.onpointerup(event(240,100,2));canvas.onpointermove(event(118,100));run.flushFrames();
+  assert(Math.abs(Number(canvas.dataset.yaw)-Math.PI*.1)<1e-8,'pinch-to-drag transition has no jump');
+  canvas.onpointercancel(event(118,100));const stopped=canvas.dataset.yaw;
+  canvas.onpointermove(event(250,250));run.flushFrames();assert.equal(canvas.dataset.yaw,stopped);
+  for(let i=0;i<20;i++)get('ZoomIn').onclick();run.flushFrames();
+  assert.equal(Number(canvas.dataset.zoom),2.5);assert(get('ZoomIn').disabled);
+  get('Turn').onclick();run.flushFrames();assert.equal(Number(canvas.dataset.yaw),Math.PI);
+  get('Light').onclick();run.flushFrames();assert.equal(Number(canvas.dataset.light),1);
+  canvas.onkeydown({key:'Home',preventDefault(){}});run.flushFrames();
+  assert.equal(Number(canvas.dataset.zoom),1);assert.equal(canvas.dataset.pan,'0,0');assert.equal(Number(canvas.dataset.light),0);assert(get('ZoomOut').disabled);
+  for(let i=0;i<4;i++)canvas.onkeydown({key:'-',preventDefault(){}});run.flushFrames();assert.equal(Number(canvas.dataset.zoom),1);
+  assert.equal(JSON.stringify(run.state()),saved,'zoom, lamp, flip and drag cannot mutate gameplay');
   const graphics=ns(run,'graphics/inspection'),profile=ns(run,'graphics/condition');
   for(let n=0;n<100;n++){
     const a=profile.conditionProfile(n),b=profile.conditionProfile(n+1);
     assert(a.wear>b.wear&&a.corrosion>b.corrosion&&a.relief<b.relief);
   }
   const model=graphics.createInspectionModel(catalog[id],65);
+  const rimPoints=side=>model.triangles.filter(t=>t.mat===side).flatMap(t=>t.points).filter(p=>Math.hypot(p[0],p[1])>.5).map(p=>p.slice(0,2).map(v=>v.toFixed(8)).join(',')).sort();
+  assert.deepEqual(rimPoints(1),rimPoints(2),'front and back share each nick in the outline');
   const front=graphics.projectModel(model,0,0),back=graphics.projectModel(model,Math.PI,0),edge=graphics.projectModel(model,Math.PI/2,0);
   assert(front.some(t=>t.mat===1)&&!front.some(t=>t.mat===2));
   assert(back.some(t=>t.mat===2)&&!back.some(t=>t.mat===1));
@@ -41,5 +63,8 @@ const event=(x,y,id=1)=>({clientX:x,clientY:y,pointerId:id,button:0,preventDefau
       assert(projected.every(t=>t.projected.flat().every(Number.isFinite)));
     }
   }
-  console.log('PASS continuous drag, multiple pointers, capture loss, redraw coalescing, view cleanup, preview isolation, 101 wear profiles and front/back/rim geometry');
+  canvas.onpointerdown(event(100,100));canvas.onpointermove(event(150,100));
+  run.elements.get('coinDetail').listeners.close.forEach(fn=>fn());
+  assert.equal(run.frames.size,0,'closing cancels queued render');assert.equal(canvas.onpointermove,null);assert(get('Tools').hidden);
+  console.log('PASS continuous drag, pinch and pan, gesture transitions, capture loss, zoom bounds, flip/light/reset, keyboard, redraw coalescing, close cleanup, save isolation, 101 wear profiles and shared front/back/rim geometry');
 })().catch(e=>{console.error(e);process.exit(1)});

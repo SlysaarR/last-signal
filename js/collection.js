@@ -1,13 +1,13 @@
-import { artifactMarkup, renderArtifactThumbnails } from './graphics/thumbnails.js?v=0.38.0';
-import { setupInspection } from './coin-flip.js?v=0.38.0';
-import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.38.0';
+import { artifactMarkup, renderArtifactThumbnails } from './graphics/thumbnails.js?v=0.39.0';
+import { setupInspection, clearInspection } from './coin-flip.js?v=0.39.0';
+import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.39.0';
 // collection responsibilities for Last Signal.
-import { rarities } from '../data/balance.js?v=0.38.0';
-import { collectible, types } from '../data/items.js?v=0.38.0';
-import { $ } from './dom.js?v=0.38.0';
-import { priceFor } from './rules.js?v=0.38.0';
-import { s } from './storage.js?v=0.38.0';
-import { coinSource, coinEdgeSpec, coinDesign } from '../data/coin-art.js?v=0.38.0';
+import { rarities } from '../data/balance.js?v=0.39.0';
+import { collectible, types } from '../data/items.js?v=0.39.0';
+import { $ } from './dom.js?v=0.39.0';
+import { priceFor } from './rules.js?v=0.39.0';
+import { s } from './storage.js?v=0.39.0';
+import { coinSource, coinEdgeSpec, coinDesign } from '../data/coin-art.js?v=0.39.0';
 export let collectionCategory = 'coin',
   denomFilter = 'all',
   yearFilter = 'all',
@@ -100,6 +100,7 @@ export function updateYearFilter() {
   $('yearFilter').value = yearFilter;
 }
 export function initCollection() {
+  $('coinDetail').addEventListener('close',()=>clearInspection($('detailArt')));
   $('denomFilter').innerHTML = '<option value="all">Усі номінали</option>' + denominations.map(d => '<option value="' + d + '">' + d + '</option>').join('');
   updateYearFilter();
   $('denomFilter').onchange = e => {

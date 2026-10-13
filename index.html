@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
     <meta name="theme-color" content="#111f20">
     <title>Останній сигнал</title>
-    <link rel="stylesheet" href="./css/base.css?v=0.38.0">
-    <link rel="stylesheet" href="./css/search.css?v=0.38.0">
-    <link rel="stylesheet" href="./css/excavation.css?v=0.38.0">
-    <link rel="stylesheet" href="./css/inventory.css?v=0.38.0">
-    <link rel="stylesheet" href="./css/workshop.css?v=0.38.0">
-    <link rel="stylesheet" href="./css/camp.css?v=0.38.0">
-    <link rel="stylesheet" href="./css/backup.css?v=0.38.0">
-    <link rel="stylesheet" href="./css/coin-art.css?v=0.38.0">
-    <link rel="stylesheet" href="./css/journal.css?v=0.38.0">
-    <script type="module" src="./js/main.js?v=0.38.0">
+    <link rel="stylesheet" href="./css/base.css?v=0.39.0">
+    <link rel="stylesheet" href="./css/search.css?v=0.39.0">
+    <link rel="stylesheet" href="./css/excavation.css?v=0.39.0">
+    <link rel="stylesheet" href="./css/inventory.css?v=0.39.0">
+    <link rel="stylesheet" href="./css/workshop.css?v=0.39.0">
+    <link rel="stylesheet" href="./css/camp.css?v=0.39.0">
+    <link rel="stylesheet" href="./css/backup.css?v=0.39.0">
+    <link rel="stylesheet" href="./css/coin-art.css?v=0.39.0">
+    <link rel="stylesheet" href="./css/journal.css?v=0.39.0">
+    <script type="module" src="./js/main.js?v=0.39.0">
     </script>
   </head>
   <body>
@@ -199,7 +199,7 @@
         <div class="search-status">
           <p class="sub" id="fieldBag">
           </p>
-          <span class="build-tag">v0.38.0</span>
+          <span class="build-tag">v0.39.0</span>
         </div>
         <div class="log" id="log" aria-live="polite">Обстежуй ділянку — кількість сигналів невідома. Шукай найчіткіший сигнал.</div>
       </section>
@@ -270,7 +270,7 @@
           </div>
           <p class="sub" id="catalogNote">Натисни монету, щоб оглянути обидва боки та гурт. Рівні рідкості та ціни адаптовано для гри.</p>
         </section>
-        <footer>ПРОТОТИП 0.38.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
+        <footer>ПРОТОТИП 0.39.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
       </main>
       <dialog id="backupDialog" aria-labelledby="backupTitle">
         <h2 id="backupTitle">Відновити прогрес?</h2>
@@ -311,7 +311,11 @@
           <div class="pack-art-stage"><canvas id="packArt" width="600" height="500" role="img" aria-label="Знайдений предмет">
           </canvas>
           <button id="packFlip" class="secondary coin-flip" hidden aria-label="Початковий ракурс">↺</button></div>
-          <figcaption>Обертай знахідку пальцем</figcaption>
+          <div id="packArtTools" class="inspection-tools" role="group" aria-label="Керування оглядом" hidden>
+          <div class="inspection-zoom"><button id="packArtZoomOut" class="secondary" aria-label="Зменшити знахідку">−</button><output id="packArtZoomValue" aria-label="Масштаб огляду">100%</output><button id="packArtZoomIn" class="secondary" aria-label="Збільшити знахідку">+</button></div>
+          <button id="packArtTurn" class="secondary">Перевернути</button><button id="packArtLight" class="secondary">Світло ↖</button>
+        </div>
+          <figcaption>Один палець — обертання · два — масштаб і зсув</figcaption>
         </figure>
         <h2 id="packTitle" tabindex="-1" autofocus>
         </h2>
@@ -363,6 +367,10 @@
           </canvas>
           <button id="excFlip" class="secondary coin-flip" hidden aria-label="Початковий ракурс">↺</button>
         </div>
+        <div id="artifactTools" class="inspection-tools" role="group" aria-label="Керування оглядом" hidden>
+          <div class="inspection-zoom"><button id="artifactZoomOut" class="secondary" aria-label="Зменшити знахідку">−</button><output id="artifactZoomValue" aria-label="Масштаб огляду">100%</output><button id="artifactZoomIn" class="secondary" aria-label="Збільшити знахідку">+</button></div>
+          <button id="artifactTurn" class="secondary">Перевернути</button><button id="artifactLight" class="secondary">Світло ↖</button>
+        </div>
         <div class="exc-progress-row">
           <span>ОЧИЩЕННЯ ПРЕДМЕТА</span>
           <strong id="excPercent">0%</strong>
@@ -380,7 +388,11 @@
         <div class="inspection-heading"><h2 id="detailTitle" tabindex="-1" autofocus></h2><button id="detailClose" class="quiet" aria-label="Закрити огляд знахідки">✕</button></div>
         <div class="inspection-stage"><canvas id="detailArt" width="600" height="500" role="img" aria-label="Зображення монети" hidden></canvas>
         <button id="detailFlip" class="secondary coin-flip" hidden aria-label="Початковий ракурс">↺</button></div>
-        <p class="inspection-hint">Обертай пальцем або мишею · на клавіатурі — стрілками</p>
+        <div id="detailArtTools" class="inspection-tools" role="group" aria-label="Керування оглядом" hidden>
+          <div class="inspection-zoom"><button id="detailArtZoomOut" class="secondary" aria-label="Зменшити знахідку">−</button><output id="detailArtZoomValue" aria-label="Масштаб огляду">100%</output><button id="detailArtZoomIn" class="secondary" aria-label="Збільшити знахідку">+</button></div>
+          <button id="detailArtTurn" class="secondary">Перевернути</button><button id="detailArtLight" class="secondary">Світло ↖</button>
+        </div>
+        <p class="inspection-hint">Один палець — обертання · два — масштаб і зсув<br>Клавіатура: стрілки, +/− · Home — скинути</p>
         <div id="wearExamples" class="condition-preview" hidden>
           <label for="conditionPreview">Порівняти стан <output id="conditionPreviewValue" for="conditionPreview">75%</output></label>
           <input id="conditionPreview" type="range" min="0" max="100" step="1" value="75" aria-describedby="conditionPreviewNote">

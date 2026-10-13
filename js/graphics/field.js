@@ -1,9 +1,9 @@
-import { drawDetector } from './detector-art.js?v=0.38.0';
+import { drawDetector } from './detector-art.js?v=0.39.0';
 // field responsibilities for Last Signal.
-import { $ } from '../dom.js?v=0.38.0';
-import { signal } from '../search.js?v=0.38.0';
-import { s } from '../storage.js?v=0.38.0';
-import { currentLocation } from '../world.js?v=0.38.0';
+import { $ } from '../dom.js?v=0.39.0';
+import { signal } from '../search.js?v=0.39.0';
+import { s } from '../storage.js?v=0.39.0';
+import { currentLocation } from '../world.js?v=0.39.0';
 export const canvas = $('field'),
   ctx = canvas.getContext('2d');
 export function paintTerrain(ctx) {

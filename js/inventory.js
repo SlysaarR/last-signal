@@ -1,14 +1,14 @@
-import { artifactMarkup, renderArtifactThumbnails } from './graphics/thumbnails.js?v=0.38.0';
-import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.38.0';
+import { artifactMarkup, renderArtifactThumbnails } from './graphics/thumbnails.js?v=0.39.0';
+import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.39.0';
 // inventory responsibilities for Last Signal.
-import { foods } from '../data/balance.js?v=0.38.0';
-import { types } from '../data/items.js?v=0.38.0';
-import { modal } from './dialogs.js?v=0.38.0';
-import { $ } from './dom.js?v=0.38.0';
-import { bagCapacity, bagUsed, foodAmount, foodFits, maxEnergy, priceFor } from './rules.js?v=0.38.0';
-import { eatFood, transferFood } from './shop.js?v=0.38.0';
-import { s, save } from './storage.js?v=0.38.0';
-import { busy, render } from './ui.js?v=0.38.0';
+import { foods } from '../data/balance.js?v=0.39.0';
+import { types } from '../data/items.js?v=0.39.0';
+import { modal } from './dialogs.js?v=0.39.0';
+import { $ } from './dom.js?v=0.39.0';
+import { bagCapacity, bagUsed, foodAmount, foodFits, maxEnergy, priceFor } from './rules.js?v=0.39.0';
+import { eatFood, transferFood } from './shop.js?v=0.39.0';
+import { s, save } from './storage.js?v=0.39.0';
+import { busy, render } from './ui.js?v=0.39.0';
 export let inventoryRenderKey = '';
 let returnedItem = null;
 function albumNotice(text, returned = null) {

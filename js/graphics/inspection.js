@@ -1,7 +1,9 @@
-import { renderMesh } from './inspection-gl.js?v=0.38.0';
-import { paintUkrainianCoin, isUkrainianCoin, coinEdgeType } from './ukrainian-coins.js?v=0.38.0';
-import { conditionProfile, metalPalette, paintWear } from './condition.js?v=0.38.0';
-import { coinDesign, coinEdgeSpec } from '../../data/coin-art.js?v=0.38.0';
+import { renderMesh } from './inspection-gl.js?v=0.39.0';
+import { paintUkrainianCoin, isUkrainianCoin, coinEdgeType } from './ukrainian-coins.js?v=0.39.0';
+import { conditionProfile, metalPalette, paintWear, artRandom } from './condition.js?v=0.39.0';
+import { coinDesign, coinEdgeSpec } from '../../data/coin-art.js?v=0.39.0';
+import { coinReliefImage } from './coin-reference.js?v=0.39.0';
+import { makeReliefMap, relightFace, lightTerms } from './inspection-light.js?v=0.39.0';
 
 const TAU=Math.PI*2;
 const sub=(a,b)=>a.map((v,i)=>v-b[i]);
@@ -26,7 +28,7 @@ function metalTexture(item,condition,seed,face) {
   });
 }
 export function createInspectionModel(item, condition) {
-  const triangles=[], textures=[], profile=conditionProfile(condition);
+  const triangles=[], textures=[], reliefMaps=[], profile=conditionProfile(condition);
   const material=tex=>{textures.push(tex);return textures.length-1;};
   const seed=(item.year||17)*31+(item.value||7)*19+(item.shape||'').length*97;
   const base=material(metalTexture(item,condition,seed));
@@ -78,6 +80,8 @@ export function createInspectionModel(item, condition) {
   if(isUkrainianCoin(item)) {
     const front=material(texture(c=>paintUkrainianCoin(c,item,condition,0)));
     const back=material(texture(c=>paintUkrainianCoin(c,item,condition,1)));
+    reliefMaps[front]={map:makeReliefMap(coinReliefImage(item,condition,0),condition),side:1};
+    reliefMaps[back]={map:makeReliefMap(coinReliefImage(item,condition,1),condition),side:-1};
     const edge=material(metalTexture(item,condition,seed+331,(c,p)=>{
       c.save();
       const spec=coinEdgeSpec(item),kind=spec.kind;c.lineWidth=.3+.45*profile.relief;c.globalAlpha=profile.relief;
@@ -88,7 +92,28 @@ export function createInspectionModel(item, condition) {
       c.restore();
     }));
     const dimensions=coinDesign(item);
-    disc(1,dimensions?2*dimensions.thickness/dimensions.diameter:.13,front,back,edge);
+    const depth=dimensions?2*dimensions.thickness/dimensions.diameter:.13;
+    // The two faces and edge share one worn outline, including every small nick.
+    // Wear rounds the bevel instead of leaving a razor-sharp cylindrical rim.
+    const random=artRandom(seed),nicks=Array.from({length:9},()=>[random()*TAU,.045+random()*.07,.004+random()*.012]);
+    const bevel=.012+profile.wear*.015,segments=128;
+    const point=(i,face,outer)=>{
+      const angle=i/segments*TAU;
+      const loss=nicks.reduce((s,[at,width,amount])=>{const distance=Math.atan2(Math.sin(angle-at),Math.cos(angle-at));return s+amount*Math.exp(-distance*distance/(width*width));},0)*profile.wear;
+      const radius=1-loss-(outer?0:bevel);
+      return [radius*Math.cos(angle),radius*Math.sin(angle),face*(depth/2-(outer?bevel:0))];
+    };
+    const uv=(p,side)=>[256+p[0]*250*side,256-p[1]*250];
+    for(let i=0;i<segments;i++) {
+      const a=point(i,1,false),b=point(i+1,1,false),c=point(i,-1,false),d=point(i+1,-1,false);
+      const ao=point(i,1,true),bo=point(i+1,1,true),co=point(i,-1,true),do_=point(i+1,-1,true);
+      tri([0,0,depth/2],a,b,front,[[256,256],uv(a,1),uv(b,1)]);
+      tri([0,0,-depth/2],d,c,back,[[256,256],uv(d,-1),uv(c,-1)]);
+      const x=i/segments*512,next=(i+1)/segments*512;
+      quad(a,ao,bo,b,edge,[[x,0],[x,100],[next,100],[next,0]]);
+      quad(ao,co,do_,bo,edge,[[x,100],[x,412],[next,412],[next,100]]);
+      quad(co,c,d,do_,edge,[[x,412],[x,512],[next,512],[next,412]]);
+    }
   } else if(shape==='washer') {
     band(.93,.43,.065,{bend:(x,y)=>.19*x*x+.3*Math.max(0,x-.12)+.025*Math.sin(y*4),pose:[-.18,.3]});
   } else if(shape==='tab') {
@@ -160,18 +185,18 @@ export function createInspectionModel(item, condition) {
     disc(shape==='pendant'?.72:.86,shape==='watch'?.2:.12,face,base,base,[0,0,0],0,shape==='cap'?.055:0);
     if(shape==='watch'||shape==='pendant')torus(.12,.04,1,1,[0,shape==='watch'?1.02:.9,0]);
   }
-  return {triangles,textures,profile};
+  return {triangles,textures,reliefMaps,profile};
 }
 
 // Perspective projection of actual mesh triangles, including the back and rim.
 // Canvas keeps the game dependency-free and works without WebGL on older phones.
-export function projectModel(model,yaw,pitch,width=600,height=500) {
-  const scale=Math.min(width*.36,height*.39), camera=5;
+export function projectModel(model,yaw,pitch,width=600,height=500,zoom=1,pan=[0,0]) {
+  const scale=Math.min(width*.36,height*.39)*zoom, camera=5;
   return model.triangles.map(t=>{
     const points=t.points.map(p=>rotatePoint(p,yaw,pitch)),normal=rotatePoint(t.normal,yaw,pitch);
     const center=[0,1,2].map(i=>points.reduce((sum,p)=>sum+p[i],0)/3);
     if(dot(normal,[-center[0],-center[1],camera-center[2]])<=0)return null;
-    return {...t,normal,depth:center[2],projected:points.map(([x,y,z])=>[width/2+x*scale*camera/(camera-z),height*.48-y*scale*camera/(camera-z)])};
+    return {...t,normal,depth:center[2],projected:points.map(([x,y,z])=>[width*(.5+pan[0])+x*scale*camera/(camera-z),height*(.48+pan[1])-y*scale*camera/(camera-z)])};
   }).filter(Boolean).sort((a,b)=>a.depth-b.depth);
 }
 function path(c,points,expand=0,maxMiter=100) {
@@ -184,27 +209,68 @@ function path(c,points,expand=0,maxMiter=100) {
     i?c.lineTo(x,y):c.moveTo(x,y);
   });c.closePath();
 }
-export function drawInspection(c,model,yaw=0,pitch=0,studio=true,width=600,height=500) {
+function beginTextureTriangle(c,points,uv) {
+  const [a,b,d]=points, [u,v,w]=uv;
+  const determinant=(v[0]-u[0])*(w[1]-u[1])-(w[0]-u[0])*(v[1]-u[1]);
+  if(Math.abs(determinant)<.001)return false;
+  const ax=((b[0]-a[0])*(w[1]-u[1])-(d[0]-a[0])*(v[1]-u[1]))/determinant;
+  const ay=((b[1]-a[1])*(w[1]-u[1])-(d[1]-a[1])*(v[1]-u[1]))/determinant;
+  const bx=((d[0]-a[0])*(v[0]-u[0])-(b[0]-a[0])*(w[0]-u[0]))/determinant;
+  const by=((d[1]-a[1])*(v[0]-u[0])-(b[1]-a[1])*(w[0]-u[0]))/determinant;
+  c.save();path(c,points,.6,2);c.clip();
+  c.transform(ax,ay,bx,by,a[0]-ax*u[0]-bx*u[1],a[1]-ay*u[0]-by*u[1]);
+  return true;
+}
+function paintTexturePatch(c,texture,uv) {
+  const x=Math.max(0,Math.min(...uv.map(p=>p[0]))-1),y=Math.max(0,Math.min(...uv.map(p=>p[1]))-1);
+  const w=Math.min(512,Math.max(...uv.map(p=>p[0]))+1)-x,h=Math.min(512,Math.max(...uv.map(p=>p[1]))+1)-y;
+  if(w>0&&h>0)c.drawImage(texture,x*texture.width/512,y*texture.height/512,w*texture.width/512,h*texture.height/512,x,y,w,h);
+}
+// A regular texture grid avoids the needle-shaped fan triangles that produced
+// radial moire in Canvas at large zoom. One shared polygon clips every patch.
+function drawCoinPlane(c,model,mat,texture,yaw,pitch,width,height,zoom,pan) {
+  const faces=model.triangles.filter(t=>t.mat===mat),side=model.reliefMaps[mat].side;
+  const z=faces[0].points[0][2],scale=Math.min(width*.36,height*.39)*zoom;
+  const project=p=>{const [x,y,z]=rotatePoint(p,yaw,pitch);return [width*(.5+pan[0])+x*scale*5/(5-z),height*(.48+pan[1])-y*scale*5/(5-z)];};
+  c.save();c.beginPath();
+  faces.forEach((t,i)=>{const p=project(t.points[1]);i?c.lineTo(...p):c.moveTo(...p);});c.closePath();c.clip();
+  const grid=10,step=512/grid;
+  for(let y=0;y<grid;y++)for(let x=0;x<grid;x++) {
+    const uv=[[x*step,y*step],[(x+1)*step,y*step],[(x+1)*step,(y+1)*step],[x*step,(y+1)*step]];
+    const points=uv.map(([u,v])=>project([(u-256)/250*side,(256-v)/250,z]));
+    for(const indices of [[0,1,2],[0,2,3]]) {
+      if(beginTextureTriangle(c,indices.map(i=>points[i]),indices.map(i=>uv[i]))) {paintTexturePatch(c,texture,uv);c.restore();}
+    }
+  }
+  c.restore();
+}
+const litFaces=new WeakMap();
+export function drawInspection(c,model,yaw=0,pitch=0,studio=true,width=600,height=500,zoom=1,light=0,pan=[0,0]) {
   c.clearRect(0,0,width,height);
   const bg=c.createRadialGradient(width*.45,height*.4,10,width/2,height*.48,width*.65);
   bg.addColorStop(0,studio?'#344831':'#796449');bg.addColorStop(1,studio?'#101e15':'#201b15');c.fillStyle=bg;c.fillRect(0,0,width,height);
   const shadow=c.createRadialGradient(width/2,height*.9,0,width/2,height*.9,width*.29);
   shadow.addColorStop(0,'#0008');shadow.addColorStop(1,'#0000');c.save();c.translate(0,height*.76);c.scale(1,.16);c.fillStyle=shadow;c.fillRect(0,0,width,height*2);c.restore();
-  const gpu=renderMesh(model,yaw,pitch,width,height);
+  const gpu=renderMesh(model,yaw,pitch,width,height,zoom,light,pan);
   if(gpu){c.drawImage(gpu,0,0);return;}
   // Canvas fallback keeps rotation usable if GPU contexts are unavailable.
 
-  for(const t of projectModel(model,yaw,pitch,width,height)) {
-    const [a,b,d]=t.projected, [u,v,w]=t.uv;
-    const determinant=(v[0]-u[0])*(w[1]-u[1])-(w[0]-u[0])*(v[1]-u[1]);
-    if(Math.abs(determinant)<.001)continue;
-    const ax=((b[0]-a[0])*(w[1]-u[1])-(d[0]-a[0])*(v[1]-u[1]))/determinant;
-    const ay=((b[1]-a[1])*(w[1]-u[1])-(d[1]-a[1])*(v[1]-u[1]))/determinant;
-    const bx=((d[0]-a[0])*(v[0]-u[0])-(b[0]-a[0])*(w[0]-u[0]))/determinant;
-    const by=((d[1]-a[1])*(v[0]-u[0])-(b[1]-a[1])*(w[0]-u[0]))/determinant;
-    c.save();path(c,t.projected,.6,Math.abs(t.normal[2])>.999?100:2);c.clip();
-    c.transform(ax,ay,bx,by,a[0]-ax*u[0]-bx*u[1],a[1]-ay*u[0]-by*u[1]);
-    c.drawImage(model.textures[t.mat],0,0);c.restore();
+  const key=[yaw,pitch,light].join(':');
+  let lit=litFaces.get(model);if(lit?.key!==key){lit={key,textures:[]};litFaces.set(model,lit);}
+  const painted=new Set();
+  for(const t of projectModel(model,yaw,pitch,width,height,zoom,pan)) {
+    const relief=model.reliefMaps[t.mat];
+    if(relief) {
+      if(painted.has(t.mat))continue;painted.add(t.mat);
+      if(!lit.textures[t.mat])lit.textures[t.mat]=relief.map?relightFace(model.textures[t.mat],relief.map,relief.side,yaw,pitch,model.profile.polish,light):model.textures[t.mat];
+      drawCoinPlane(c,model,t.mat,lit.textures[t.mat],yaw,pitch,width,height,zoom,pan);continue;
+    }
+    if(!beginTextureTriangle(c,t.projected,t.uv))continue;
+    const [diffuse,shine]=lightTerms(t.normal,model.profile.polish,light);
+    paintTexturePatch(c,model.textures[t.mat],t.uv);
+    c.fillStyle=`rgba(0,0,0,${1-diffuse})`;c.fillRect(0,0,512,512);
+    c.fillStyle=`rgba(255,251,230,${shine})`;c.fillRect(0,0,512,512);
+    c.restore();
 
   }
 }

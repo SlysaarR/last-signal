@@ -1,11 +1,11 @@
-import { setupInspection, clearInspection } from './coin-flip.js?v=0.38.0';
-import { onCoinImagesReady } from './graphics/coin-reference.js?v=0.38.0';
+import { setupInspection, clearInspection } from './coin-flip.js?v=0.39.0';
+import { onCoinImagesReady } from './graphics/coin-reference.js?v=0.39.0';
 // Soil canvas, finger cleaning, dust and reveal progress.
-import { types } from '../data/items.js?v=0.38.0';
-import { $ } from './dom.js?v=0.38.0';
-import { drawArtifact, seededArt } from './graphics/artifacts.js?v=0.38.0';
-import { openPacking } from './packing.js?v=0.38.0';
-import { s, save } from './storage.js?v=0.38.0';
+import { types } from '../data/items.js?v=0.39.0';
+import { $ } from './dom.js?v=0.39.0';
+import { drawArtifact, seededArt } from './graphics/artifacts.js?v=0.39.0';
+import { openPacking } from './packing.js?v=0.39.0';
+import { s, save } from './storage.js?v=0.39.0';
 export const soil = $('soil'),
   dirt = soil.getContext('2d'),
   art = $('artifact').getContext('2d');
@@ -195,6 +195,7 @@ export function collectPending() {
   openPacking();
 }
 export function initExcavation() {
+  $('excavate').addEventListener('close',()=>clearInspection($('artifact')));
   soil.addEventListener('pointerdown', e => {
     if (phaseDone) return;
     if (brushDown) return;
