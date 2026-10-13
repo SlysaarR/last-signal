@@ -1,9 +1,9 @@
-import { renderMesh } from './inspection-gl.js?v=0.39.0';
-import { paintUkrainianCoin, isUkrainianCoin, coinEdgeType } from './ukrainian-coins.js?v=0.39.0';
-import { conditionProfile, metalPalette, paintWear, artRandom } from './condition.js?v=0.39.0';
-import { coinDesign, coinEdgeSpec } from '../../data/coin-art.js?v=0.39.0';
-import { coinReliefImage } from './coin-reference.js?v=0.39.0';
-import { makeReliefMap, relightFace, lightTerms } from './inspection-light.js?v=0.39.0';
+import { renderMesh } from './inspection-gl.js?v=0.40.0';
+import { paintUkrainianCoin, isUkrainianCoin, coinEdgeType } from './ukrainian-coins.js?v=0.40.0';
+import { conditionProfile, metalPalette, paintWear, artRandom } from './condition.js?v=0.40.0';
+import { coinDesign, coinEdgeSpec } from '../../data/coin-art.js?v=0.40.0';
+import { coinReliefImage } from './coin-reference.js?v=0.40.0';
+import { makeReliefMap, relightFace, lightTerms } from './inspection-light.js?v=0.40.0';
 
 const TAU=Math.PI*2;
 const sub=(a,b)=>a.map((v,i)=>v-b[i]);

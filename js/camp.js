@@ -1,12 +1,13 @@
-import { chosenRoute, conditions } from '../data/expeditions.js?v=0.39.0';
-import { startLeg,endLeg } from './progression.js?v=0.39.0';
+import { chosenRoute, conditions } from '../data/expeditions.js?v=0.40.0';
+import { startLeg,endLeg } from './progression.js?v=0.40.0';
 // camp responsibilities for Last Signal.
-import { modal } from './dialogs.js?v=0.39.0';
-import { $ } from './dom.js?v=0.39.0';
-import { bagCapacity, bagUsed, canLeave, emergencyAllowed, maxEnergy, priceFor, travelCost } from './rules.js?v=0.39.0';
-import { s, save } from './storage.js?v=0.39.0';
-import { busy, render, showTab } from './ui.js?v=0.39.0';
-import { currentLocation, generate, rollLocation } from './world.js?v=0.39.0';
+import { modal } from './dialogs.js?v=0.40.0';
+import { $ } from './dom.js?v=0.40.0';
+import { bagCapacity, bagUsed, canLeave, emergencyAllowed, maxEnergy, priceFor, travelCost } from './rules.js?v=0.40.0';
+import { s, save } from './storage.js?v=0.40.0';
+import { busy, render, showTab } from './ui.js?v=0.40.0';
+import { currentLocation, generate, rollLocation } from './world.js?v=0.40.0';
+import { inventorySummary } from './inventory-plan.js?v=0.40.0';
 export function returnHome() {
   if (s.atCamp || s.pending) return;
   s.lastTrip = {
@@ -65,6 +66,9 @@ export function departureWarnings() {
 }
 export function renderCamp() {
   const food = s.food.reduce((sum, n) => sum + n, 0), free = Math.max(0, bagCapacity() - bagUsed());
+  const loot=inventorySummary();
+  $('campLoot').hidden=!s.atCamp||!loot.total;
+  $('campLootSummary').textContent=`Рюкзак і сховище: ${loot.total}. Нових позицій для альбому: ${loot.new}, покращень: ${loot.upgrade}. Дублікатів: ${loot.duplicate}, металобрухту: ${loot.scrap}.`;
   $('campStatus').textContent = s.atCamp ? 'Вдома · підготовка до наступного виїзду' : 'Ти в полі · табір доступний після повернення';
   $('campEnergy').textContent = s.energy + ' / ' + maxEnergy();
   $('campEnergyBar').value = s.energy;

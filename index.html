@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
     <meta name="theme-color" content="#111f20">
     <title>Останній сигнал</title>
-    <link rel="stylesheet" href="./css/base.css?v=0.39.0">
-    <link rel="stylesheet" href="./css/search.css?v=0.39.0">
-    <link rel="stylesheet" href="./css/excavation.css?v=0.39.0">
-    <link rel="stylesheet" href="./css/inventory.css?v=0.39.0">
-    <link rel="stylesheet" href="./css/workshop.css?v=0.39.0">
-    <link rel="stylesheet" href="./css/camp.css?v=0.39.0">
-    <link rel="stylesheet" href="./css/backup.css?v=0.39.0">
-    <link rel="stylesheet" href="./css/coin-art.css?v=0.39.0">
-    <link rel="stylesheet" href="./css/journal.css?v=0.39.0">
-    <script type="module" src="./js/main.js?v=0.39.0">
+    <link rel="stylesheet" href="./css/base.css?v=0.40.0">
+    <link rel="stylesheet" href="./css/search.css?v=0.40.0">
+    <link rel="stylesheet" href="./css/excavation.css?v=0.40.0">
+    <link rel="stylesheet" href="./css/inventory.css?v=0.40.0">
+    <link rel="stylesheet" href="./css/workshop.css?v=0.40.0">
+    <link rel="stylesheet" href="./css/camp.css?v=0.40.0">
+    <link rel="stylesheet" href="./css/backup.css?v=0.40.0">
+    <link rel="stylesheet" href="./css/coin-art.css?v=0.40.0">
+    <link rel="stylesheet" href="./css/journal.css?v=0.40.0">
+    <script type="module" src="./js/main.js?v=0.40.0">
     </script>
   </head>
   <body>
@@ -81,7 +81,8 @@
       <div id="saveNote" hidden>У цьому браузері збереження недоступне. Прогрес зберігається лише до закриття гри.</div>
       <section id="camp" hidden>
         <div class="camp-heading"><div class="eyebrow">ДІМ / ПІДГОТОВКА</div><h2>Твій табір</h2><p id="campStatus"></p></div>
-        <div class="expedition-banner"><div class="eyebrow">ОНОВЛЕННЯ 0.35 / ПРИЛАД ЗРОСТАЄ З ТОБОЮ</div><h3>Кожен виїзд має свою історію</h3><p>8 місцевостей · 4 напрямки · 12 цілей</p><button class="secondary" data-open="journal">Відкрити щоденник →</button><small id="journalBadge"></small></div>
+        <div id="campLoot" class="camp-loot" hidden><h3>Розбери знахідки</h3><p id="campLootSummary"></p><button class="secondary" data-open="inventory">До рюкзака й сховища →</button></div>
+        <div class="expedition-banner"><div class="eyebrow">ПОЛЬОВИЙ ЩОДЕННИК</div><h3>Кожен виїзд має свою історію</h3><p>8 місцевостей · 4 напрямки · 12 цілей</p><button class="secondary" data-open="journal">Відкрити щоденник →</button><small id="journalBadge"></small></div>
         <div class="camp-ready">
           <div class="camp-energy"><span>ЕНЕРГІЯ</span><strong id="campEnergy"></strong></div>
           <progress id="campEnergyBar" aria-label="Запас енергії" value="0" max="100"></progress>
@@ -123,10 +124,19 @@
           <p id="inventoryNoticeText" role="status" aria-live="polite"></p>
           <button class="secondary" id="showReturnedItem" hidden>Показати попередній екземпляр у сховищі</button>
         </div>
+        <div class="inventory-controls">
+          <h2>Розбір знахідок</h2>
+          <p id="inventorySummary" role="status" aria-live="polite"></p>
+          <div id="inventoryReviewActions" class="inventory-batch-actions"><button id="reviewAlbum" class="secondary">Кращі до альбому</button><button id="reviewSale" class="secondary">Переглянути продаж</button><small>Обидві дії враховують увесь рюкзак і сховище.</small></div>
+          <p id="inventoryFieldNote" class="camp-note" hidden>Продаж і поповнення альбому доступні після повернення до табору.</p>
+          <div class="inventory-filters"><label>Сортувати<select id="inventorySort"><option value="album">Спочатку для альбому</option><option value="condition">Стан: від кращого</option><option value="price">Ціна: від дорожчого</option><option value="type">Тип і назва</option><option value="stored">Порядок зберігання</option></select></label><label>Показати<select id="inventoryFilter"><option value="all">Усі знахідки</option><option value="album">Для альбому</option><option value="duplicate">Дублікати</option><option value="scrap">Металобрухт</option></select></label></div>
+          <button id="inventoryFilterReset" class="quiet" hidden>Показати всі знахідки</button>
+        </div>
         <h2>Рюкзак</h2>
         <p id="bagStatus">
         </p>
         <progress id="bagCapacity" aria-label="Заповнення рюкзака" value="0" max="8"></progress>
+        <p id="bagShown" class="inventory-count"></p>
         <div id="bagItems">
         </div>
         <h2>Провізія в рюкзаку</h2>
@@ -134,8 +144,9 @@
         </div>
         <div id="warehousePanel">
           <h2>Домашнє сховище</h2>
-          <p>Сховище не обмежене. При покращенні альбому попередній екземпляр потрапляє на початок сховища. Його можна зберегти або продати.</p>
+          <p>Сховище не обмежене. При покращенні альбому попередній екземпляр повертається сюди. Його можна зберегти або продати.</p>
           <button class="secondary" id="unload">Перекласти все зі рюкзака</button>
+          <p id="stashShown" class="inventory-count"></p>
           <div id="warehouseItems">
           </div>
           <h2>Запаси вдома</h2>
@@ -199,7 +210,7 @@
         <div class="search-status">
           <p class="sub" id="fieldBag">
           </p>
-          <span class="build-tag">v0.39.0</span>
+          <span class="build-tag">v0.40.0</span>
         </div>
         <div class="log" id="log" aria-live="polite">Обстежуй ділянку — кількість сигналів невідома. Шукай найчіткіший сигнал.</div>
       </section>
@@ -270,7 +281,7 @@
           </div>
           <p class="sub" id="catalogNote">Натисни монету, щоб оглянути обидва боки та гурт. Рівні рідкості та ціни адаптовано для гри.</p>
         </section>
-        <footer>ПРОТОТИП 0.39.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
+        <footer>ПРОТОТИП 0.40.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
       </main>
       <dialog id="backupDialog" aria-labelledby="backupTitle">
         <h2 id="backupTitle">Відновити прогрес?</h2>
@@ -341,6 +352,15 @@
         <div id="packChoices">
         </div>
         <button class="secondary" id="leaveFind" style="width:100%;margin-top:12px">Залишити знахідку</button>
+      </dialog>
+      <dialog id="inventoryReview" aria-labelledby="reviewTitle" aria-describedby="reviewDescription">
+        <div class="review-heading"><h2 id="reviewTitle"></h2><button id="reviewClose" class="quiet" aria-label="Закрити розбір знахідок">✕</button></div>
+        <p id="reviewDescription"></p>
+        <label id="reviewScrapOption" class="review-scrap"><input id="reviewIncludeScrap" type="checkbox">Додати металобрухт</label>
+        <p id="reviewNotice" role="status" aria-live="polite"></p>
+        <button id="reviewSelectAll" class="quiet">Зняти вибір</button>
+        <div id="reviewItems"></div>
+        <div class="review-footer"><p id="reviewTotal" role="status" aria-live="polite"></p><button id="reviewConfirm" class="primary">Підтвердити</button><button id="reviewCancel" class="secondary">Скасувати</button></div>
       </dialog>
       <dialog id="modal">
         <div class="eyebrow" id="modalLabel">

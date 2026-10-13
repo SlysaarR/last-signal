@@ -63,3 +63,42 @@
 @media(max-width:350px) { .find-metrics strong { font-size:20px } #coinFilters { padding:10px } #items .collect { padding:11px 7px } }
 
 .album-return-hint { margin:0 0 12px; color:#bed298; font-size:12px; line-height:1.5 }
+
+/* One shared view for sorting; all mutations still use the original item index. */
+.inventory-controls { padding:15px; border:1px solid #475b3c; border-radius:16px; background:#1b2b1f; margin:18px 0 }
+#inventory .inventory-controls h2 { margin:0 0 10px; font-size:20px }
+#inventorySummary { font-size:13px; line-height:1.65; color:#c4d5b0; margin:0 0 12px }
+.inventory-batch-actions,.inventory-filters { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px }
+.inventory-batch-actions button { min-height:48px; margin:0; padding:10px 7px; font-size:12px; line-height:1.4; white-space:normal }
+.inventory-batch-actions small { grid-column:1/-1; color:#aebe9f; font-size:11px; line-height:1.5; margin:0 0 14px }
+.inventory-filters label { min-width:0; font-size:11px; color:#c4d2b5 }
+.inventory-filters select { display:block; width:100%; min-width:0; min-height:44px; margin:6px 0 0; padding:8px 5px; font-size:12px }
+#inventoryFilterReset { min-height:44px; margin:8px 0 0; padding:7px 0; color:#d4e5af; font-size:12px; text-decoration:underline }
+.inventory-count { color:#acbe99; font-size:12px; margin:10px 0 }
+.item-status { display:inline-block; border:1px solid #506046; border-radius:6px; padding:4px 7px; font-size:11px; line-height:1.4; color:#c5d3b6 }
+.item-status.new { color:#deefb2; background:#384b28; border-color:#8fa562 }
+.item-status.upgrade { color:#cce5d5; background:#254237; border-color:#64967d }
+.item-status.scrap { color:#bdc2b6 }
+.item-status-note { display:block; margin-top:6px; line-height:1.5 }
+.camp-loot { padding:17px; margin:16px 0; border:1px solid #768b50; border-radius:16px; background:#293c25 }
+.camp-loot h3 { font-size:18px; margin:0 0 8px }.camp-loot p { font-size:13px; line-height:1.65; color:#c9dbb5; margin:0 0 12px }
+.camp-loot button { width:100%; min-height:44px; margin:0; font-size:13px }
+.review-heading { display:flex; gap:8px; justify-content:space-between; align-items:center }
+.review-heading h2 { margin:0; min-width:0; font-size:22px; overflow-wrap:anywhere }
+.review-heading button { width:44px; height:44px; flex:none; padding:0; margin:0 }
+.review-scrap,.review-item { display:flex; align-items:center; gap:12px; min-height:44px; font-size:13px; line-height:1.5 }
+.review-scrap input,.review-item input { width:22px; height:22px; flex:none; accent-color:#c5df98; margin:0 }
+#reviewItems { max-height:38dvh; overflow-y:auto; overscroll-behavior:contain; border-block:1px solid #526044; margin:8px 0; padding:0 3px }
+.review-item { padding:12px 0; border-bottom:1px solid #384932; align-items:flex-start }
+.review-item:last-child { border:0 }.review-item span { min-width:0; overflow-wrap:anywhere }
+.review-item b,.review-item small,.review-item strong { display:block }
+.review-item b { font-size:13px; color:#e0e9cf }.review-item small { font-size:11px; color:#b0c09f; margin:3px 0 }
+.review-item strong { font-size:12px; color:#d4e7a6; font-weight:500 }
+#reviewNotice { color:#e4d59b; font-size:12px }#reviewNotice:empty { display:none }
+#reviewSelectAll { min-height:44px; padding:7px 0; font-size:12px; color:#cce2a5; text-decoration:underline }
+.review-footer { padding-top:4px; background:#18261e }
+#reviewTotal { color:#d7e9b7; font-size:14px; font-weight:600; font-variant-numeric:tabular-nums }
+.review-footer button { width:100%; min-height:46px; margin:7px 0 0; font-size:13px; white-space:normal }
+.inventory-batch-actions[hidden],#inventoryFilterReset[hidden],.review-scrap[hidden],.camp-loot[hidden] { display:none }
+#inventoryReview input:focus-visible,#inventoryReview button:focus-visible,#inventory select:focus-visible { outline:2px solid #d5e9a3; outline-offset:3px }
+@media(max-width:360px) { .inventory-controls { padding:11px } .inventory-filters { grid-template-columns:minmax(0,1fr) } #inventoryReview { padding:18px } }

@@ -1,20 +1,20 @@
-import { detectorFeatures, detectorSettings } from '../data/gear.js?v=0.39.0';
-import { initDetectorControls, renderDetectorControls } from './detector-controls.js?v=0.39.0';
-import { signalDescription } from './detector.js?v=0.39.0';
-import { renderJournal } from './journal.js?v=0.39.0';
-import { conditions } from '../data/expeditions.js?v=0.39.0';
+import { detectorFeatures, detectorSettings } from '../data/gear.js?v=0.40.0';
+import { initDetectorControls, renderDetectorControls } from './detector-controls.js?v=0.40.0';
+import { signalDescription } from './detector.js?v=0.40.0';
+import { renderJournal } from './journal.js?v=0.40.0';
+import { conditions } from '../data/expeditions.js?v=0.40.0';
 // Shared navigation, detector readout and quick sheets. Rendering functions never award items.
-import { renderCamp } from './camp.js?v=0.39.0';
-import { foods } from '../data/balance.js?v=0.39.0';
-import { renderCollection } from './collection.js?v=0.39.0';
-import { $ } from './dom.js?v=0.39.0';
-import { draw } from './graphics/field.js?v=0.39.0';
-import { renderInventory } from './inventory.js?v=0.39.0';
-import { canLeave, emergencyAllowed, foodAmount, foodAvailable, foodFits, maxEnergy, minDig, travelCost } from './rules.js?v=0.39.0';
-import { digInfo, signal } from './search.js?v=0.39.0';
-import { eatFood, renderShop } from './shop.js?v=0.39.0';
-import { s } from './storage.js?v=0.39.0';
-import { currentLocation } from './world.js?v=0.39.0';
+import { renderCamp } from './camp.js?v=0.40.0';
+import { foods } from '../data/balance.js?v=0.40.0';
+import { renderCollection } from './collection.js?v=0.40.0';
+import { $ } from './dom.js?v=0.40.0';
+import { draw } from './graphics/field.js?v=0.40.0';
+import { renderInventory } from './inventory.js?v=0.40.0';
+import { canLeave, emergencyAllowed, foodAmount, foodAvailable, foodFits, maxEnergy, minDig, travelCost } from './rules.js?v=0.40.0';
+import { digInfo, signal } from './search.js?v=0.40.0';
+import { eatFood, renderShop } from './shop.js?v=0.40.0';
+import { s } from './storage.js?v=0.40.0';
+import { currentLocation } from './world.js?v=0.40.0';
 export function renderFieldChrome() {
   const choices = document.getElementById('quickFoodChoices');
   if (!choices) return;
@@ -48,8 +48,8 @@ export function renderFieldChrome() {
     choices.append(b);
   });
 }
-export function busy() {
-  return !!s.pending || ['modal','excavate','packDialog','tripMenu','quickFood','coinDetail','backupDialog'].some(id => $(id).open);
+export function busy(except=null) {
+  return !!s.pending || ['modal','excavate','packDialog','tripMenu','quickFood','coinDetail','backupDialog','inventoryReview'].some(id => id!==except&&$(id).open);
 }
 export function showTab(tab) {
   if (tab === 'search' && s.atCamp) tab = 'camp';
