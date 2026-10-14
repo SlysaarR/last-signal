@@ -9,7 +9,8 @@
     <link rel="apple-touch-icon" href="./assets/app/icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Останній сигнал">
-    <link rel="stylesheet" href="./css/atlas.css?v=0.46.0">
+    <link rel="stylesheet" href="./css/atlas.css?v=0.47.0">
+    <link rel="stylesheet" href="./css/career.css?v=0.47.0">
     <link rel="stylesheet" href="./css/offline.css?v=0.45.0">
     <title>Останній сигнал</title>
     <link rel="stylesheet" href="./css/base.css?v=0.40.0">
@@ -21,7 +22,7 @@
     <link rel="stylesheet" href="./css/backup.css?v=0.40.0">
     <link rel="stylesheet" href="./css/coin-art.css?v=0.43.0">
     <link rel="stylesheet" href="./css/journal.css?v=0.41.0">
-    <script type="module" src="./js/main.js?v=0.46.0">
+    <script type="module" src="./js/main.js?v=0.47.0">
     </script>
   </head>
   <body>
@@ -89,7 +90,7 @@
       <section id="camp" hidden>
         <div class="camp-heading"><div class="eyebrow">ДІМ / ПІДГОТОВКА</div><h2>Твій табір</h2><p id="campStatus"></p></div>
         <div id="campLoot" class="camp-loot" hidden><h3>Розбери знахідки</h3><p id="campLootSummary"></p><button class="secondary" data-open="inventory">До рюкзака й сховища →</button></div>
-        <div class="expedition-banner"><div class="eyebrow">ПОЛЬОВИЙ ЩОДЕННИК</div><h3>Кожен виїзд має свою історію</h3><p>8 місцевостей · 4 напрямки · 12 цілей</p><button class="secondary" data-open="journal">Відкрити щоденник →</button><small id="journalBadge"></small></div>
+        <div class="main-objective"><div class="eyebrow" id="campObjectiveKind"></div><h3 id="campObjectiveTitle"></h3><p id="campObjectiveText"></p><div class="career-meter"><progress id="campObjectiveMeter" aria-label="Головна мета"></progress><span id="campObjectiveCount"></span></div><button class="secondary" id="campObjectiveOpen">До головної мети →</button><button class="quiet" data-open="journal">Кар’єра та щоденник</button><p id="journalBadge"></p></div>
         <div class="camp-order"><div class="eyebrow">МЕТА НА ВИЇЗД</div><h3>Польові замовлення</h3><p id="campOrderSummary"></p><button class="secondary" data-open="journal">До замовлень →</button></div>
         <div class="camp-ready">
           <div class="camp-energy"><span>ЕНЕРГІЯ</span><strong id="campEnergy"></strong></div>
@@ -149,18 +150,21 @@
       </section>
       <section id="journal" hidden>
         <div class="journal-heading"><div class="eyebrow">ЗАВДАННЯ / СТАТИСТИКА</div><h2>Польовий щоденник</h2></div>
+        <div class="career-heading"><div class="eyebrow">КАР’ЄРА ШУКАЧА</div><h2 id="careerTitle" tabindex="-1">Твій шлях</h2><strong id="careerRank"></strong><p id="careerProgress"></p><button class="secondary" id="trackCareer" aria-pressed="true">Головна мета: кар’єра</button></div>
+        <p class="career-note">Умови майбутніх етапів рахуються вже зараз. Альбом, відвідані місцевості, завершені цілі й замовлення враховано. Відзнаки отримуй послідовно в таборі. Глибокі знахідки та повернення до мітки рахуються з версії 0.47.</p>
+        <p id="careerNotice" role="status" aria-live="polite"></p><div id="careerCards"></div>
         <p id="journalNotice" role="status" aria-live="polite"></p>
         <h2>Польові замовлення</h2>
         <p class="camp-note">Одне активне замовлення, без терміну виконання. Зараховуються лише нові знахідки, забрані в рюкзак після прийняття. Їх можна зберегти, додати в альбом або продати — прогрес залишиться. Нагороду забирай у таборі.</p>
         <p id="orderSummary" class="camp-note" tabindex="-1"></p>
         <p id="orderNotice" role="status" aria-live="polite"></p>
         <div id="orderCards" class="goal-grid"></div>
-        <p id="orderCompleted" class="camp-note"></p>
-        <h2>Цілі колекціонера</h2>
+        <p id="orderCompleted" class="camp-note"></p><button class="secondary" id="trackOrder" hidden>Зробити замовлення головною метою</button>
+        <details class="journal-panel"><summary>Нагороди цілей колекціонера</summary><p class="camp-note">Ці 12 цілей входять до етапів кар’єри. Їхні початкові нагороди збережено; раніше отримані повторно не видаються.</p>
         <p id="goalSummary" class="camp-note" tabindex="-1"></p>
         <div id="goalCards" class="goal-grid"></div>
         <details id="completedGoals" class="journal-panel" hidden><summary>Нагороди отримано <span id="completedGoalCount"></span></summary><div id="completedGoalCards" class="goal-grid"></div></details>
-        <h2>Польова статистика</h2><div id="careerStats" class="trip-grid"></div>
+        </details><h2>Польова статистика</h2><div id="careerStats" class="trip-grid"></div>
         <p class="camp-note">Польова статистика рахується з оновлення 0.30. Попередній альбом враховано. Кожну нагороду можна отримати один раз у таборі.</p>
         <details class="journal-panel"><summary>Атлас місцевостей <span>8 місць</span></summary><div id="visitedPlaces"></div></details>
         <details class="journal-panel" open><summary>Історія виїздів <span>останні 12</span></summary><div id="tripHistory"></div></details>
@@ -257,8 +261,9 @@
         <div class="search-status">
           <p class="sub" id="fieldBag">
           </p>
-          <span class="build-tag">v0.46.0</span>
+          <span class="build-tag">v0.47.0</span>
         </div>
+        <div class="main-objective"><div class="eyebrow" id="fieldObjectiveKind"></div><h3 id="fieldObjectiveTitle"></h3><p id="fieldObjectiveText"></p><div class="career-meter"><progress id="fieldObjectiveMeter" aria-label="Головна мета"></progress><span id="fieldObjectiveCount"></span></div><button class="quiet" id="fieldObjectiveOpen">Деталі головної мети →</button></div>
         <div class="log" id="log" aria-live="polite">Обстежуй ділянку — кількість сигналів невідома. Шукай найчіткіший сигнал.</div>
         <details id="fieldPanel" class="field-panel" hidden>
           <summary>Польова панель <span class="field-panel-status"><span id="fieldModeSummary" hidden></span><span id="fieldOrderSummary" hidden></span></span></summary>
@@ -306,6 +311,8 @@
         <h2>Твоя колекція</h2>
         <p class="sub" id="collectionCount">
         </p>
+        <details class="album-sets journal-panel" id="albumSets"><summary>Тематичні набори <span id="albumSetCount"></span></summary><p>Зараховуються лише монети в альбомі. Для кожної частини достатньо одного відповідного екземпляра. Набори не витрачають монети й можуть перетинатися; відзнаки за них входять до кар’єри.</p><p id="albumSetNotice" role="status" aria-live="polite"></p><div id="albumSetCards"></div></details>
+        <div class="set-filter" id="setFilterBar" hidden><div id="setFilterText"></div><button class="secondary" id="clearSetFilter">Повернутися до всього альбому</button></div>
         <div class="category-tabs" id="categories">
           <button data-category="coin">Монети України</button>
           <button data-category="jewel">Прикраси</button>
@@ -333,7 +340,7 @@
           </div>
           <p class="sub" id="catalogNote">Натисни монету, щоб оглянути обидва боки та гурт. Рівні рідкості та ціни адаптовано для гри.</p>
         </section>
-        <footer>ПРОТОТИП 0.46.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
+        <footer>ПРОТОТИП 0.47.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
       </main>
       <dialog id="appUpdateDialog" aria-labelledby="appUpdateTitle"><h2 id="appUpdateTitle">Оновлюємо гру</h2><p>Прогрес збережено. Зачекай на перезапуск…</p></dialog>
       <dialog id="backupDialog" aria-labelledby="backupTitle">

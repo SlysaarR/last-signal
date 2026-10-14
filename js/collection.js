@@ -1,18 +1,25 @@
-import { artifactMarkup, renderArtifactThumbnails } from './graphics/thumbnails.js?v=0.46.0';
-import { setupInspection, clearInspection } from './coin-flip.js?v=0.46.0';
-import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.46.0';
+import { artifactMarkup, renderArtifactThumbnails } from './graphics/thumbnails.js?v=0.47.0';
+import { albumSets, setProgress } from '../data/career.js?v=0.47.0';
+import { setupInspection, clearInspection } from './coin-flip.js?v=0.47.0';
+import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.47.0';
 // collection responsibilities for Last Signal.
-import { rarities } from '../data/balance.js?v=0.46.0';
-import { collectible, types } from '../data/items.js?v=0.46.0';
-import { $ } from './dom.js?v=0.46.0';
-import { priceFor } from './rules.js?v=0.46.0';
-import { s } from './storage.js?v=0.46.0';
-import { coinSource, coinEdgeSpec, coinDesign } from '../data/coin-art.js?v=0.46.0';
+import { rarities } from '../data/balance.js?v=0.47.0';
+import { collectible, types } from '../data/items.js?v=0.47.0';
+import { $ } from './dom.js?v=0.47.0';
+import { priceFor } from './rules.js?v=0.47.0';
+import { s } from './storage.js?v=0.47.0';
+import { coinSource, coinEdgeSpec, coinDesign } from '../data/coin-art.js?v=0.47.0';
 export let collectionCategory = 'coin',
   denomFilter = 'all',
   yearFilter = 'all',
   missingOnly = false,
   collectionRenderKey = '';
+export let setFilter=null;
+export function showSetItems(id){
+ if(!albumSets.some(set=>set.id===id))return;
+ setFilter=id;collectionCategory='coin';denomFilter='all';yearFilter='all';missingOnly=false;
+ $('denomFilter').value='all';$('missingFilter').checked=false;updateYearFilter();renderCollection();
+}
 export const yearKey = t => t.denom + '|' + t.year;
 export function categoryItems() {
   const all = types.map((t, id) => ({
@@ -20,17 +27,20 @@ export function categoryItems() {
     id
   }));
   if (collectionCategory === 'legacy') return all.filter(t => t.legacy && s.collection.includes(t.id));
+  if(setFilter){const set=setProgress(albumSets.find(set=>set.id===setFilter),s),rows=set.done?set.slots:set.slots.filter(row=>!row.done),ids=new Set(rows.flatMap(row=>row.ids));return all.filter(t=>ids.has(t.id)).sort((a,b)=>denominations.indexOf(a.denom)-denominations.indexOf(b.denom)||a.year-b.year||a.id-b.id);}
   return all.filter(t => !t.legacy && t.kind === collectionCategory && (collectionCategory !== 'coin' || (denomFilter === 'all' || t.denom === denomFilter) && (yearFilter === 'all' || t.year === Number(yearFilter)) && (!missingOnly || !s.collection.includes(t.id)))).sort((a, b) => collectionCategory === 'coin' ? denominations.indexOf(a.denom) - denominations.indexOf(b.denom) || a.year - b.year || a.id - b.id : a.id - b.id);
 }
 export function renderCollection() {
-  const key = JSON.stringify([collectionCategory, denomFilter, yearFilter, missingOnly, s.collection, s.best]);
+  const key = JSON.stringify([collectionCategory, denomFilter, yearFilter, missingOnly, setFilter, s.collection, s.best]);
   if (key === collectionRenderKey) return;
   collectionRenderKey = key;
   const owned = new Set(s.collection),
     found = collectible.filter(t => owned.has(t.id)).length;
   $('collectionCount').textContent = found + ' / ' + collectible.length + ' позицій у колекції';
   $('archiveTab').hidden = !s.collection.some(id => types[id]?.legacy);
-  $('coinFilters').hidden = collectionCategory !== 'coin';
+  $('coinFilters').hidden = collectionCategory !== 'coin'||!!setFilter;
+  $('setFilterBar').hidden=!setFilter;
+  if(setFilter){const set=setProgress(albumSets.find(set=>set.id===setFilter),s);$('setFilterText').textContent=set.name+' · '+(set.done?'Набір завершено. Показані всі відповідні позиції.':'Показані варіанти для незаповнених частин набору. Достатньо одного відповідного екземпляра на частину.');}
   document.querySelectorAll('[data-category]').forEach(b => {
     b.classList.toggle('active', b.dataset.category === collectionCategory);
     b.setAttribute('aria-pressed', String(b.dataset.category === collectionCategory));
@@ -118,6 +128,7 @@ export function initCollection() {
   };
   document.querySelectorAll('[data-category]').forEach(b => b.onclick = () => {
     collectionCategory = b.dataset.category;
+    setFilter=null;
     renderCollection();
   });
   $('items').addEventListener('click', e => {
@@ -125,5 +136,6 @@ export function initCollection() {
     if (b) showItem(Number(b.dataset.item));
   });
   $('detailClose').onclick = () => $('coinDetail').close();
+  $('clearSetFilter').onclick=()=>{setFilter=null;renderCollection();};
 }
 

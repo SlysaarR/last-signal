@@ -1,10 +1,10 @@
-import { siteName } from '../data/atlas.js?v=0.46.0';
-import { routes, goals, conditions, chosenRoute } from '../data/expeditions.js?v=0.46.0';
-import { locations } from '../data/locations.js?v=0.46.0';
-import { $ } from './dom.js?v=0.46.0';
-import { s,save } from './storage.js?v=0.46.0';
-import { progress,goalMetrics,claimGoal } from './progression.js?v=0.46.0';
-import { render,busy } from './ui.js?v=0.46.0';
+import { siteName } from '../data/atlas.js?v=0.47.0';
+import { routes, goals, conditions, chosenRoute } from '../data/expeditions.js?v=0.47.0';
+import { locations } from '../data/locations.js?v=0.47.0';
+import { $ } from './dom.js?v=0.47.0';
+import { s,save } from './storage.js?v=0.47.0';
+import { progress,goalMetrics,claimGoal } from './progression.js?v=0.47.0';
+import { render,busy } from './ui.js?v=0.47.0';
 let campKey='',journalKey='';
 export function journalGoals(metrics=goalMetrics()){
  const claimed=progress().claimed;
@@ -14,7 +14,7 @@ export function journalGoals(metrics=goalMetrics()){
 function goalCard(g){
  const ready=g.value===g.target&&!g.done;
  const action=g.done?'<span class="goal-status">✓ Нагороду отримано</span>':ready&&s.atCamp&&!s.pending?`<button class="primary" data-claim="${g.id}">Отримати ${g.reward} купонів</button>`:`<span class="goal-status">${ready?'Готово · забрати в таборі':'У процесі'}</span>`;
- return `<article class="goal-card ${g.done?'complete':ready?'ready':''}" data-goal="${g.id}"><div class="goal-head"><h3>${g.name}</h3><span>${g.done?'✓':g.reward+' куп.'}</span></div><p>${g.text}</p><div class="goal-meter"><progress aria-label="${g.name}" value="${g.value}" max="${g.target}"></progress><small>${g.value} / ${g.target}</small></div>${action}</article>`;
+ return `<article class="goal-card ${g.done?'complete':ready?'ready':''}" data-goal="${g.id}"><div class="goal-head"><h3>${g.name}</h3><span>${g.done?'✓':g.reward+' куп.'}</span></div><p>${g.text}</p><div class="goal-meter"><progress aria-label="${g.name}" value="${g.value}" max="${g.target}"></progress><small>${g.value} / ${g.target}</small></div>${action}${g.done?'':`<button class="quiet" data-focus="goal:${g.id}">Стежити за цією ціллю</button>`}</article>`;
 }
 export function renderJournal(scope='all'){
  const next=JSON.stringify([s.progress,s.route,s.collection,s.best,s.atCamp,!!s.pending]);

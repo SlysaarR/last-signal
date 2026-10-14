@@ -1,14 +1,15 @@
-import { recordFind } from './progression.js?v=0.46.0';
-import { orderReady } from './orders.js?v=0.46.0';
-import { setupInspection, clearInspection } from './coin-flip.js?v=0.46.0';
+import { recordFind } from './progression.js?v=0.47.0';
+import { recordCareerFind } from './career.js?v=0.47.0';
+import { orderReady } from './orders.js?v=0.47.0';
+import { setupInspection, clearInspection } from './coin-flip.js?v=0.47.0';
 // Revealed-find card and the take/swap/leave decision.
-import { foods, rarities } from '../data/balance.js?v=0.46.0';
-import { types } from '../data/items.js?v=0.46.0';
-import { $ } from './dom.js?v=0.46.0';
-import { itemLabel } from './inventory.js?v=0.46.0';
-import { bagCapacity, bagUsed, conditionLabel, priceFor } from './rules.js?v=0.46.0';
-import { s, save } from './storage.js?v=0.46.0';
-import { render } from './ui.js?v=0.46.0';
+import { foods, rarities } from '../data/balance.js?v=0.47.0';
+import { types } from '../data/items.js?v=0.47.0';
+import { $ } from './dom.js?v=0.47.0';
+import { itemLabel } from './inventory.js?v=0.47.0';
+import { bagCapacity, bagUsed, conditionLabel, priceFor } from './rules.js?v=0.47.0';
+import { s, save } from './storage.js?v=0.47.0';
+import { render } from './ui.js?v=0.47.0';
 export function openPacking() {
   if (!s.pending) return;
   const item = s.pending,
@@ -45,6 +46,7 @@ export function resolvePacking(action, index) {
     s.bag.push(item);
   } else if (action !== 'leave') return;
   const orderAdvanced=recordFind(item, action !== 'leave');
+  recordCareerFind(s.pending,action !== 'leave');
   s.pending = null;
   s.found = (s.found || 0) + 1;
   save();

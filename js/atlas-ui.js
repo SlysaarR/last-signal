@@ -1,13 +1,13 @@
-import { MAX_SITES, activeSite, selectedSite, siteName, siteLocation, siteRoute, siteAccessible, canScout } from '../data/atlas.js?v=0.46.0';
-import { routes, conditions, chosenRoute } from '../data/expeditions.js?v=0.46.0';
-import { surveyCols, surveyRows } from '../data/balance.js?v=0.46.0';
-import { ensureAtlas, selectSite, forgetSite } from './atlas-state.js?v=0.46.0';
-import { s, save } from './storage.js?v=0.46.0';
-import { $ } from './dom.js?v=0.46.0';
-import { busy, render, showTab } from './ui.js?v=0.46.0';
-import { modal } from './dialogs.js?v=0.46.0';
-import { canLeave, travelCost, emergencyAllowed } from './rules.js?v=0.46.0';
-import { confirmDeparture, departureBlock } from './camp.js?v=0.46.0';
+import { MAX_SITES, activeSite, selectedSite, siteName, siteLocation, siteRoute, siteAccessible, canScout } from '../data/atlas.js?v=0.47.0';
+import { routes, conditions, chosenRoute } from '../data/expeditions.js?v=0.47.0';
+import { surveyCols, surveyRows } from '../data/balance.js?v=0.47.0';
+import { ensureAtlas, selectSite, forgetSite } from './atlas-state.js?v=0.47.0';
+import { s, save } from './storage.js?v=0.47.0';
+import { $ } from './dom.js?v=0.47.0';
+import { busy, render, showTab } from './ui.js?v=0.47.0';
+import { modal } from './dialogs.js?v=0.47.0';
+import { canLeave, travelCost, emergencyAllowed } from './rules.js?v=0.47.0';
+import { confirmDeparture, departureBlock } from './camp.js?v=0.47.0';
 const pins=[[19,20],[73,15],[85,49],[69,81],[20,80],[13,48]];
 export function openAtlas() {
   if(busy())return;
