@@ -1,6 +1,6 @@
-import { types } from '../data/items.js?v=0.45.0';
-import { priceFor } from './rules.js?v=0.45.0';
-import { s } from './storage.js?v=0.45.0';
+import { types } from '../data/items.js?v=0.46.0';
+import { priceFor } from './rules.js?v=0.46.0';
+import { s } from './storage.js?v=0.46.0';
 const kindOrder={coin:0,jewel:1,relic:2,trash:3};
 const typeOrder=[];
 types.map((type,id)=>({type,id})).sort((a,b)=>kindOrder[a.type.kind]-kindOrder[b.type.kind]||a.type.name.localeCompare(b.type.name,'uk')||a.id-b.id).forEach((entry,rank)=>{typeOrder[entry.id]=rank;});

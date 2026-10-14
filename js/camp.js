@@ -1,13 +1,16 @@
-import { chosenRoute, conditions } from '../data/expeditions.js?v=0.45.0';
-import { startLeg,endLeg } from './progression.js?v=0.45.0';
+import { openAtlas } from './atlas-ui.js?v=0.46.0';
+import { ensureAtlas, parkCurrent, restoreSite, rememberCurrent } from './atlas-state.js?v=0.46.0';
+import { activeSite, selectedSite, siteName, siteAccessible, canScout, MAX_SITES } from '../data/atlas.js?v=0.46.0';
+import { chosenRoute, conditions } from '../data/expeditions.js?v=0.46.0';
+import { startLeg,endLeg } from './progression.js?v=0.46.0';
 // camp responsibilities for Last Signal.
-import { modal } from './dialogs.js?v=0.45.0';
-import { $ } from './dom.js?v=0.45.0';
-import { bagCapacity, bagUsed, canLeave, emergencyAllowed, maxEnergy, priceFor, travelCost } from './rules.js?v=0.45.0';
-import { s, save } from './storage.js?v=0.45.0';
-import { busy, render, showTab } from './ui.js?v=0.45.0';
-import { currentLocation, generate, rollLocation } from './world.js?v=0.45.0';
-import { inventorySummary } from './inventory-plan.js?v=0.45.0';
+import { modal } from './dialogs.js?v=0.46.0';
+import { $ } from './dom.js?v=0.46.0';
+import { bagCapacity, bagUsed, canLeave, emergencyAllowed, maxEnergy, priceFor, travelCost } from './rules.js?v=0.46.0';
+import { s, save } from './storage.js?v=0.46.0';
+import { busy, render, showTab } from './ui.js?v=0.46.0';
+import { currentLocation, generate, rollLocation } from './world.js?v=0.46.0';
+import { inventorySummary } from './inventory-plan.js?v=0.46.0';
 export function returnHome() {
   if (s.atCamp || s.pending) return;
   s.lastTrip = {
@@ -17,48 +20,58 @@ export function returnHome() {
     travel: s.travelSpent,
     food: s.foodSpent
   };
+  ensureAtlas();
   endLeg();
+  parkCurrent();
+  s.atlas.selectedId=null;
   s.atCamp = true;
   s.objects = [];
   s.holes = [];
+  s.survey = [];
   delete s.site;
   delete s.fieldMarks;
   save();
   showTab('camp');
 }
-export function showArrival() {
-  const loc = currentLocation();
-  modal('НОВА ДІЛЯНКА', loc.icon, loc.name, s.energy + ' сил. ' + (conditions[s.progress?.active?.condition]?.text || '') + ' ' + loc.hint, 'Почати пошук');
+export function destinationName() {
+  const target=selectedSite(s);
+  return target?siteName(target):emergencyAllowed()?'Бідне узбіччя':chosenRoute(s).name;
+}
+export function departureBlock() {
+  const target=selectedSite(s);
+  if(s.pending)return 'Заверши поточну знахідку перед дорогою.';
+  if(target&&target.id===s.atlas?.activeId)return 'Ти вже на цій ділянці. Повернися до пошуку або обери іншу.';
+  if(target&&!siteAccessible(s,target))return 'Для цього напрямку ще бракує позицій в альбомі.';
+  if(!target&&!canScout(s))return 'На карті вже '+MAX_SITES+' ділянок. У таборі прибери одну стару або обери знайому для повернення.';
+  if(s.coins<travelCost())return 'Бракує купонів на цю дорогу. Обери дешевше місце'+(s.atCamp&&s.coins<25?' або розвідку безкоштовного узбіччя.':'.');
+  return '';
+}
+export function showArrival(revisit=false) {
+  const loc=currentLocation(),site=activeSite(s);
+  modal(revisit?'ЗНАЙОМА ДІЛЯНКА':'НОВА ДІЛЯНКА',loc.icon,site?siteName(site):loc.name,
+    s.energy+' сил. '+(conditions[s.progress?.active?.condition]?.text||'')+' '+(revisit?'Ями, мітки й пройдена територія збережені. Здобич не відновлюється.':loc.hint), 'Почати пошук');
 }
 export function depart() {
-  if (!canLeave()) return;
-  const fromCamp = s.atCamp,
-    emergency = emergencyAllowed(), cost = travelCost(), route = chosenRoute(s);
-  endLeg();
-  if (fromCamp) {
-    s.travelSpent = 0;
-    s.foodSpent = 0;
-    s.found = 0;
-    s.earned = 0;
-    s.foodUsed = 0;
+  if(!canLeave())return false;
+  const fromCamp=s.atCamp,emergency=emergencyAllowed(),cost=travelCost(),route=chosenRoute(s);
+  ensureAtlas();
+  const target=selectedSite(s);
+  endLeg();parkCurrent();
+  if(fromCamp){s.travelSpent=0;s.foodSpent=0;s.found=0;s.earned=0;s.foodUsed=0;}
+  s.coins-=cost;s.travelSpent+=cost;s.day++;s.atCamp=false;
+  if(target){
+    restoreSite(target);startLeg(cost,target.condition);
+  }else{
+    s.x=.5;s.y=.52;s.emergency=emergency;
+    s.location=emergency?0:rollLocation(route);
+    const weatherRoll=Math.random();
+    startLeg(cost,emergency?0:weatherRoll<.6?0:weatherRoll<.8?1:2);
+    generate({persist:false});rememberCurrent(emergency?'wander':route.id);
   }
-  if (!emergency) {
-    s.coins -= cost;
-    s.travelSpent += cost;
-  }
-  s.day++;
-  s.atCamp = false;
-  s.x = .5;
-  s.y = .52;
-  s.emergency = emergency;
-  s.location = emergency ? 0 : rollLocation(route);
-  const weatherRoll = Math.random();
-  startLeg(cost, emergency ? 0 : weatherRoll < .6 ? 0 : weatherRoll < .8 ? 1 : 2);
-  generate();
-  save();
-  showTab('search');
-  $('log').textContent = 'Нова ділянка. Залишок сил: ' + s.energy + '.';
-  showArrival();
+  // The completed state is saved once, after the field and its identity agree.
+  save();showTab('search');
+  $('log').textContent=(target?'Повернувся на знайому ділянку. ':'Нове місце додано на карту. ')+'Залишок сил: '+s.energy+'.';
+  showArrival(!!target);return true;
 }
 export function departureWarnings() {
   const warnings = [];
@@ -82,19 +95,26 @@ export function renderCamp() {
   $('restHome').disabled = !s.atCamp || s.energy === maxEnergy() || !!s.pending;
   $('restHome').textContent = s.energy === maxEnergy() ? 'Енергію відновлено' : 'Відпочити · безкоштовно';
   $('startTrip').disabled = !!s.pending || s.atCamp && !canLeave();
-  $('startTrip').textContent = !s.atCamp ? 'Повернутися до табору' : s.coins < 25 ? 'На узбіччя · безкоштовно' : 'Вирушити · '+travelCost()+' купонів';
-  $('departureNote').textContent = !s.atCamp ? 'Повернення безкоштовне. Знахідки залишаться в рюкзаку, а поточну ділянку буде залишено.' : s.coins < 25 ? 'Коли купонів менше 25, доступне бідне узбіччя. Дорога не відновлює енергію.' : (canLeave() ? chosenRoute(s).name + '. Після оплати залишиться ' + (s.coins - travelCost()) + ' купонів.' : 'Бракує купонів. Обери дешевший напрямок або продай знахідки.') + ' Дорога не відновлює енергію.';
+  const target=selectedSite(s);
+  $('startTrip').textContent=!s.atCamp?'Повернутися до табору':(target?'До «'+siteName(target)+'»':emergencyAllowed()?'На узбіччя':'Розвідати нове місце')+' · '+travelCost()+' купонів';
+  $('departureNote').textContent=!s.atCamp?'Повернення безкоштовне. Ділянка та мітки залишаться на карті.':departureBlock() || (target?'Повернення на знайому ділянку. ':emergencyAllowed()?'Безкоштовна розвідка бідного узбіччя. ':chosenRoute(s).name+'. ')+'Після дороги залишиться '+(s.coins-travelCost())+' купонів. Дорога не відновлює енергію.';
+  $('campMapSummary').textContent=(s.atlas?.sites.length || (s.atCamp?0:1))+' / '+MAX_SITES+' ділянок · '+(target?'обрано: '+siteName(target):'обрано розвідку нового місця');
   const trip = s.lastTrip;
   $('tripSummary').innerHTML = trip ? `<div class="trip-grid"><div><span>Оглянуто за виїзд</span><strong>${trip.found}</strong></div><div><span>Предметів у рюкзаку</span><strong>${trip.brought}</strong></div><div><span>Вартість рюкзака</span><strong>${trip.value}<small> купонів</small></strong></div><div><span>Витрати на виїзд</span><strong>${trip.travel + trip.food}<small> купонів</small></strong></div></div><p class="camp-note">Дорога: ${trip.travel} · з’їдена їжа: ${trip.food} купонів. Вартість рюкзака включає всі принесені предмети, зокрема взяті з дому. Купони нараховуються після продажу.</p>` : '<p class="camp-note">Тут з’являться знахідки й витрати після першого повернення з поля.</p>';
 }
 export function confirmDeparture() {
-  if (!canLeave() || busy()) return;
-  const warnings = departureWarnings();
-  modal(warnings.length ? 'ПЕРЕВІР ПІДГОТОВКУ' : 'ВИРУШИТИ?', '⛺', emergencyAllowed() ? 'Бідне узбіччя' : chosenRoute(s).name, (emergencyAllowed() ? 'Безкоштовний виїзд на бідне узбіччя.' : 'Вартість: '+travelCost()+' купонів.') + ' Енергія: ' + s.energy + ' / ' + maxEnergy() + '. Вільних місць: ' + Math.max(0, bagCapacity() - bagUsed()) + '. ' + warnings.join(' ') + ' Дорога не відновлює сили.' + (s.atCamp ? '' : ' Стару ділянку буде втрачено.'), warnings.length ? 'Усе одно вирушити' : 'Вирушити', depart);
+  if(!canLeave()||busy())return;
+  const warnings=departureWarnings(),state=s,selected=s.atlas?.selectedId??null,day=s.day,camp=s.atCamp;
+  modal(warnings.length?'ПЕРЕВІР ПІДГОТОВКУ':'ВИРУШИТИ?','⛺',destinationName(),
+    'Вартість: '+travelCost()+' купонів. Енергія: '+s.energy+' / '+maxEnergy()+'. Вільних місць: '+Math.max(0,bagCapacity()-bagUsed())+'. '+warnings.join(' ')+' Дорога не відновлює сили.'+(s.atCamp?'':' Поточна ділянка залишиться на карті.'),
+    warnings.length?'Усе одно вирушити':'Вирушити',()=>{
+      if(s!==state||s.day!==day||s.atCamp!==camp||(s.atlas?.selectedId??null)!==selected)return;
+      depart();
+    });
 }
 export function confirmReturnHome() {
   if (busy() || s.atCamp) return;
-  modal('ПОВЕРНУТИСЯ ДОДОМУ?', '🏠', 'Завершити виїзд', 'Повернення безкоштовне. Здобич у рюкзаку збережеться, але ділянку буде втрачено.', 'До табору', returnHome);
+  modal('ПОВЕРНУТИСЯ ДОДОМУ?', '🏠', 'Завершити виїзд', 'Повернення безкоштовне. Здобич у рюкзаку збережеться. Ділянка, ями та мітки залишаться на карті для наступного виїзду.', 'До табору', returnHome);
 }
 export function initCamp() {
   $('restHome').onclick = () => {
@@ -105,7 +125,7 @@ export function initCamp() {
     render();
   };
   $('returnHome').onclick = confirmReturnHome;
-  $('finish').onclick = confirmDeparture;
+  $('finish').onclick = () => {if(busy('tripMenu'))return;$('tripMenu').close();openAtlas();};
   $('startTrip').onclick = () => s.atCamp ? confirmDeparture() : confirmReturnHome();
 }
 

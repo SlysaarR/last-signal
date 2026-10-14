@@ -1,5 +1,5 @@
 // dialogs responsibilities for Last Signal.
-import { $ } from './dom.js?v=0.45.0';
+import { $ } from './dom.js?v=0.46.0';
 export let modalAction = null;
 export function modal(label, icon, title, text, button, action) {
   $('modalLabel').style.color = '#a9bd84';

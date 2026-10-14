@@ -1,9 +1,10 @@
-import { routes, goals, conditions, chosenRoute } from '../data/expeditions.js?v=0.45.0';
-import { locations } from '../data/locations.js?v=0.45.0';
-import { $ } from './dom.js?v=0.45.0';
-import { s,save } from './storage.js?v=0.45.0';
-import { progress,goalMetrics,claimGoal } from './progression.js?v=0.45.0';
-import { render,busy } from './ui.js?v=0.45.0';
+import { siteName } from '../data/atlas.js?v=0.46.0';
+import { routes, goals, conditions, chosenRoute } from '../data/expeditions.js?v=0.46.0';
+import { locations } from '../data/locations.js?v=0.46.0';
+import { $ } from './dom.js?v=0.46.0';
+import { s,save } from './storage.js?v=0.46.0';
+import { progress,goalMetrics,claimGoal } from './progression.js?v=0.46.0';
+import { render,busy } from './ui.js?v=0.46.0';
 let campKey='',journalKey='';
 export function journalGoals(metrics=goalMetrics()){
  const claimed=progress().claimed;
@@ -38,9 +39,9 @@ export function renderJournal(scope='all'){
  $('completedGoals').hidden=!finished.length;
  $('completedGoalCount').textContent=finished.length+' / '+goals.length;
  $('visitedPlaces').innerHTML=locations.map((l,i)=>`<div class="place-row ${p.visited.includes(i)?'visited':''}"><span aria-hidden="true">${l.icon}</span><div><b>${l.name}</b><small>${p.visited.includes(i)?'Місцевість відвідана':'Ще попереду'}</small></div><span>${p.visited.includes(i)?'✓':'—'}</span></div>`).join('');
- $('tripHistory').innerHTML=p.history.map(a=>`<article class="history-card"><div class="goal-head"><h3>${a.emergency?'Бідне узбіччя':locations[a.location]?.name||'Попередня ділянка'}</h3><span>№ ${a.day}</span></div><p>${conditions[a.condition].name} · дорога ${a.travel} куп.</p><div class="history-numbers"><span><b>${a.found}</b> оглянуто</span><span><b>${a.kept}</b> забрано</span><span><b>${a.empty}</b> порожніх ямок</span></div><small>${a.newTypes} нових для альбому типів помічено${a.found>=3?' · результативна ділянка':''}</small></article>`).join('')||'<div class="empty-state"><b>Історія починається з наступного виїзду</b><p>Після повернення або зміни ділянки тут залишиться запис. Зберігаються останні 12 ділянок.</p></div>';
+ $('tripHistory').innerHTML=p.history.map(a=>`<article class="history-card"><div class="goal-head"><h3>${a.siteId?siteName({id:a.siteId,location:a.location,emergency:a.emergency}):a.emergency?'Бідне узбіччя':locations[a.location]?.name||'Попередня ділянка'}</h3><span>№ ${a.day}</span></div><p>${conditions[a.condition].name} · дорога ${a.travel} куп.</p><div class="history-numbers"><span><b>${a.found}</b> оглянуто</span><span><b>${a.kept}</b> забрано</span><span><b>${a.empty}</b> порожніх ямок</span></div><small>${a.newTypes} нових для альбому типів помічено${(a.qualifiedSite??a.found>=3)?' · результативна ділянка':''}</small></article>`).join('')||'<div class="empty-state"><b>Історія починається з наступного виїзду</b><p>Після повернення або зміни ділянки тут залишиться запис. Зберігаються останні 12 ділянок.</p></div>';
 }
 export function initJournal(){
- $('routeCards').addEventListener('click',e=>{const b=e.target.closest('[data-route]');if(!b||!s.atCamp||busy())return;const r=routes.find(r=>r.id===b.dataset.route);if(!r||s.collection.length<r.need)return;s.route=r.id;save();render();});
+ $('routeCards').addEventListener('click',e=>{const b=e.target.closest('[data-route]');if(!b||!s.atCamp||busy())return;const r=routes.find(r=>r.id===b.dataset.route);if(!r||s.collection.length<r.need)return;s.route=r.id;if(s.atlas)s.atlas.selectedId=null;save();render();});
  $('goalCards').addEventListener('click',e=>{const b=e.target.closest('[data-claim]');if(!b||busy())return;if(claimGoal(b.dataset.claim)){$('journalNotice').textContent='Нагороду отримано. Купони додано до балансу.';render();const next=$('goalCards').querySelector('[data-claim]')||$('goalSummary');next.focus?.({preventScroll:true});}});
 }

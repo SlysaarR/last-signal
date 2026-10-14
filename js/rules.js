@@ -1,9 +1,10 @@
-import { capacityAt, detectorAt, energyLimit, shovelAt, upgradePrice } from '../data/gear.js?v=0.45.0';
-import { chosenRoute, conditions } from '../data/expeditions.js?v=0.45.0';
+import { selectedSite, siteRoute, siteAccessible, canScout } from '../data/atlas.js?v=0.46.0';
+import { capacityAt, detectorAt, energyLimit, shovelAt, upgradePrice } from '../data/gear.js?v=0.46.0';
+import { chosenRoute, conditions } from '../data/expeditions.js?v=0.46.0';
 // rules responsibilities for Last Signal.
-import { foods, rarities } from '../data/balance.js?v=0.45.0';
-import { types } from '../data/items.js?v=0.45.0';
-import { s } from './storage.js?v=0.45.0';
+import { foods, rarities } from '../data/balance.js?v=0.46.0';
+import { types } from '../data/items.js?v=0.46.0';
+import { s } from './storage.js?v=0.46.0';
 export function rollCondition() {
   return Math.floor(Math.random() * 101);
 }
@@ -46,10 +47,11 @@ export function bagUsed() {
   return s.bag.length + s.food.reduce((a, b) => a + b, 0);
 }
 export function emergencyAllowed() {
-  return s.atCamp && s.coins < 25 && !s.pending;
+  return s.atCamp && s.coins < 25 && !s.pending && (!selectedSite(s) || selectedSite(s).emergency);
 }
-export function travelCost() { return emergencyAllowed()?0:chosenRoute(s).cost; }
+export function travelCost() { const target=selectedSite(s);return emergencyAllowed()?0:target?siteRoute(target).cost:chosenRoute(s).cost; }
 export function canLeave() {
-  return !s.pending && (s.coins >= travelCost());
+  const target=selectedSite(s);
+  return !s.pending && (target ? target.id!==s.atlas.activeId && siteAccessible(s,target) : canScout(s)) && s.coins >= travelCost();
 }
 

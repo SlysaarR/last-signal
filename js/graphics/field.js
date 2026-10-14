@@ -1,11 +1,12 @@
-import { createSiteLayout } from '../../data/site-layout.js?v=0.45.0';
-import { paintSiteTerrain } from './site-terrain.js?v=0.45.0';
-import { drawDetector } from './detector-art.js?v=0.45.0';
+import { activeSite } from '../../data/atlas.js?v=0.46.0';
+import { createSiteLayout } from '../../data/site-layout.js?v=0.46.0';
+import { paintSiteTerrain } from './site-terrain.js?v=0.46.0';
+import { drawDetector } from './detector-art.js?v=0.46.0';
 // field responsibilities for Last Signal.
-import { $ } from '../dom.js?v=0.45.0';
-import { signal } from '../search.js?v=0.45.0';
-import { s } from '../storage.js?v=0.45.0';
-import { currentLocation } from '../world.js?v=0.45.0';
+import { $ } from '../dom.js?v=0.46.0';
+import { signal } from '../search.js?v=0.46.0';
+import { s } from '../storage.js?v=0.46.0';
+import { currentLocation } from '../world.js?v=0.46.0';
 export const canvas = $('field'),
   ctx = canvas.getContext('2d');
 export function paintTerrain(ctx) {
@@ -20,7 +21,7 @@ export function paintTerrain(ctx) {
   g.addColorStop(1, loc.ground[1]);
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, w, h);
-  let seed = 47 + s.day * 101 + (s.location + 1) * 317;
+  let seed = 47 + (activeSite(s)?.createdDay || s.day) * 101 + (s.location + 1) * 317;
   function rand() {
     seed = seed * 16807 % 2147483647;
     return seed / 2147483647;
@@ -180,7 +181,7 @@ function paintMarks(c,w,h) {
   c.restore();
 }
 export function draw(n=signal()) {
-  const key=s.day+':'+s.location+':'+s.emergency+':'+(s.site?s.site.version+':'+s.site.seed:'legacy');
+  const key=s.location+':'+s.emergency+':'+(s.site?s.site.version+':'+s.site.seed:'legacy:'+(activeSite(s)?.createdDay||s.day));
   if(!terrainLayer||key!==terrainKey){
     terrainLayer=terrainLayer||document.createElement('canvas');terrainLayer.width=880;terrainLayer.height=720;
     paintTerrain(terrainLayer.getContext('2d'));terrainKey=key;

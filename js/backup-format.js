@@ -1,10 +1,11 @@
-import { GEAR_VERSION, MAX_GEAR_LEVEL, capacityFor, energyLimit, gearCosts, migrateGear } from '../data/gear.js?v=0.45.0';
-import { routes, validProgress } from '../data/expeditions.js?v=0.45.0';
-import { validOrders } from '../data/orders.js?v=0.45.0';
-import { MAX_BRUSH_MARKS } from '../data/cleaning.js?v=0.45.0';
+import { validAtlas } from '../data/atlas.js?v=0.46.0';
+import { GEAR_VERSION, MAX_GEAR_LEVEL, capacityFor, energyLimit, gearCosts, migrateGear } from '../data/gear.js?v=0.46.0';
+import { routes, validProgress } from '../data/expeditions.js?v=0.46.0';
+import { validOrders } from '../data/orders.js?v=0.46.0';
+import { MAX_BRUSH_MARKS } from '../data/cleaning.js?v=0.46.0';
 // Strict validation for portable backups. Reading a file never changes game state.
-import { types } from '../data/items.js?v=0.45.0';
-import { locations } from '../data/locations.js?v=0.45.0';
+import { types } from '../data/items.js?v=0.46.0';
+import { locations } from '../data/locations.js?v=0.46.0';
 export const MAX_BACKUP_SIZE = 4 * 1024 * 1024;
 const object = v => v !== null && typeof v === 'object' && !Array.isArray(v);
 const number = (v, min = 0, max = Number.MAX_SAFE_INTEGER) => typeof v === 'number' && Number.isFinite(v) && v >= min && v <= max;
@@ -14,6 +15,11 @@ const id = v => integer(v, 0, types.length - 1);
 const collectible = v => id(v) && types[v].kind !== 'trash';
 const item = v => object(v) && id(v.type) && number(v.condition, 0, 100);
 const point = v => object(v) && number(v.x, 0, 1) && number(v.y, 0, 1);
+const fieldState = v => object(v) && point(v) &&
+  array(v.objects, o => item(o) && point(o) && integer(o.depth,0,2) && typeof o.dug==='boolean',100) &&
+  array(v.holes,point) && array(v.survey,n=>integer(n,0,319),320) &&
+  (v.site===undefined || object(v.site)&&v.site.version===1&&integer(v.site.seed,0,4294967295)) &&
+  (v.fieldMarks===undefined || array(v.fieldMarks,point,8)&&new Set(v.fieldMarks.map(p=>p.x+':'+p.y)).size===v.fieldMarks.length);
 export function validateBackupState(s) {
   const fail = () => { throw new Error('Файл містить пошкоджений або несумісний прогрес.'); };
   if (!object(s)) fail();
@@ -47,6 +53,7 @@ export function validateBackupState(s) {
   if(s.site !== undefined && (!object(s.site)||s.site.version!==1||!integer(s.site.seed,0,4294967295))) fail();
   if(s.fieldMarks !== undefined && (!array(s.fieldMarks,point,8)||new Set(s.fieldMarks.map(p=>p.x+':'+p.y)).size!==s.fieldMarks.length)) fail();
   if(s.detectorSettings !== undefined && (!object(s.detectorSettings)||!['search','pinpoint','deep'].includes(s.detectorSettings.mode)||typeof s.detectorSettings.ironQuiet!=='boolean'))fail();
+  if(s.atlas !== undefined && !validAtlas(s.atlas,s,fieldState)) fail();
   if(s.route !== undefined && !routes.some(r=>r.id===s.route)) fail();
   return s;
 }
@@ -54,7 +61,7 @@ export function createBackup(state, createdAt = new Date().toISOString()) {
   state = JSON.parse(JSON.stringify(state));
   for (const key of ['earned', 'found']) if (state[key] === undefined) state[key] = 0;
   validateBackupState(state);
-  const text = JSON.stringify({format:'last-signal-backup',backupVersion:1,saveVersion:1,gameVersion:'0.45.0',createdAt,state});
+  const text = JSON.stringify({format:'last-signal-backup',backupVersion:1,saveVersion:1,gameVersion:'0.46.0',createdAt,state});
   if (text.length > MAX_BACKUP_SIZE) throw new Error('Прогрес завеликий для цього формату копії.');
   return text;
 }

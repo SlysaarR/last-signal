@@ -46,7 +46,7 @@ class Target {
  addEventListener(type,fn){(this.listeners[type]??=[]).push(fn);}
  emit(type,event={}){for(const fn of this.listeners[type]||[])fn(event);}
 }
-async function ui({activeVersion='0.45.0',waiting=false,available=true,ready=true,saveOK=true,canUpdate=true}={}){
+async function ui({activeVersion=release.version,waiting=false,available=true,ready=true,saveOK=true,canUpdate=true}={}){
  const elements=new Map();for(const id of ['offlineSummary','offlineStatus','offlineCheck','appUpdate','appInstall','installHelp','appUpdateDialog'])elements.set(id,Object.assign(new Target(),{hidden:false,disabled:false,open:false,textContent:'',showModal(){this.open=true;},close(){this.open=false;}}));
  const calls=[],timers=new Map();let timerID=0,reloads=0;
  const config={saveOK,canUpdate,ready,reply:'ok',deferApply:false,otherDialog:false};
@@ -91,7 +91,7 @@ async function ui({activeVersion='0.45.0',waiting=false,available=true,ready=tru
  assert.equal(await a.fetch('index.html','same-origin','POST'),undefined);
  assert.equal(await a.message('OFFLINE_APPLY',{id:'bad',url:'https://example.test/other-app/'}),undefined);
  assert.equal(a.stats.skip,0);
- console.log('PASS full 111-resource offline start, all game files/images, deep-link queries, bounded downloads and scoped requests');
+ console.log('PASS full runtime-package offline start, all game files/images, deep-link queries, bounded downloads and scoped requests');
  // Readiness survives worker termination, and does not confuse a missing image with readiness.
  const restarted=worker(release,a.cacheStorage);restarted.options.offline=true;
  assert((await restarted.message('OFFLINE_STATUS')).ready);

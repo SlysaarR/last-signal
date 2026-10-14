@@ -1,23 +1,25 @@
-import { detectorFeatures, detectorSettings } from '../data/gear.js?v=0.45.0';
-import { initDetectorControls, renderDetectorControls } from './detector-controls.js?v=0.45.0';
-import { signalDescription } from './detector.js?v=0.45.0';
-import { renderOrders, renderOrderSummary } from './orders-ui.js?v=0.45.0';
-import { renderMarkControls } from './field-notes.js?v=0.45.0';
-import { renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.45.0';
-import { renderJournal } from './journal.js?v=0.45.0';
-import { conditions } from '../data/expeditions.js?v=0.45.0';
+import { renderAtlas, openAtlas } from './atlas-ui.js?v=0.46.0';
+import { activeSite, siteName } from '../data/atlas.js?v=0.46.0';
+import { detectorFeatures, detectorSettings } from '../data/gear.js?v=0.46.0';
+import { initDetectorControls, renderDetectorControls } from './detector-controls.js?v=0.46.0';
+import { signalDescription } from './detector.js?v=0.46.0';
+import { renderOrders, renderOrderSummary } from './orders-ui.js?v=0.46.0';
+import { renderMarkControls } from './field-notes.js?v=0.46.0';
+import { renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.46.0';
+import { renderJournal } from './journal.js?v=0.46.0';
+import { conditions } from '../data/expeditions.js?v=0.46.0';
 // Shared navigation, detector readout and quick sheets. Rendering functions never award items.
-import { renderCamp } from './camp.js?v=0.45.0';
-import { foods } from '../data/balance.js?v=0.45.0';
-import { renderCollection } from './collection.js?v=0.45.0';
-import { $ } from './dom.js?v=0.45.0';
-import { draw } from './graphics/field.js?v=0.45.0';
-import { renderInventory } from './inventory.js?v=0.45.0';
-import { bagCapacity, bagUsed, canLeave, emergencyAllowed, foodAmount, foodAvailable, foodFits, maxEnergy, minDig, travelCost } from './rules.js?v=0.45.0';
-import { digInfo, signal } from './search.js?v=0.45.0';
-import { eatFood, renderShop } from './shop.js?v=0.45.0';
-import { s } from './storage.js?v=0.45.0';
-import { currentLocation } from './world.js?v=0.45.0';
+import { renderCamp } from './camp.js?v=0.46.0';
+import { foods } from '../data/balance.js?v=0.46.0';
+import { renderCollection } from './collection.js?v=0.46.0';
+import { $ } from './dom.js?v=0.46.0';
+import { draw } from './graphics/field.js?v=0.46.0';
+import { renderInventory } from './inventory.js?v=0.46.0';
+import { bagCapacity, bagUsed, canLeave, emergencyAllowed, foodAmount, foodAvailable, foodFits, maxEnergy, minDig, travelCost } from './rules.js?v=0.46.0';
+import { digInfo, signal } from './search.js?v=0.46.0';
+import { eatFood, renderShop } from './shop.js?v=0.46.0';
+import { s } from './storage.js?v=0.46.0';
+import { currentLocation } from './world.js?v=0.46.0';
 export function renderFieldChrome() {
   const choices = document.getElementById('quickFoodChoices');
   if (!choices) return;
@@ -53,11 +55,11 @@ export function renderFieldChrome() {
   });
 }
 export function busy(except=null) {
-  return !!s.pending || ['modal','excavate','packDialog','tripMenu','quickFood','coinDetail','backupDialog','inventoryReview','fieldNotes'].some(id => id!==except&&$(id).open);
+  return !!s.pending || ['modal','excavate','packDialog','tripMenu','quickFood','coinDetail','backupDialog','inventoryReview','fieldNotes','appUpdateDialog'].some(id => id!==except&&$(id).open);
 }
 export function showTab(tab) {
   if (tab === 'search' && s.atCamp) tab = 'camp';
-  for (const id of ['camp', 'inventory', 'search', 'gear', 'collection', 'journal']) $(id).hidden = id !== tab;
+  for (const id of ['camp', 'inventory', 'search', 'gear', 'collection', 'journal', 'atlas']) $(id).hidden = id !== tab;
   document.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   render();
   window.scrollTo(0,0);
@@ -65,7 +67,8 @@ export function showTab(tab) {
 }
 export function render() {
   const loc = currentLocation();
-  $('locationName').textContent = loc.name;
+  const site=activeSite(s);
+  $('locationName').textContent = site?siteName(site):loc.name;
   $('locationRarity').hidden = false;
   const soil = conditions[s.progress?.active?.condition] || conditions[0];
   $('locationRarity').textContent = soil.name + (soil.factor===1?'':soil.factor<1?' · −10% сил':' · +20% сил');
@@ -73,9 +76,9 @@ export function render() {
   $('potential').hidden = true;
   $('potential').style.color = loc.accent;
   $('locationHint').textContent = 'Що приховує ця ділянка — дізнаєшся під час пошуку.';
-  $('finish').disabled = !canLeave();
-  $('finish').textContent = emergencyAllowed() ? 'Аварійний виїзд · безкоштовно' : 'Нова ділянка · '+travelCost()+' купонів';
-  $('tripGate').textContent = canLeave() ? 'Залишену ділянку повернути не можна.' : foodAvailable() ? 'Бракує '+travelCost()+' купонів на дорогу. Можна продовжити пошук або повернутися додому.' : 'Бракує '+travelCost()+' купонів. Повернення додому безкоштовне.';
+  $('finish').disabled=!!s.pending;
+  $('finish').textContent='Карта · обрати інше місце';
+  $('tripGate').textContent='Ділянка й мітки збережуться. Переїзд не відновлює сили та ліміт їжі; повернення до табору безкоштовне.';
   $('energy').textContent = s.energy + ' / ' + maxEnergy();
   $('coins').textContent = s.coins;
   $('day').textContent = String(s.day).padStart(2, '0');
@@ -84,6 +87,7 @@ export function render() {
   if (!$('gear').hidden) renderShop();
   if (!$('inventory').hidden) renderInventory();
   if (!$('camp').hidden) {renderCamp();renderJournal('camp');renderOrderSummary('camp');}
+  if (!$('atlas').hidden) renderAtlas();
   if (!$('journal').hidden) {renderJournal('journal');renderOrders();}
   if (!$('collection').hidden) renderCollection();
   if (!$('search').hidden) {
@@ -115,7 +119,7 @@ export function renderDetector(n=signal()) {
 }
 export function initUI() {
   initDetectorControls();
-  document.querySelectorAll('[data-open]').forEach(b => b.onclick = () => showTab(b.dataset.open));
+  document.querySelectorAll('[data-open]').forEach(b => b.onclick = () => b.dataset.open==='atlas'?openAtlas():showTab(b.dataset.open));
   document.querySelectorAll('[data-tab]').forEach(btn => btn.onclick = () => showTab(btn.dataset.tab));
   document.getElementById('tripMenuButton').onclick = () => {
     if (!busy()) document.getElementById('tripMenu').showModal();

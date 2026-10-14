@@ -17,7 +17,7 @@ export const goals = [
  {id:'visit5',name:'Знайомі стежки',text:'Відвідай 5 різних місцевостей.',metric:'places',target:5,reward:45},
  {id:'coins6',name:'Шість номіналів',text:'Збережи монети 6 різних номіналів.',metric:'denoms',target:6,reward:60},
  {id:'rare3',name:'Непрості знахідки',text:'Збери 3 рідкісні або виняткові позиції.',metric:'rare',target:3,reward:75},
- {id:'trip20',name:'Повертаюся знову',text:'Заверши 20 ділянок, оглянувши хоча б 3 знахідки на кожній.',metric:'trips',target:20,reward:70},
+ {id:'trip20',name:'Повертаюся знову',text:'Обстеж 20 різних ділянок: оглянь хоча б 3 знахідки на кожній, за один або кілька виїздів.',metric:'trips',target:20,reward:70},
  {id:'fine10',name:'Вибагливий колекціонер',text:'Збережи 10 позицій зі станом 90 або вище.',metric:'fine',target:10,reward:100},
  {id:'album40',name:'Власний маленький музей',text:'Збери 40 різних позицій.',metric:'album',target:40,reward:120},
  {id:'visit8',name:'Усі горизонти',text:'Відвідай усі 8 місцевостей.',metric:'places',target:8,reward:90},
@@ -31,6 +31,6 @@ export function validProgress(p,locationCount){
  const int=x=>Number.isSafeInteger(x)&&x>=0;
  const num=x=>Number.isFinite(x)&&x>=0;
  const loc=x=>Number.isInteger(x)&&x>=-1&&x<locationCount;
- const leg=x=>obj(x)&&int(x.day)&&loc(x.location)&&Number.isInteger(x.condition)&&x.condition>=0&&x.condition<conditions.length&&typeof x.emergency==='boolean'&&['found','kept','digs','empty','newTypes'].every(k=>int(x[k]))&&num(x.value)&&num(x.travel)&&Array.isArray(x.seen)&&x.seen.length<=500&&x.seen.every(int)&&new Set(x.seen).size===x.seen.length;
+ const leg=x=>obj(x)&&int(x.day)&&loc(x.location)&&Number.isInteger(x.condition)&&x.condition>=0&&x.condition<conditions.length&&typeof x.emergency==='boolean'&&['found','kept','digs','empty','newTypes'].every(k=>int(x[k]))&&num(x.value)&&num(x.travel)&&Array.isArray(x.seen)&&x.seen.length<=500&&x.seen.every(int)&&new Set(x.seen).size===x.seen.length&&(x.siteId===undefined||int(x.siteId)&&x.siteId>0)&&(x.qualifiedSite===undefined||typeof x.qualifiedSite==='boolean');
  return obj(p)&&['finds','kept','digs','empty','trips'].every(k=>int(p[k]))&&Array.isArray(p.visited)&&p.visited.length<=locationCount&&p.visited.every(x=>loc(x)&&x>=0)&&new Set(p.visited).size===p.visited.length&&Array.isArray(p.claimed)&&p.claimed.every(x=>goals.some(g=>g.id===x))&&new Set(p.claimed).size===p.claimed.length&&Array.isArray(p.history)&&p.history.length<=12&&p.history.every(leg)&&(p.active===null||leg(p.active));
 }

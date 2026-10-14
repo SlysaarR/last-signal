@@ -9,6 +9,7 @@
     <link rel="apple-touch-icon" href="./assets/app/icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Останній сигнал">
+    <link rel="stylesheet" href="./css/atlas.css?v=0.46.0">
     <link rel="stylesheet" href="./css/offline.css?v=0.45.0">
     <title>Останній сигнал</title>
     <link rel="stylesheet" href="./css/base.css?v=0.40.0">
@@ -20,7 +21,7 @@
     <link rel="stylesheet" href="./css/backup.css?v=0.40.0">
     <link rel="stylesheet" href="./css/coin-art.css?v=0.43.0">
     <link rel="stylesheet" href="./css/journal.css?v=0.41.0">
-    <script type="module" src="./js/main.js?v=0.45.0">
+    <script type="module" src="./js/main.js?v=0.46.0">
     </script>
   </head>
   <body>
@@ -98,6 +99,7 @@
           <button class="secondary" id="restHome">Відпочити · безкоштовно</button>
         </div>
         <div class="camp-links">
+          <button data-open="atlas"><b>Карта пошуку</b><small id="campMapSummary">Знайомі ділянки та розвідка нових місць</small><span aria-hidden="true">→</span></button>
           <button data-open="inventory"><b>Рюкзак і сховище</b><small>Звільнити місце · продати знахідки</small><span aria-hidden="true">→</span></button>
           <button data-open="gear"><b>Майстерня та провізія</b><small>Спорядження · їжа на виїзд</small><span aria-hidden="true">→</span></button>
           <button data-open="collection"><b>Твоя колекція</b><small>Переглянути альбоми знахідок</small><span aria-hidden="true">→</span></button>
@@ -122,6 +124,28 @@
           <button class="quiet" id="backupRecovery">Копія перед останнім відновленням</button>
           <p id="backupStatus" role="status" aria-live="polite">Зберігай копію після важливих знахідок. Це ручна копія, а не хмарна синхронізація.</p>
         </details>
+      </section>
+      <section id="atlas" hidden aria-labelledby="atlasTitle">
+        <button id="atlasBack" class="quiet">← До табору</button>
+        <div class="atlas-heading"><div><div class="eyebrow">ТВОЇ МІСЦЯ / РОЗВІДКА</div><h2 id="atlasTitle">Карта пошуку</h2></div><small id="atlasCount">0 / 6 ділянок</small></div>
+        <p id="atlasNotice" role="status" aria-live="polite" tabindex="-1"></p>
+        <div class="atlas-map">
+          <svg viewBox="0 0 420 246" preserveAspectRatio="none" aria-hidden="true">
+            <defs><pattern id="atlasGrid" width="35" height="35" patternUnits="userSpaceOnUse"><path d="M35 0H0V35" fill="none" stroke="#69734d" stroke-width=".5" opacity=".4"/></pattern></defs>
+            <rect width="420" height="246" fill="url(#atlasGrid)"/>
+            <path d="M365-20Q290 50 355 113T362 270" fill="none" stroke="#5a8581" stroke-width="25" opacity=".3"/>
+            <path d="M-10 180Q90 108 187 132T450 34" fill="none" stroke="#bcc48a" stroke-width="16" opacity=".07"/>
+            <path d="M197 121 80 49M197 121 307 37M197 121 357 121M197 121 290 199M197 121 84 197M197 121 55 118" fill="none" stroke="#b4c68b" stroke-width="1.5" stroke-dasharray="4 6" opacity=".4"/>
+            <path d="M32 29 41 12 50 29M53 37 64 15 75 37M17 50 27 31 37 50M92 215 101 198 110 215M118 227 129 205 140 227" fill="none" stroke="#71946a" stroke-width="2" opacity=".45"/>
+          </svg>
+          <span class="atlas-compass" aria-hidden="true">↑ ПН</span><span class="atlas-home" aria-hidden="true">⌂<small>ТАБІР</small></span>
+          <div id="atlasPins" role="group" aria-label="Збережені ділянки на схемі"></div><span id="atlasPinsEmpty">Перше місце з’явиться після розвідки</span>
+        </div>
+        <p class="atlas-map-caption">Умовна схема без масштабу · натисни номер, щоб обрати ділянку</p>
+        <div class="atlas-selected" id="atlasSelected" tabindex="-1"><div class="eyebrow">НАСТУПНИЙ ВИЇЗД</div><h3 id="atlasTarget"></h3><p id="atlasTargetNote"></p><strong id="atlasFare"></strong><button class="primary" id="atlasTravel">Вирушити на розвідку</button><p id="atlasTravelNote"></p></div>
+        <h2>Знайомі місця</h2><div id="atlasSites"></div>
+        <div class="atlas-scout"><div class="eyebrow">НОВА ДІЛЯНКА</div><h3>Розвідати незнайоме місце</h3><label for="atlasRoute">Напрямок розвідки</label><select id="atlasRoute"></select><p id="atlasRouteNote"></p><button class="secondary" id="atlasScout">Обрати розвідку нового місця</button><p id="atlasCapacity"></p></div>
+        <p class="camp-note">Пройдені відсотки показують рух котушки, а не частку знайдених предметів. Повернення не відновлює здобич. На карті зберігаються до шести ділянок; прибирай їх у таборі, коли вирішиш рухатися далі.</p>
       </section>
       <section id="journal" hidden>
         <div class="journal-heading"><div class="eyebrow">ЗАВДАННЯ / СТАТИСТИКА</div><h2>Польовий щоденник</h2></div>
@@ -229,11 +253,11 @@
           <button class="primary" id="dig">Копати</button>
           <button class="secondary" id="foodQuick" style="width:100%;margin-top:10px">Їжа</button>
         </div>
-        <p class="sub">⚡ Їжа відновлює до 50% запасу за виїзд · нова ділянка: 25 купонів</p>
+        <p class="sub">⚡ Їжа відновлює до 50% запасу за виїзд · дорога за тарифом обраного місця</p>
         <div class="search-status">
           <p class="sub" id="fieldBag">
           </p>
-          <span class="build-tag">v0.45.0</span>
+          <span class="build-tag">v0.46.0</span>
         </div>
         <div class="log" id="log" aria-live="polite">Обстежуй ділянку — кількість сигналів невідома. Шукай найчіткіший сигнал.</div>
         <details id="fieldPanel" class="field-panel" hidden>
@@ -275,7 +299,7 @@
         <div id="foodShop"></div>
         <div class="card">
           <b>Як грати</b>
-          <p>Рюкзак вміщує знахідки та їжу: кожен предмет займає одне місце. 10 ступенів дають 8–40 місць. У полі немає автоматичного продажу чи поповнення альбому. Повний рюкзак: залиш нову знахідку або заміни предмет. У таборі продай здобич, збережи у сховищі чи додай до альбому. Магазин і прокачка доступні лише вдома. Відпочинок удома відновлює енергію. Переїзд між ділянками за ціною обраного напрямку не поповнює сили й не скидає ліміт їжі. Повернення до табору безкоштовне, але ділянка втрачається. Якщо немає 25 купонів, із табору можна безкоштовно вирушити на бідне узбіччя.</p>
+          <p>Рюкзак вміщує знахідки та їжу: кожен предмет займає одне місце. 10 ступенів дають 8–40 місць. У полі немає автоматичного продажу чи поповнення альбому. Повний рюкзак: залиш нову знахідку або заміни предмет. У таборі продай здобич, збережи у сховищі чи додай до альбому. Магазин і прокачка доступні лише вдома. Відпочинок удома відновлює енергію. Переїзд за тарифом обраної ділянки чи напрямку розвідки не поповнює сили й не скидає ліміт їжі. Повернення до табору безкоштовне. Ділянка та мітки залишаються на карті; здобич повторно не з’являється. Якщо немає 25 купонів, із табору можна безкоштовно вирушити на бідне узбіччя.</p>
         </div>
       </section>
       <section id="collection" hidden>
@@ -309,7 +333,7 @@
           </div>
           <p class="sub" id="catalogNote">Натисни монету, щоб оглянути обидва боки та гурт. Рівні рідкості та ціни адаптовано для гри.</p>
         </section>
-        <footer>ПРОТОТИП 0.45.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
+        <footer>ПРОТОТИП 0.46.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
       </main>
       <dialog id="appUpdateDialog" aria-labelledby="appUpdateTitle"><h2 id="appUpdateTitle">Оновлюємо гру</h2><p>Прогрес збережено. Зачекай на перезапуск…</p></dialog>
       <dialog id="backupDialog" aria-labelledby="backupTitle">
@@ -324,7 +348,7 @@
           <h2 id="tripMenuTitle">Твій виїзд</h2>
           <button class="quiet" data-close="tripMenu" aria-label="Закрити меню виїзду">✕</button>
         </div>
-        <p>Повернися зі знахідками до табору або вирушай на нову ділянку.</p>
+        <p>Повернися зі знахідками до табору або обери інше місце на карті. Поточна ділянка збережеться.</p>
         <button class="secondary" id="finish" style="width:100%;margin-top:10px">Завершити виїзд</button>
         <button class="secondary" id="returnHome" style="width:100%">Повернутися до табору</button>
         <div class="sub" id="tripGate" aria-live="polite" style="margin-top:10px">
@@ -334,7 +358,7 @@
         <div class="sheet-heading"><h2 id="fieldNotesTitle">Мітки ділянки</h2><button class="quiet" data-close="fieldNotes" aria-label="Закрити позначки">✕</button></div>
         <p id="siteGuide" class="camp-note"></p>
         <p id="fieldNotesStatus" class="camp-note" role="status" aria-live="polite" tabindex="-1"></p>
-        <p class="camp-note">До 8 власних позначок. Зберігаються до виходу з цієї ділянки. Кнопка «До мітки» повертає котушку на позначене місце.</p>
+        <p class="camp-note">До 8 власних позначок. Залишаються на збереженій ділянці навіть після повернення до табору. Кнопка «До мітки» повертає котушку на позначене місце.</p>
         <div id="fieldNoteList"></div>
       </dialog>
       <dialog id="quickFood" aria-labelledby="quickFoodTitle">
@@ -386,6 +410,7 @@
         <div id="packChoices">
         </div>
         <button class="secondary" id="leaveFind" style="width:100%;margin-top:12px">Залишити знахідку</button>
+        <p class="camp-note">Залишені знахідки й предмети, віддані під час заміни, не можна забрати повторно.</p>
       </dialog>
       <dialog id="inventoryReview" aria-labelledby="reviewTitle" aria-describedby="reviewDescription">
         <div class="review-heading"><h2 id="reviewTitle"></h2><button id="reviewClose" class="quiet" aria-label="Закрити розбір знахідок">✕</button></div>
