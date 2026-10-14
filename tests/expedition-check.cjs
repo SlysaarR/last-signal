@@ -11,7 +11,7 @@ const {newRun,root,assert,golden}=require('./harness.cjs');
  r.elements.get('modalClose').onclick();
  const objects=JSON.stringify(state.objects),condition=state.progress.active.condition;
  m('storage').save();const again=await newRun(r.store.get('last-signal-v1'));assert.equal(JSON.stringify(again.state().objects),objects);assert.equal(again.state().progress.active.condition,condition);
- const base=rules.digCost(10);assert.equal(base,Math.round(10*data.conditions[condition].factor*10)/10);
+ const base=rules.digCost(10);assert.equal(base,Math.round(10*({dry:1.05,damp:.9,stony:1.1}[state.progress.active.environment.ground])*10)/10);
  for(let i=0;i<3;i++){state.pending={type:coins[0].id,condition:77,spent:base,revealed:true};m('packing').resolvePacking('take');}
  assert.equal(p.progress().finds,3);assert.equal(p.progress().active.kept,3);m('packing').resolvePacking('take');assert.equal(p.progress().finds,3,'resolved item cannot count twice');
  camp.returnHome();assert.equal(p.progress().history.length,1);assert.equal(p.progress().trips,1);assert.equal(p.progress().active,null);assert.equal(rules.digCost(10),10,'soil penalty ends at camp');

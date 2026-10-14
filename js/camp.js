@@ -1,16 +1,18 @@
-import { openAtlas } from './atlas-ui.js?v=0.48.0';
-import { ensureAtlas, parkCurrent, restoreSite, rememberCurrent } from './atlas-state.js?v=0.48.0';
-import { activeSite, selectedSite, siteName, siteAccessible, canScout, MAX_SITES } from '../data/atlas.js?v=0.48.0';
-import { chosenRoute, conditions } from '../data/expeditions.js?v=0.48.0';
-import { startLeg,endLeg } from './progression.js?v=0.48.0';
+import { forecastEnvironment, groundTypes, currentEnvironment } from '../data/environment.js?v=0.49.0';
+import { departureConditions, renderPreparation, preparationText } from './environment-ui.js?v=0.49.0';
+import { openAtlas } from './atlas-ui.js?v=0.49.0';
+import { ensureAtlas, parkCurrent, restoreSite, rememberCurrent } from './atlas-state.js?v=0.49.0';
+import { activeSite, selectedSite, siteName, siteAccessible, canScout, MAX_SITES } from '../data/atlas.js?v=0.49.0';
+import { chosenRoute, conditions } from '../data/expeditions.js?v=0.49.0';
+import { startLeg,endLeg } from './progression.js?v=0.49.0';
 // camp responsibilities for Last Signal.
-import { modal } from './dialogs.js?v=0.48.0';
-import { $ } from './dom.js?v=0.48.0';
-import { bagCapacity, bagUsed, canLeave, emergencyAllowed, maxEnergy, priceFor, travelCost } from './rules.js?v=0.48.0';
-import { s, save } from './storage.js?v=0.48.0';
-import { busy, render, showTab } from './ui.js?v=0.48.0';
-import { currentLocation, generate, rollLocation } from './world.js?v=0.48.0';
-import { inventorySummary } from './inventory-plan.js?v=0.48.0';
+import { modal } from './dialogs.js?v=0.49.0';
+import { $ } from './dom.js?v=0.49.0';
+import { bagCapacity, bagUsed, canLeave, emergencyAllowed, maxEnergy, priceFor, travelCost } from './rules.js?v=0.49.0';
+import { s, save } from './storage.js?v=0.49.0';
+import { busy, render, showTab } from './ui.js?v=0.49.0';
+import { currentLocation, generate, rollLocation } from './world.js?v=0.49.0';
+import { inventorySummary } from './inventory-plan.js?v=0.49.0';
 export function returnHome() {
   if (s.atCamp || s.pending) return;
   s.lastTrip = {
@@ -49,23 +51,23 @@ export function departureBlock() {
 export function showArrival(revisit=false) {
   const loc=currentLocation(),site=activeSite(s);
   modal(revisit?'ЗНАЙОМА ДІЛЯНКА':'НОВА ДІЛЯНКА',loc.icon,site?siteName(site):loc.name,
-    s.energy+' сил. '+(conditions[s.progress?.active?.condition]?.text||'')+' '+(revisit?'Ями, мітки й пройдена територія збережені. Здобич не відновлюється.':loc.hint), 'Почати пошук');
+    s.energy+' сил. '+(currentEnvironment(s)?preparationText({environment:currentEnvironment(s),emergency:!!s.emergency}):(conditions[s.progress?.active?.condition]?.text||''))+' '+(revisit?'Ями, мітки й пройдена територія збережені. Здобич не відновлюється.':loc.hint), 'Почати пошук');
 }
 export function depart() {
   if(!canLeave())return false;
-  const fromCamp=s.atCamp,emergency=emergencyAllowed(),cost=travelCost(),route=chosenRoute(s);
+  const fromCamp=s.atCamp,emergency=emergencyAllowed(),cost=travelCost(),route=chosenRoute(s),environment=forecastEnvironment(s,route,emergency);
   ensureAtlas();
   const target=selectedSite(s);
   endLeg();parkCurrent();
   if(fromCamp){s.travelSpent=0;s.foodSpent=0;s.found=0;s.earned=0;s.foodUsed=0;}
   s.coins-=cost;s.travelSpent+=cost;s.day++;s.atCamp=false;
   if(target){
-    restoreSite(target);startLeg(cost,target.condition);
+    restoreSite(target);startLeg(cost,target.condition,target.environment);
   }else{
     s.x=.5;s.y=.52;s.emergency=emergency;
     s.location=emergency?0:rollLocation(route);
-    const weatherRoll=Math.random();
-    startLeg(cost,emergency?0:weatherRoll<.6?0:weatherRoll<.8?1:2);
+    Math.random(); // Retain the published loot stream's one former soil draw.
+    startLeg(cost,groundTypes[environment.ground].condition,environment);
     generate({persist:false});rememberCurrent(emergency?'wander':route.id);
   }
   // The completed state is saved once, after the field and its identity agree.
@@ -80,6 +82,7 @@ export function departureWarnings() {
   return warnings;
 }
 export function renderCamp() {
+  renderPreparation('campConditions');
   const food = s.food.reduce((sum, n) => sum + n, 0), free = Math.max(0, bagCapacity() - bagUsed());
   const loot=inventorySummary();
   $('campLoot').hidden=!s.atCamp||!loot.total;
@@ -106,7 +109,7 @@ export function confirmDeparture() {
   if(!canLeave()||busy())return;
   const warnings=departureWarnings(),state=s,selected=s.atlas?.selectedId??null,day=s.day,camp=s.atCamp;
   modal(warnings.length?'ПЕРЕВІР ПІДГОТОВКУ':'ВИРУШИТИ?','⛺',destinationName(),
-    'Вартість: '+travelCost()+' купонів. Енергія: '+s.energy+' / '+maxEnergy()+'. Вільних місць: '+Math.max(0,bagCapacity()-bagUsed())+'. '+warnings.join(' ')+' Дорога не відновлює сили.'+(s.atCamp?'':' Поточна ділянка залишиться на карті.'),
+    preparationText(departureConditions())+' Вартість: '+travelCost()+' купонів. Енергія: '+s.energy+' / '+maxEnergy()+'. Вільних місць: '+Math.max(0,bagCapacity()-bagUsed())+'. '+warnings.join(' ')+' Дорога не відновлює сили.'+(s.atCamp?'':' Поточна ділянка залишиться на карті.'),
     warnings.length?'Усе одно вирушити':'Вирушити',()=>{
       if(s!==state||s.day!==day||s.atCamp!==camp||(s.atlas?.selectedId??null)!==selected)return;
       depart();

@@ -1,9 +1,9 @@
-import { activeSite } from '../data/atlas.js?v=0.48.0';
-import { collectorMetrics } from '../data/career.js?v=0.48.0';
-import { goals, emptyProgress } from '../data/expeditions.js?v=0.48.0';
-import { types } from '../data/items.js?v=0.48.0';
-import { s, save } from './storage.js?v=0.48.0';
-import { recordOrderFind } from './orders.js?v=0.48.0';
+import { activeSite } from '../data/atlas.js?v=0.49.0';
+import { collectorMetrics } from '../data/career.js?v=0.49.0';
+import { goals, emptyProgress } from '../data/expeditions.js?v=0.49.0';
+import { types } from '../data/items.js?v=0.49.0';
+import { s, save } from './storage.js?v=0.49.0';
+import { recordOrderFind } from './orders.js?v=0.49.0';
 export function progress(){return s.progress||emptyProgress();}
 function writable(){return s.progress||(s.progress=emptyProgress());}
 export function goalMetrics(){
@@ -15,10 +15,11 @@ export function claimGoal(id){
  if(!goal||!s.atCamp||s.pending||progress().claimed.includes(id)||goalValue(goal)<goal.target)return false;
  writable().claimed.push(id);s.coins+=goal.reward;save();return true;
 }
-export function startLeg(travel,condition){
+export function startLeg(travel,condition,environment=null){
  const p=writable();
  if(!p.visited.includes(s.location)&&s.location>=0)p.visited.push(s.location);
  p.active={day:s.day,location:s.location,condition,emergency:!!s.emergency,found:0,kept:0,digs:0,empty:0,newTypes:0,value:0,travel,seen:[]};
+ if(environment)p.active.environment={...environment};
  const site=activeSite(s);if(site)p.active.siteId=site.id;
  if(site?.visits>1&&s.fieldMarks?.length)p.active.returnMarks=s.fieldMarks.map(({x,y})=>({x,y}));
 }

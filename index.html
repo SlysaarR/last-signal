@@ -9,8 +9,8 @@
     <link rel="apple-touch-icon" href="./assets/app/icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Останній сигнал">
-    <link rel="stylesheet" href="./css/atlas.css?v=0.48.0">
-    <link rel="stylesheet" href="./css/career.css?v=0.48.0">
+    <link rel="stylesheet" href="./css/atlas.css?v=0.49.0">
+    <link rel="stylesheet" href="./css/career.css?v=0.49.0">
     <link rel="stylesheet" href="./css/offline.css?v=0.45.0">
     <title>Останній сигнал</title>
     <link rel="stylesheet" href="./css/base.css?v=0.40.0">
@@ -22,7 +22,8 @@
     <link rel="stylesheet" href="./css/backup.css?v=0.40.0">
     <link rel="stylesheet" href="./css/coin-art.css?v=0.43.0">
     <link rel="stylesheet" href="./css/journal.css?v=0.41.0">
-    <script type="module" src="./js/main.js?v=0.48.0">
+    <link rel="stylesheet" href="./css/environment.css?v=0.49.0">
+    <script type="module" src="./js/main.js?v=0.49.0">
     </script>
   </head>
   <body>
@@ -106,8 +107,10 @@
           <button data-open="collection"><b>Твоя колекція</b><small>Переглянути альбоми знахідок</small><span aria-hidden="true">→</span></button>
         </div>
         <details class="route-panel"><summary><span class="eyebrow">НАПРЯМОК ВИЇЗДУ</span><b id="routeName"></b><small id="routeHint">Натисни, щоб обрати</small></summary><div id="routeCards"></div><p class="camp-note">Доступ відкривається за кількістю різних позицій у твоєму альбомі. Будь-який напрямок може виявитися бідним на знахідки.</p></details>
+        <section class="conditions-card" id="campConditions" aria-label="Умови перед виїздом"></section>
         <div class="camp-departure"><button class="primary" id="startTrip">Вирушити · 25 купонів</button><p id="departureNote" class="camp-note"></p></div>
         <div class="camp-summary"><div class="eyebrow">ПОЛЬОВИЙ ЩОДЕННИК</div><h2>Минулий виїзд</h2><div id="tripSummary"></div></div>
+        <details class="weather-settings"><summary>Ефекти погоди</summary><label for="weatherEffects">Деталізація</label><select id="weatherEffects"><option value="auto">Автоматично</option><option value="full">Повні ефекти</option><option value="low">Мінімальні · без анімації</option></select><p id="weatherEffectsNote"></p></details>
         <details class="offline-panel" id="offlinePanel">
           <summary><span>Гра на телефоні</span><small id="offlineSummary">Підготовка офлайну…</small></summary>
           <p id="offlineStatus" role="status" aria-live="polite">Завантажуємо гру для роботи без інтернету.</p>
@@ -143,7 +146,7 @@
           <div id="atlasPins" role="group" aria-label="Збережені ділянки на схемі"></div><span id="atlasPinsEmpty">Перше місце з’явиться після розвідки</span>
         </div>
         <p class="atlas-map-caption">Умовна схема без масштабу · натисни номер, щоб обрати ділянку</p>
-        <div class="atlas-selected" id="atlasSelected" tabindex="-1"><div class="eyebrow">НАСТУПНИЙ ВИЇЗД</div><h3 id="atlasTarget"></h3><p id="atlasTargetNote"></p><strong id="atlasFare"></strong><button class="primary" id="atlasTravel">Вирушити на розвідку</button><p id="atlasTravelNote"></p></div>
+        <div class="atlas-selected" id="atlasSelected" tabindex="-1"><div class="eyebrow">НАСТУПНИЙ ВИЇЗД</div><h3 id="atlasTarget"></h3><p id="atlasTargetNote"></p><section class="conditions-card" id="atlasConditions" aria-label="Умови обраної ділянки"></section><strong id="atlasFare"></strong><button class="primary" id="atlasTravel">Вирушити на розвідку</button><p id="atlasTravelNote"></p></div>
         <h2>Знайомі місця</h2><div id="atlasSites"></div>
         <div class="atlas-scout"><div class="eyebrow">НОВА ДІЛЯНКА</div><h3>Розвідати незнайоме місце</h3><label for="atlasRoute">Напрямок розвідки</label><select id="atlasRoute"></select><p id="atlasRouteNote"></p><button class="secondary" id="atlasScout">Обрати розвідку нового місця</button><p id="atlasCapacity"></p></div>
         <p class="camp-note">Пройдені відсотки показують рух котушки, а не частку знайдених предметів. Повернення не відновлює здобич. На карті зберігаються до шести ділянок; прибирай їх у таборі, коли вирішиш рухатися далі.</p>
@@ -210,6 +213,7 @@
         <div class="field-stage">
           <canvas id="field" width="880" height="720" tabindex="0" role="img" aria-label="Поле пошуку. Ведіть пальцем або стрілками клавіатури, пробіл — копати, M — позначити місце.">
           </canvas>
+          <div class="weather-layer" id="weatherLayer" aria-hidden="true" hidden></div>
           <div class="field-hud">
             <div class="location">
               <div>
@@ -261,7 +265,7 @@
         <div class="search-status">
           <p class="sub" id="fieldBag">
           </p>
-          <span class="build-tag">v0.48.0</span>
+          <span class="build-tag">v0.49.0</span>
         </div>
         <div class="main-objective"><div class="eyebrow" id="fieldObjectiveKind"></div><h3 id="fieldObjectiveTitle"></h3><p id="fieldObjectiveText"></p><div class="career-meter"><progress id="fieldObjectiveMeter" aria-label="Головна мета"></progress><span id="fieldObjectiveCount"></span></div><button class="quiet" id="fieldObjectiveOpen">Деталі головної мети →</button></div>
         <div class="log" id="log" aria-live="polite">Обстежуй ділянку — кількість сигналів невідома. Шукай найчіткіший сигнал.</div>
@@ -340,7 +344,7 @@
           </div>
           <p class="sub" id="catalogNote">Натисни монету, щоб оглянути обидва боки та гурт. Рівні рідкості та ціни адаптовано для гри.</p>
         </section>
-        <footer>ПРОТОТИП 0.48.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
+        <footer>ПРОТОТИП 0.49.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
       </main>
       <dialog id="appUpdateDialog" aria-labelledby="appUpdateTitle"><h2 id="appUpdateTitle">Оновлюємо гру</h2><p>Прогрес збережено. Зачекай на перезапуск…</p></dialog>
       <dialog id="backupDialog" aria-labelledby="backupTitle">

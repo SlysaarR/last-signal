@@ -1,13 +1,15 @@
-import { MAX_SITES, activeSite, selectedSite, siteName, siteLocation, siteRoute, siteAccessible, canScout } from '../data/atlas.js?v=0.48.0';
-import { routes, conditions, chosenRoute } from '../data/expeditions.js?v=0.48.0';
-import { surveyCols, surveyRows } from '../data/balance.js?v=0.48.0';
-import { ensureAtlas, selectSite, forgetSite } from './atlas-state.js?v=0.48.0';
-import { s, save } from './storage.js?v=0.48.0';
-import { $ } from './dom.js?v=0.48.0';
-import { busy, render, showTab } from './ui.js?v=0.48.0';
-import { modal } from './dialogs.js?v=0.48.0';
-import { canLeave, travelCost, emergencyAllowed } from './rules.js?v=0.48.0';
-import { confirmDeparture, departureBlock } from './camp.js?v=0.48.0';
+import { renderPreparation } from './environment-ui.js?v=0.49.0';
+import { environmentName } from '../data/environment.js?v=0.49.0';
+import { MAX_SITES, activeSite, selectedSite, siteName, siteLocation, siteRoute, siteAccessible, canScout } from '../data/atlas.js?v=0.49.0';
+import { routes, conditions, chosenRoute } from '../data/expeditions.js?v=0.49.0';
+import { surveyCols, surveyRows } from '../data/balance.js?v=0.49.0';
+import { ensureAtlas, selectSite, forgetSite } from './atlas-state.js?v=0.49.0';
+import { s, save } from './storage.js?v=0.49.0';
+import { $ } from './dom.js?v=0.49.0';
+import { busy, render, showTab } from './ui.js?v=0.49.0';
+import { modal } from './dialogs.js?v=0.49.0';
+import { canLeave, travelCost, emergencyAllowed } from './rules.js?v=0.49.0';
+import { confirmDeparture, departureBlock } from './camp.js?v=0.49.0';
 const pins=[[19,20],[73,15],[85,49],[69,81],[20,80],[13,48]];
 export function openAtlas() {
   if(busy())return;
@@ -29,6 +31,7 @@ function requestForget(id) {
     });
 }
 export function renderAtlas() {
+  renderPreparation('atlasConditions');
   const atlas=s.atlas,sites=atlas?.sites||[],target=selectedSite(s),route=chosenRoute(s),current=activeSite(s);
   const here=target&&target.id===current?.id;
   $('atlasCount').textContent=sites.length+' / '+MAX_SITES+' ділянок';
@@ -36,7 +39,7 @@ export function renderAtlas() {
   $('atlasPins').innerHTML=sites.map((site,i)=>`<button class="atlas-pin ${site===target?'selected':''} ${site===current?'current':''}" style="left:${pins[i][0]}%;top:${pins[i][1]}%" data-atlas-pick="${site.id}" aria-label="Обрати: ${siteName(site)}, ділянка ${site.id}${site===current?', ти тут':''}" aria-pressed="${site===target}" ${siteAccessible(s,site)?'':'disabled'}><span aria-hidden="true">${siteLocation(site).icon}</span><b>${site.id}</b></button>`).join('');
   $('atlasPinsEmpty').hidden=!!sites.length;
   $('atlasTarget').textContent=target?siteName(target):emergencyAllowed()?'Розвідка бідного узбіччя':'Розвідка · '+route.name;
-  $('atlasTargetNote').textContent=here?'Ти вже тут. Пошук можна продовжити з тієї самої позиції.':target?'Ділянка № '+target.id+' · '+conditions[target.condition].name+'. Ями, мітки та здобич залишаються на своїх місцях.':emergencyAllowed()?'Коли купонів менше 25, із табору доступна безкоштовна розвідка бідного узбіччя.':route.text+' Конкретне місце й ґрунт стануть відомими після прибуття.';
+  $('atlasTargetNote').textContent=here?'Ти вже тут. Пошук можна продовжити з тієї самої позиції.':target?'Ділянка № '+target.id+' · '+(target.environment?environmentName(target.environment):conditions[target.condition].name)+'. Ями, мітки та здобич залишаються на своїх місцях.':emergencyAllowed()?'Коли купонів менше 25, із табору доступна безкоштовна розвідка бідного узбіччя.':route.text+' Погода й ґрунт показані у прогнозі нижче; конкретне місце відкриється після прибуття.';
   $('atlasFare').textContent=here?'Ти на ділянці':'Дорога · '+travelCost()+' купонів';
   $('atlasTravel').textContent=here?'Продовжити пошук':target?'Повернутися на ділянку':'Вирушити на розвідку';
   $('atlasTravel').disabled=!here&&!canLeave();
@@ -45,7 +48,7 @@ export function renderAtlas() {
     const field=site===current?s:site.field,loc=siteLocation(site),isCurrent=site===current;
     const explored=Math.floor((field.survey?.length||0)/(surveyCols*surveyRows)*100),marks=field.fieldMarks?.length||0;
     const locked=!siteAccessible(s,site),fare=site.emergency&&s.atCamp&&s.coins<25?0:siteRoute(site).cost;
-    return `<article class="atlas-card ${site===target?'selected':''}"><div class="atlas-card-head"><span class="atlas-number">${site.id}</span><div><h3>${siteName(site)}</h3><small>${loc.name}${isCurrent?' · ти тут':''}</small></div><span aria-hidden="true">${loc.icon}</span></div><p>${site.emergency?'Бідне узбіччя з великою кількістю сміття.':loc.hint}</p><div class="atlas-facts"><span>${conditions[site.condition].name}</span><span>Дорога: ${fare} куп.</span><span>Пройдено: ${explored}%</span><span>Міток: ${marks} / 8</span></div><p class="atlas-history">Відвідувань: ${site.visits} · останній виїзд № ${site.lastDay}${site.productive?' · результативна ділянка':''}</p><div class="atlas-card-actions"><button class="${site===target?'primary':'secondary'}" data-atlas-pick="${site.id}" aria-pressed="${site===target}" ${locked?'disabled':''}>${locked?'Потрібно '+siteRoute(site).need+' позицій в альбомі':site===target?'Обрано':isCurrent?'Поточне місце':'Обрати ділянку'}</button><button class="quiet" data-atlas-forget="${site.id}" ${!s.atCamp||isCurrent?'disabled':''} aria-label="Прибрати з карти: ${siteName(site)}">Прибрати</button></div></article>`;
+    return `<article class="atlas-card ${site===target?'selected':''}"><div class="atlas-card-head"><span class="atlas-number">${site.id}</span><div><h3>${siteName(site)}</h3><small>${loc.name}${isCurrent?' · ти тут':''}</small></div><span aria-hidden="true">${loc.icon}</span></div><p>${site.emergency?'Бідне узбіччя з великою кількістю сміття.':loc.hint}</p><div class="atlas-facts"><span>${site.environment?environmentName(site.environment):conditions[site.condition].name}</span><span>Дорога: ${fare} куп.</span><span>Пройдено: ${explored}%</span><span>Міток: ${marks} / 8</span></div><p class="atlas-history">Відвідувань: ${site.visits} · останній виїзд № ${site.lastDay}${site.productive?' · результативна ділянка':''}</p><div class="atlas-card-actions"><button class="${site===target?'primary':'secondary'}" data-atlas-pick="${site.id}" aria-pressed="${site===target}" ${locked?'disabled':''}>${locked?'Потрібно '+siteRoute(site).need+' позицій в альбомі':site===target?'Обрано':isCurrent?'Поточне місце':'Обрати ділянку'}</button><button class="quiet" data-atlas-forget="${site.id}" ${!s.atCamp||isCurrent?'disabled':''} aria-label="Прибрати з карти: ${siteName(site)}">Прибрати</button></div></article>`;
   }).join('')||'<div class="empty-state"><b>Твоя карта поки порожня</b><p>Обери напрямок розвідки нижче. Після прибуття ділянка збережеться тут.</p></div>';
   $('atlasScout').textContent=!target?'Обрано розвідку нового місця':'Обрати розвідку нового місця';
   $('atlasScout').setAttribute('aria-pressed',String(!target));

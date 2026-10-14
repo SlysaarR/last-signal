@@ -1,12 +1,12 @@
-import { drawDetectorPreview } from './graphics/detector-art.js?v=0.48.0';
-import { MAX_GEAR_LEVEL, creditFor, detectorMilestones, detectorLook } from '../data/gear.js?v=0.48.0';
-import { chosenRoute } from '../data/expeditions.js?v=0.48.0';
+import { drawDetectorPreview } from './graphics/detector-art.js?v=0.49.0';
+import { MAX_GEAR_LEVEL, creditFor, detectorMilestones, detectorLook } from '../data/gear.js?v=0.49.0';
+import { chosenRoute } from '../data/expeditions.js?v=0.49.0';
 // shop responsibilities for Last Signal.
-import { foods } from '../data/balance.js?v=0.48.0';
-import { $ } from './dom.js?v=0.48.0';
-import { bagCapacity, bagUsed, detectorStats, foodAmount, foodFits, maxEnergy, shovelFactor, upgradeCost } from './rules.js?v=0.48.0';
-import { s, save } from './storage.js?v=0.48.0';
-import { busy, render } from './ui.js?v=0.48.0';
+import { foods } from '../data/balance.js?v=0.49.0';
+import { $ } from './dom.js?v=0.49.0';
+import { bagCapacity, bagUsed, detectorStats, foodAmount, foodFits, maxEnergy, shovelFactor, upgradeCost } from './rules.js?v=0.49.0';
+import { s, save } from './storage.js?v=0.49.0';
+import { busy, render } from './ui.js?v=0.49.0';
 export let shopRenderKey = '';
 export function purchaseBudgetNote(cost) {
   if(!s.atCamp||s.pending||cost>s.coins)return '';

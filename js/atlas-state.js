@@ -1,5 +1,5 @@
-import { activeSite, selectedSite, routeForCurrent, canScout, MAX_SITES } from '../data/atlas.js?v=0.48.0';
-import { s } from './storage.js?v=0.48.0';
+import { activeSite, selectedSite, routeForCurrent, canScout, MAX_SITES } from '../data/atlas.js?v=0.49.0';
+import { s } from './storage.js?v=0.49.0';
 export function ensureAtlas() {
   if(!s.atlas)s.atlas={version:1,nextId:1,activeId:null,selectedId:null,sites:[]};
   if(!s.atCamp&&!activeSite(s))rememberCurrent(routeForCurrent(s).id);
@@ -10,6 +10,7 @@ export function rememberCurrent(route) {
   if(atlas.sites.length>=MAX_SITES)throw new Error('Atlas is full');
   const site={id:atlas.nextId++,route,location:s.location,emergency:!!s.emergency,condition:s.progress?.active?.condition||0,
     createdDay:s.day,lastDay:s.day,visits:1,found:0,productive:false,field:null};
+  if(s.progress?.active?.environment)site.environment={...s.progress.active.environment};
   atlas.sites.push(site);atlas.activeId=site.id;
   if(s.progress?.active)s.progress.active.siteId=site.id;
   return site;

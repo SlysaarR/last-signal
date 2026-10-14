@@ -1,5 +1,6 @@
-import { routes, chosenRoute } from './expeditions.js?v=0.48.0';
-import { locations, legacyLocation } from './locations.js?v=0.48.0';
+import { validEnvironment, groundTypes, environmentKey } from './environment.js?v=0.49.0';
+import { routes, chosenRoute } from './expeditions.js?v=0.49.0';
+import { locations, legacyLocation } from './locations.js?v=0.49.0';
 export const MAX_SITES = 6;
 export const activeSite = state => state.atlas?.sites.find(site => site.id === state.atlas.activeId) || null;
 export const selectedSite = state => state.atlas?.sites.find(site => site.id === state.atlas.selectedId) || null;
@@ -42,9 +43,11 @@ export function validAtlas(a,state,validField) {
     if(site.emergency&&(site.location!==0||site.route!=='wander'))return false;
     if(!int(site.createdDay,1)||!int(site.lastDay,site.createdDay)||site.lastDay>state.day||!int(site.visits,1)||!int(site.found)||typeof site.productive!=='boolean'||site.productive&&site.found<3)return false;
     if(!Number.isInteger(site.condition)||site.condition<0||site.condition>2)return false;
+    if(site.environment!==undefined&&(!validEnvironment(site.environment)||groundTypes[site.environment.ground].condition!==site.condition))return false;
     if(site.id===a.activeId){
       if(site.field!==null||state.atCamp||site.location!==state.location||site.emergency!==!!state.emergency)return false;
       if(state.progress?.active && state.progress.active.condition!==site.condition)return false;
+      if(environmentKey(state.progress?.active?.environment)!==environmentKey(site.environment))return false;
     } else if(!validField(site.field))return false;
   }
   if(a.selectedId!==null&&!ids.has(a.selectedId))return false;

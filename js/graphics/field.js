@@ -1,15 +1,20 @@
-import { activeSite } from '../../data/atlas.js?v=0.48.0';
-import { createSiteLayout } from '../../data/site-layout.js?v=0.48.0';
-import { paintSiteTerrain } from './site-terrain.js?v=0.48.0';
-import { drawDetector } from './detector-art.js?v=0.48.0';
+import { currentEnvironment, environmentKey } from '../../data/environment.js?v=0.49.0';
+import { paintEnvironmentGround } from './environment-art.js?v=0.49.0';
+import { activeSite } from '../../data/atlas.js?v=0.49.0';
+import { createSiteLayout } from '../../data/site-layout.js?v=0.49.0';
+import { paintSiteTerrain } from './site-terrain.js?v=0.49.0';
+import { drawDetector } from './detector-art.js?v=0.49.0';
 // field responsibilities for Last Signal.
-import { $ } from '../dom.js?v=0.48.0';
-import { signal } from '../search.js?v=0.48.0';
-import { s } from '../storage.js?v=0.48.0';
-import { currentLocation } from '../world.js?v=0.48.0';
+import { $ } from '../dom.js?v=0.49.0';
+import { signal } from '../search.js?v=0.49.0';
+import { s } from '../storage.js?v=0.49.0';
+import { currentLocation } from '../world.js?v=0.49.0';
 export const canvas = $('field'),
   ctx = canvas.getContext('2d');
 export function paintTerrain(ctx) {
+  paintBaseTerrain(ctx);paintEnvironmentGround(ctx,currentEnvironment(s),s.site?.seed||1);
+}
+function paintBaseTerrain(ctx) {
   if(s.site){paintSiteTerrain(ctx,currentLocation(),createSiteLayout(currentLocation().terrain,s.site.seed));return;}
   const loc = currentLocation(),
     w = 880,
@@ -181,7 +186,7 @@ function paintMarks(c,w,h) {
   c.restore();
 }
 export function draw(n=signal()) {
-  const key=s.location+':'+s.emergency+':'+(s.site?s.site.version+':'+s.site.seed:'legacy:'+(activeSite(s)?.createdDay||s.day));
+  const key=environmentKey(currentEnvironment(s))+':'+s.location+':'+s.emergency+':'+(s.site?s.site.version+':'+s.site.seed:'legacy:'+(activeSite(s)?.createdDay||s.day));
   if(!terrainLayer||key!==terrainKey){
     terrainLayer=terrainLayer||document.createElement('canvas');terrainLayer.width=880;terrainLayer.height=720;
     paintTerrain(terrainLayer.getContext('2d'));terrainKey=key;

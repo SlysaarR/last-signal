@@ -1,10 +1,40 @@
 // audio responsibilities for Last Signal.
-import { $ } from './dom.js?v=0.48.0';
+import { $ } from './dom.js?v=0.49.0';
 export let audio = null,
   sound = false,
   lastBeep = -Infinity;
 let pageActive=true,resuming=null,unavailable=false;
 const voices=new Set();
+let weatherRequested=null,ambience=null,noiseContext=null,noiseBuffer=null;
+function stopAmbience(){
+ if(!ambience)return;
+ const old=ambience;ambience=null;
+ try{old.source.stop();}catch{}
+ old.source.disconnect();old.filter.disconnect();old.gain.disconnect();
+}
+function syncAmbience(){
+ const context=audio,kind=weatherRequested;
+ if(!kind||!sound||!foreground()||context?.state!=='running'){stopAmbience();return;}
+ if(ambience?.context===context&&ambience.kind===kind)return;
+ stopAmbience();
+ if(!context.createBufferSource||!context.createBuffer||!context.createBiquadFilter)return;
+ let source,filter,gain;
+ try{
+   if(noiseContext!==context){
+     noiseBuffer=context.createBuffer(1,context.sampleRate*2,context.sampleRate);noiseContext=context;
+     const values=noiseBuffer.getChannelData(0);let seed=491049;
+     for(let i=0;i<values.length;i++){seed=(Math.imul(seed,1664525)+1013904223)>>>0;values[i]=(seed/4294967296-.5)*.7*Math.min(1,i/128,(values.length-1-i)/128);}
+   }
+   source=context.createBufferSource();source.buffer=noiseBuffer;source.loop=true;
+   filter=context.createBiquadFilter();filter.type='lowpass';filter.frequency.value=kind==='rain'?1700:kind==='overcast'?420:250;filter.Q.value=.45;
+   gain=context.createGain();gain.gain.setValueAtTime(kind==='rain'?.004:kind==='overcast'?.0025:.0015,context.currentTime);
+   source.connect(filter);filter.connect(gain);gain.connect(context.destination);source.start();
+   ambience={context,kind,source,filter,gain};
+ }catch{try{source?.stop();}catch{}source?.disconnect();filter?.disconnect();gain?.disconnect();}
+}
+export function setWeatherAmbience(kind){
+ weatherRequested=['clear','overcast','rain'].includes(kind)?kind:null;syncAmbience();
+}
 const foreground=()=>pageActive&&document.visibilityState!=='hidden';
 function renderSound() {
   const waiting=sound&&audio?.state!=='running';
@@ -16,7 +46,7 @@ function stopVoices() {
   for(const voice of voices){try{voice.osc.stop();}catch{}voice.dispose();}
 }
 function pauseAudio() {
-  stopVoices();const context=audio;
+  stopVoices();stopAmbience();const context=audio;
   if(context?.state==='running') {
     try {
       Promise.resolve(context.suspend()).then(()=>{
@@ -37,15 +67,15 @@ export function resumeAudio(gesture=false) {
       if(audio)audio.onstatechange=null;
       audio=new (window.AudioContext||window.webkitAudioContext)();
       audio.onstatechange=()=>{
-        if(audio.state!=='running')stopVoices();
+        if(audio.state!=='running'){stopVoices();stopAmbience();}
         else if(!sound||!foreground())pauseAudio();
-        else lastBeep=-Infinity;
+        else {lastBeep=-Infinity;syncAmbience();}
         renderSound();
       };
       unavailable=false;
     } catch {sound=false;unavailable=true;renderSound();return Promise.resolve(false);}
   }
-  if(audio.state==='running'){renderSound();return Promise.resolve(true);}
+  if(audio.state==='running'){syncAmbience();renderSound();return Promise.resolve(true);}
   // An automatic resume may wait for a gesture. A fresh gesture can retry it.
   if(resuming?.context===audio&&!gesture)return resuming.promise;
   const context=audio,attempt={context,promise:null};resuming=attempt;
@@ -53,7 +83,7 @@ export function resumeAudio(gesture=false) {
     attempt.promise=Promise.resolve(context.resume()).then(()=>{
       if(audio!==context)return false;
       if(!sound||!foreground()){pauseAudio();return false;}
-      lastBeep=-Infinity;return context.state==='running';
+      lastBeep=-Infinity;syncAmbience();return context.state==='running';
     }).catch(()=>false).finally(()=>{
       if(resuming===attempt)resuming=null;
       renderSound();

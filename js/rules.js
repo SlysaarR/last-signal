@@ -1,10 +1,11 @@
-import { selectedSite, siteRoute, siteAccessible, canScout } from '../data/atlas.js?v=0.48.0';
-import { capacityAt, detectorAt, energyLimit, shovelAt, upgradePrice } from '../data/gear.js?v=0.48.0';
-import { chosenRoute, conditions } from '../data/expeditions.js?v=0.48.0';
+import { currentEnvironment, groundFactor } from '../data/environment.js?v=0.49.0';
+import { selectedSite, siteRoute, siteAccessible, canScout } from '../data/atlas.js?v=0.49.0';
+import { capacityAt, detectorAt, energyLimit, shovelAt, upgradePrice } from '../data/gear.js?v=0.49.0';
+import { chosenRoute, conditions } from '../data/expeditions.js?v=0.49.0';
 // rules responsibilities for Last Signal.
-import { foods, rarities } from '../data/balance.js?v=0.48.0';
-import { types } from '../data/items.js?v=0.48.0';
-import { s } from './storage.js?v=0.48.0';
+import { foods, rarities } from '../data/balance.js?v=0.49.0';
+import { types } from '../data/items.js?v=0.49.0';
+import { s } from './storage.js?v=0.49.0';
 export function rollCondition() {
   return Math.floor(Math.random() * 101);
 }
@@ -22,8 +23,12 @@ export function detectorStats(level = s.level) { return detectorAt(level); }
 export function shovelFactor(level = s.shovel) {
   return shovelAt(level);
 }
+export function digCostFor(base,{environment=null,condition=0,emergency=false}={}) {
+  const factor=environment?(emergency?1:groundFactor(environment,base)):(conditions[condition]?.factor||1);
+  return Math.round(base*shovelFactor()*factor*10)/10;
+}
 export function digCost(base) {
-  return Math.round(base * shovelFactor() * (conditions[s.progress?.active?.condition]?.factor || 1) * 10) / 10;
+  return digCostFor(base,{environment:currentEnvironment(s),condition:s.progress?.active?.condition||0,emergency:!!s.emergency});
 }
 export function minDig() {
   return digCost(5);
