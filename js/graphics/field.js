@@ -1,11 +1,11 @@
-import { createSiteLayout } from '../../data/site-layout.js?v=0.43.0';
-import { paintSiteTerrain } from './site-terrain.js?v=0.43.0';
-import { drawDetector } from './detector-art.js?v=0.43.0';
+import { createSiteLayout } from '../../data/site-layout.js?v=0.44.0';
+import { paintSiteTerrain } from './site-terrain.js?v=0.44.0';
+import { drawDetector } from './detector-art.js?v=0.44.0';
 // field responsibilities for Last Signal.
-import { $ } from '../dom.js?v=0.43.0';
-import { signal } from '../search.js?v=0.43.0';
-import { s } from '../storage.js?v=0.43.0';
-import { currentLocation } from '../world.js?v=0.43.0';
+import { $ } from '../dom.js?v=0.44.0';
+import { signal } from '../search.js?v=0.44.0';
+import { s } from '../storage.js?v=0.44.0';
+import { currentLocation } from '../world.js?v=0.44.0';
 export const canvas = $('field'),
   ctx = canvas.getContext('2d');
 export function paintTerrain(ctx) {
@@ -179,7 +179,7 @@ function paintMarks(c,w,h) {
   }
   c.restore();
 }
-export function draw() {
+export function draw(n=signal()) {
   const key=s.day+':'+s.location+':'+s.emergency+':'+(s.site?s.site.version+':'+s.site.seed:'legacy');
   if(!terrainLayer||key!==terrainKey){
     terrainLayer=terrainLayer||document.createElement('canvas');terrainLayer.width=880;terrainLayer.height=720;
@@ -196,5 +196,5 @@ export function draw() {
     groundKey=nextGroundKey;holesRef=s.holes;holesCount=s.holes.length;marksRef=s.fieldMarks;
   }
   ctx.drawImage(groundLayer,0,0,w,h);
-  const n=signal();ctx.save();ctx.translate(s.x*w,s.y*h);drawDetector(ctx,s.level,n);ctx.restore();
+  ctx.save();ctx.translate(s.x*w,s.y*h);drawDetector(ctx,s.level,n);ctx.restore();
 }

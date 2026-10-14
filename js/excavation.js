@@ -1,11 +1,13 @@
-import { setupInspection, clearInspection } from './coin-flip.js?v=0.43.0';
-import { onCoinImagesReady } from './graphics/coin-reference.js?v=0.43.0';
+import { setupInspection, clearInspection } from './coin-flip.js?v=0.44.0';
+import { onCoinImagesReady } from './graphics/coin-reference.js?v=0.44.0';
+import { brushMark, cleaningPercent, visitBrushSegment } from '../data/cleaning.js?v=0.44.0';
+import { createSoilBrush } from './graphics/soil-brush.js?v=0.44.0';
 // Soil canvas, finger cleaning, dust and reveal progress.
-import { types } from '../data/items.js?v=0.43.0';
-import { $ } from './dom.js?v=0.43.0';
-import { drawArtifact, seededArt } from './graphics/artifacts.js?v=0.43.0';
-import { openPacking } from './packing.js?v=0.43.0';
-import { s, save } from './storage.js?v=0.43.0';
+import { types } from '../data/items.js?v=0.44.0';
+import { $ } from './dom.js?v=0.44.0';
+import { drawArtifact, seededArt } from './graphics/artifacts.js?v=0.44.0';
+import { openPacking } from './packing.js?v=0.44.0';
+import { s, save } from './storage.js?v=0.44.0';
 export const soil = $('soil'),
   dirt = soil.getContext('2d'),
   art = $('artifact').getContext('2d');
@@ -14,6 +16,8 @@ export let swept = new Set(),
   lastBrush = null,
   phaseDone = false;
 let brushPointer = null;
+const soilBrush=createSoilBrush();
+let cleaningItem=null,cleaningBase=[],brushFrame=0,brushQueue=[],newMarks=[],brushMarks=new Set(),cellsDirty=false,lastProgress=-1,dustPoint=null;
 export function paintSoil() {
   dirt.globalCompositeOperation = 'source-over';
   dirt.clearRect(0, 0, 600, 500);
@@ -58,7 +62,7 @@ export let dustParticles = [],
   dustFrame = 0,
   dustLast = 0;
 export function scatterDust(x, y) {
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (document.visibilityState==='hidden'||matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const rand = seededArt(Math.round(x * 17 + y * 31 + performance.now()));
   for (let i = 0; i < 3; i++) dustParticles.push({
     x,
@@ -79,7 +83,7 @@ export function animateDust(now) {
     dt = Math.min(.04, (now - dustLast) / 1000);
   dustLast = now;
   c.clearRect(0, 0, 600, 500);
-  if (!$('excavate').open) {
+  if (!$('excavate').open||document.visibilityState==='hidden') {
     dustParticles = [];
     dustFrame = 0;
     return;
@@ -99,6 +103,7 @@ export function animateDust(now) {
 }
 export function openExcavation() {
   if (!s.pending) return;
+  stopBrush(false);stopDust();cleaningItem=s.pending;
   clearInspection($('artifact'));
   $('excFlip').hidden = true;
   $('artifact').onclick = null;
@@ -109,6 +114,8 @@ export function openExcavation() {
   soil.onclick = null;
   drawArtifact(s.pending.type);
   swept = new Set(s.pending.cleanedCells || []);
+  cleaningBase=s.pending.cleaning?.base||[...swept];
+  brushMarks=new Set(s.pending.cleaning?.marks||[]);lastProgress=-1;
   phaseDone = false;
   brushDown = false;
   brushPointer = null;
@@ -124,38 +131,60 @@ export function openExcavation() {
   $('excNext').disabled = true;
   $('excNext').textContent = 'Спочатку прибери землю';
   paintSoil();
-  // Restore the cleared central area; the same cells drive the progress meter.
-  for (const cell of swept) {
-    dirt.clearRect(172 + (cell % 16) * 16, 122 + Math.floor(cell / 16) * 16, 16, 16);
-  }
+  soilBrush.restore(dirt,s.pending.cleaning,[...swept]);
   updateCleaning();
   if (!$('excavate').open) $('excavate').showModal();
 }
 // The dirt is on its own canvas. Loading the specimen may redraw the metal but
 // must never clear soil, reset a brush stroke or change saved cleaning progress.
 onCoinImagesReady(()=>{if(s.pending && $('excavate').open && !phaseDone)drawArtifact(s.pending.type);});
-export function brushAt(x, y) {
-  if (!s.pending || phaseDone) return;
-  const radius = 64,
-    g = dirt.createRadialGradient(x, y, 42, x, y, radius);
-  g.addColorStop(0, '#000');
-  g.addColorStop(.75, '#000');
-  g.addColorStop(1, '#0000');
-  dirt.fillStyle = g;
-  dirt.beginPath();
-  dirt.arc(x, y, radius, 0, Math.PI * 2);
-  dirt.fill();
-  scatterDust(x, y);
-  for (let row = 0; row < 16; row++) for (let col = 0; col < 16; col++) {
+function stampAt(x,y) {
+  if(cleaningPercent(swept.size)===100)return false;
+  const mark=brushMark(x,y);
+  if(!brushMarks.has(mark)){brushMarks.add(mark);newMarks.push(mark);}
+  const before=swept.size;
+  const firstRow=Math.max(0,Math.ceil((y-57-130)/16)),lastRow=Math.min(15,Math.floor((y+57-130)/16));
+  const firstCol=Math.max(0,Math.ceil((x-57-180)/16)),lastCol=Math.min(15,Math.floor((x+57-180)/16));
+  for (let row=firstRow;row<=lastRow;row++) for (let col=firstCol;col<=lastCol;col++) {
     const gx = 180 + col * 16,
       gy = 130 + row * 16;
-    if (Math.hypot(gx - x, gy - y) <= radius - 7) swept.add(row * 16 + col);
+    if ((gx-x)**2+(gy-y)**2<=57**2) swept.add(row * 16 + col);
   }
-  s.pending.cleanedCells = [...swept];
+  cellsDirty ||= swept.size!==before;dustPoint={x,y};
+  return cleaningPercent(swept.size)<100;
+}
+function currentCleaning() {return s.pending&&s.pending===cleaningItem&&!s.pending.revealed&&!phaseDone;}
+function applyBrushQueue() {
+  if(!currentCleaning()){brushQueue=[];return;}
+  for(const point of brushQueue) {
+    visitBrushSegment(lastBrush||point,point,stampAt);lastBrush=point;
+    if(cleaningPercent(swept.size)===100)break;
+  }
+  brushQueue=[];
+}
+export function flushBrush() {
+  if(brushFrame)cancelAnimationFrame(brushFrame);brushFrame=0;
+  if(!currentCleaning()){brushQueue=[];newMarks=[];cellsDirty=false;return;}
+  applyBrushQueue();
+  if(!newMarks.length&&!cellsDirty)return;
+  s.pending.cleanedCells=[...swept];
+  if(newMarks.length) {
+    s.pending.cleaning??={version:1,base:cleaningBase,marks:[]};
+    s.pending.cleaning.marks.push(...newMarks);
+    for(const mark of newMarks)soilBrush.paint(dirt,mark);
+  }
+  newMarks=[];cellsDirty=false;
   updateCleaning();
+  if(dustPoint&&!phaseDone)scatterDust(dustPoint.x,dustPoint.y);
+  dustPoint=null;
+}
+export function brushAt(x,y) {
+  if(!currentCleaning())return;
+  applyBrushQueue();visitBrushSegment({x,y},{x,y},stampAt);flushBrush();
 }
 function updateCleaning() {
-  const progress = Math.min(100, Math.round(swept.size / 256 / .78 * 100));
+  const progress = cleaningPercent(swept.size);
+  if(progress===lastProgress)return;lastProgress=progress;
   $('excProgress').value = progress;
   $('excPercent').textContent = progress + '%';
   $('excStatus').textContent = progress < 35 ? 'Знімай верхній шар ґрунту.' : progress < 75 ? 'Вже видно обриси. Продовжуй очищення.' : 'Ще трохи — предмет майже відкрито.';
@@ -175,29 +204,48 @@ function updateCleaning() {
   }
 }
 export function brushMove(e) {
+  if(!currentCleaning()||document.visibilityState==='hidden')return;
   const r = soil.getBoundingClientRect();
   if (!r.width || !r.height) return;
   const p = {
       x: (e.clientX - r.left) * 600 / r.width,
       y: (e.clientY - r.top) * 500 / r.height
     };
-  const from = lastBrush || p,
-    steps = Math.max(1, Math.ceil(Math.hypot(p.x - from.x, p.y - from.y) / 12));
-  for (let i = 1; i <= steps; i++) brushAt(from.x + (p.x - from.x) * i / steps, from.y + (p.y - from.y) * i / steps);
-  lastBrush = p;
+  if(!Number.isFinite(p.x)||!Number.isFinite(p.y))return;
+  brushQueue.push(p);
+  // A burst cannot retain an unbounded event list. Geometry has no DOM writes.
+  if(brushQueue.length>=128)applyBrushQueue();
+  if(!brushFrame)brushFrame=requestAnimationFrame(flushBrush);
+}
+function stopBrush(flush=true) {
+  if(flush)flushBrush();
+  if(brushFrame)cancelAnimationFrame(brushFrame);
+  brushFrame=0;brushQueue=[];newMarks=[];cellsDirty=false;dustPoint=null;
+  const pointer=brushPointer;brushDown=false;brushPointer=null;lastBrush=null;
+  if(pointer!==null&&soil.hasPointerCapture?.(pointer))soil.releasePointerCapture(pointer);
+}
+function stopDust() {
+  if(dustFrame)cancelAnimationFrame(dustFrame);
+  dustFrame=0;dustParticles=[];$('dustOverlay').getContext('2d').clearRect(0,0,600,500);
 }
 export function collectPending() {
   if (!s.pending) return;
+  stopBrush();stopDust();
   s.pending.revealed = true;
   delete s.pending.cleanedCells;
+  delete s.pending.cleaning;
   save();
   $('excavate').close();
   openPacking();
 }
 export function initExcavation() {
-  $('excavate').addEventListener('close',()=>clearInspection($('artifact')));
+  $('excavate').addEventListener('close',()=>{stopBrush();stopDust();clearInspection($('artifact'));});
+  // Registered before the entry point's persistence handlers: never lose the
+  // final queued segment when the page goes away before its animation frame.
+  window.addEventListener('pagehide',()=>{stopBrush();stopDust();});
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){stopBrush();stopDust();}});
   soil.addEventListener('pointerdown', e => {
-    if (phaseDone) return;
+    if (!currentCleaning()||document.visibilityState==='hidden'||(e.button!==undefined&&e.button!==0)) return;
     if (brushDown) return;
     brushDown = true;
     brushPointer = e.pointerId;
@@ -211,9 +259,8 @@ export function initExcavation() {
   for (const event of ['pointerup', 'pointercancel', 'lostpointercapture']) soil.addEventListener(event, e => {
     if (brushPointer !== e.pointerId) return;
     const wasCleaning = brushDown;
-    brushDown = false;
-    brushPointer = null;
-    lastBrush = null;
+    if(event==='pointerup'&&wasCleaning)brushMove(e);
+    stopBrush();
     if (wasCleaning) save();
   });
   $('excNext').onclick = () => {

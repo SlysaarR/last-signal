@@ -1,5 +1,5 @@
 // One reusable GPU context for all three inspection canvases. No network assets.
-import { inspectionLights } from './inspection-light.js?v=0.43.0';
+import { inspectionLights } from './inspection-light.js?v=0.44.0';
 let renderer;
 export function renderMesh(model,yaw,pitch,width,height,zoom=1,light=0,pan=[0,0]) {
   if(renderer===undefined)renderer=createRenderer();

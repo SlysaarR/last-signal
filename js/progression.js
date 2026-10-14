@@ -1,7 +1,7 @@
-import { goals, emptyProgress } from '../data/expeditions.js?v=0.43.0';
-import { types } from '../data/items.js?v=0.43.0';
-import { s, save } from './storage.js?v=0.43.0';
-import { recordOrderFind } from './orders.js?v=0.43.0';
+import { goals, emptyProgress } from '../data/expeditions.js?v=0.44.0';
+import { types } from '../data/items.js?v=0.44.0';
+import { s, save } from './storage.js?v=0.44.0';
+import { recordOrderFind } from './orders.js?v=0.44.0';
 export function progress(){return s.progress||emptyProgress();}
 function writable(){return s.progress||(s.progress=emptyProgress());}
 export function goalMetrics(){

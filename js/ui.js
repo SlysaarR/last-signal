@@ -1,23 +1,23 @@
-import { detectorFeatures, detectorSettings } from '../data/gear.js?v=0.43.0';
-import { initDetectorControls, renderDetectorControls } from './detector-controls.js?v=0.43.0';
-import { signalDescription } from './detector.js?v=0.43.0';
-import { renderOrders, renderOrderSummary } from './orders-ui.js?v=0.43.0';
-import { renderMarkControls } from './field-notes.js?v=0.43.0';
-import { renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.43.0';
-import { renderJournal } from './journal.js?v=0.43.0';
-import { conditions } from '../data/expeditions.js?v=0.43.0';
+import { detectorFeatures, detectorSettings } from '../data/gear.js?v=0.44.0';
+import { initDetectorControls, renderDetectorControls } from './detector-controls.js?v=0.44.0';
+import { signalDescription } from './detector.js?v=0.44.0';
+import { renderOrders, renderOrderSummary } from './orders-ui.js?v=0.44.0';
+import { renderMarkControls } from './field-notes.js?v=0.44.0';
+import { renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.44.0';
+import { renderJournal } from './journal.js?v=0.44.0';
+import { conditions } from '../data/expeditions.js?v=0.44.0';
 // Shared navigation, detector readout and quick sheets. Rendering functions never award items.
-import { renderCamp } from './camp.js?v=0.43.0';
-import { foods } from '../data/balance.js?v=0.43.0';
-import { renderCollection } from './collection.js?v=0.43.0';
-import { $ } from './dom.js?v=0.43.0';
-import { draw } from './graphics/field.js?v=0.43.0';
-import { renderInventory } from './inventory.js?v=0.43.0';
-import { bagCapacity, bagUsed, canLeave, emergencyAllowed, foodAmount, foodAvailable, foodFits, maxEnergy, minDig, travelCost } from './rules.js?v=0.43.0';
-import { digInfo, signal } from './search.js?v=0.43.0';
-import { eatFood, renderShop } from './shop.js?v=0.43.0';
-import { s } from './storage.js?v=0.43.0';
-import { currentLocation } from './world.js?v=0.43.0';
+import { renderCamp } from './camp.js?v=0.44.0';
+import { foods } from '../data/balance.js?v=0.44.0';
+import { renderCollection } from './collection.js?v=0.44.0';
+import { $ } from './dom.js?v=0.44.0';
+import { draw } from './graphics/field.js?v=0.44.0';
+import { renderInventory } from './inventory.js?v=0.44.0';
+import { bagCapacity, bagUsed, canLeave, emergencyAllowed, foodAmount, foodAvailable, foodFits, maxEnergy, minDig, travelCost } from './rules.js?v=0.44.0';
+import { digInfo, signal } from './search.js?v=0.44.0';
+import { eatFood, renderShop } from './shop.js?v=0.44.0';
+import { s } from './storage.js?v=0.44.0';
+import { currentLocation } from './world.js?v=0.44.0';
 export function renderFieldChrome() {
   const choices = document.getElementById('quickFoodChoices');
   if (!choices) return;
@@ -88,13 +88,13 @@ export function render() {
   if (!$('collection').hidden) renderCollection();
   if (!$('search').hidden) {
     $('fieldBag').textContent = 'Рюкзак: ' + bagUsed() + ' / ' + bagCapacity();
-    renderDetector();renderFieldChrome();renderOrderSummary('search');draw();
+    const reading=signal();
+    renderDetector(reading);renderFieldChrome();renderOrderSummary('search');draw(reading);
   }
 }
 // Moving the coil must not rebuild inventory cards, shop controls or album art.
-export function renderDetector() {
+export function renderDetector(n=signal()) {
   renderMarkControls();
-  const n = signal();
   const features=detectorFeatures(s.level),settings=detectorSettings(s);
   const meter=settings.mode==='pinpoint'?n.focus:n.power;
   $('strength').textContent = String(meter).padStart(2, '0');
@@ -105,7 +105,7 @@ export function renderDetector() {
   $('signalStability').textContent = n.power<5 ? '—' : n.stability>=70 ? 'Стабільний' : n.stability>=40 ? 'Мінливий' : 'Нечіткий';
   $('signalStability').dataset.quality = n.power<5?'none':n.stability>=70?'clear':'mixed';
   [...$('bars').children].forEach((b, i) => b.style.background = i < meter / 5 ? n.pinpoint ? '#d2e58e' : '#81ad84' : '#2b403a');
-  const info = digInfo();
+  const info = digInfo(n);
   $('dig').textContent = 'Копати · ' + info.cost + ' сил';
   $('hint').textContent = s.energy < minDig() ? 'Сили вичерпано. Час завершити виїзд.' : n.pinpoint ? 'Центр відгуку. Можна копати.' : n.power > 5 ? 'Проведи навхрест: шукай найсильніший відгук.' : 'Веди металошукачем і слухай сигнал.';
   if (s.energy >= minDig() && s.energy < info.cost) $('hint').textContent = 'На цю розкопку бракує енергії. Перевір їжу або пошукай інший сигнал.';

@@ -26,6 +26,7 @@ const {newRun,root,assert}=require('./harness.cjs');
  const locked=detector.readTarget({...obj,depth:0},.5,.5,4,0,{ironQuiet:true});assert.equal(locked.quiet,false);
  console.log('PASS ground compensation, nearby-target separation, deep mode response and audio-only iron suppression');
  s.level=7;s.x=.5;s.y=.5;s.objects=[obj];s.detectorSettings={mode:'pinpoint',ironQuiet:true};
+ mod('ui').showTab('search');
  const emit=(type,event)=>r.elements.get('field').listeners[type].forEach(fn=>fn(event));
  emit('keydown',{key:'ArrowRight',preventDefault(){}});assert(Math.abs(s.x-.505)<1e-10);
  emit('pointerdown',{pointerId:1,clientX:90,clientY:100,button:0});
