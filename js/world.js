@@ -1,10 +1,10 @@
 // world responsibilities for Last Signal.
-import { rarities, signalRanges, surveyCols, surveyRows } from '../data/balance.js?v=0.47.0';
-import { types } from '../data/items.js?v=0.47.0';
-import { legacyLocation, locations } from '../data/locations.js?v=0.47.0';
-import { rollCondition } from './rules.js?v=0.47.0';
-import { s, save } from './storage.js?v=0.47.0';
-import { SITE_VERSION, seedForSite, createSiteLayout, placeSiteObjects } from '../data/site-layout.js?v=0.47.0';
+import { rarities, signalRanges, surveyCols, surveyRows } from '../data/balance.js?v=0.48.0';
+import { types } from '../data/items.js?v=0.48.0';
+import { legacyLocation, locations } from '../data/locations.js?v=0.48.0';
+import { rollCondition } from './rules.js?v=0.48.0';
+import { s, save } from './storage.js?v=0.48.0';
+import { SITE_VERSION, seedForSite, createSiteLayout, placeSiteObjects } from '../data/site-layout.js?v=0.48.0';
 export function rollLocation(route = null) {
   const pool = route ? route.pool : [0,1,2,3,4];
   let roll = Math.random() * pool.reduce((sum,i)=>sum+locations[i].chance,0);
@@ -27,15 +27,30 @@ export function itemWeight(t, id, loc) {
   if (loc.terrain === 'beach' && t.kind === 'trash') weight *= [8, 9, 10].includes(id) ? 3 : 1;
   return weight;
 }
-export function pickType(kind, loc = currentLocation()) {
+const pools=new Map();
+export function weightedPool(kind,loc=currentLocation()) {
+  const key=kind+':'+loc.terrain+':'+loc.boost.join(',');
+  if(pools.has(key))return pools.get(key);
   const pool = types.map((t, id) => ({
       id,
       t
-    })).filter(x => x.t.kind === kind && !x.t.legacy),
-    total = pool.reduce((sum, x) => sum + itemWeight(x.t, x.id, loc), 0);
+    })).filter(x => x.t.kind === kind && !x.t.legacy);
+  const weights=pool.map(x=>itemWeight(x.t,x.id,loc)*(x.t.findRegions?.[loc.terrain]??1));
+  if(kind==='relic'||kind==='jewel'){
+    // Adding variants changes variety, not the total probability of a rarity.
+    const oldMass=[0,0,0,0],newMass=[0,0,0,0];
+    pool.forEach((x,i)=>{newMass[x.t.rarity]+=weights[i];if(!x.t.contentPack)oldMass[x.t.rarity]+=itemWeight(x.t,x.id,loc);});
+    pool.forEach((x,i)=>{weights[i]*=oldMass[x.t.rarity]/newMass[x.t.rarity];});
+  }
+  const result=pool.map((x,i)=>({id:x.id,weight:weights[i]}));
+  pools.set(key,result);if(pools.size>48)pools.delete(pools.keys().next().value);
+  return result;
+}
+export function pickType(kind, loc = currentLocation()) {
+  const pool=weightedPool(kind,loc),total=pool.reduce((sum,x)=>sum+x.weight,0);
   let roll = Math.random() * total;
   for (const x of pool) {
-    roll -= itemWeight(x.t, x.id, loc);
+    roll -= x.weight;
     if (roll < 0) return x.id;
   }
   return pool[pool.length - 1].id;

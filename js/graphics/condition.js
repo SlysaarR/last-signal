@@ -13,6 +13,11 @@ export function mixMetal(a, b, amount) {
 }
 export function metalPalette(item, condition) {
   const { wear } = conditionProfile(condition);
+  if(item.findMaterial){
+    const families={brass:[[213,181,100],[83,91,49],'63,89,59'],bronze:[[178,139,79],[66,85,55],'47,85,62'],copper:[[205,140,96],[72,91,69],'47,104,84'],lead:[[169,178,180],[77,83,85],'121,125,121'],pewter:[[200,208,202],[82,91,91],'66,84,84']};
+    const [bright,tarnish,corrosion]=families[item.findMaterial]||families.bronze;
+    return {gold:false,silver:['lead','pewter'].includes(item.findMaterial),iron:false,light:mixMetal(bright,tarnish,wear*.76),mid:mixMetal(bright.map(v=>v*.78),tarnish,wear*.72),dark:mixMetal(bright.map(v=>v*.40),tarnish.map(v=>v*.65),wear),corrosion};
+  }
   const gold = item.material === 'yellow' || /Золот/.test(item.name);
   const iron = item.metal === 'iron' && !item.country;
   const silver = !!(item.material && item.material !== 'yellow' || /Сріб|Алюм/.test(item.name) || ['watch', 'foil', 'tab', 'can', 'gemring'].includes(item.shape));

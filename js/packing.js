@@ -1,15 +1,15 @@
-import { recordFind } from './progression.js?v=0.47.0';
-import { recordCareerFind } from './career.js?v=0.47.0';
-import { orderReady } from './orders.js?v=0.47.0';
-import { setupInspection, clearInspection } from './coin-flip.js?v=0.47.0';
+import { recordFind } from './progression.js?v=0.48.0';
+import { recordCareerFind } from './career.js?v=0.48.0';
+import { orderReady } from './orders.js?v=0.48.0';
+import { setupInspection, clearInspection } from './coin-flip.js?v=0.48.0';
 // Revealed-find card and the take/swap/leave decision.
-import { foods, rarities } from '../data/balance.js?v=0.47.0';
-import { types } from '../data/items.js?v=0.47.0';
-import { $ } from './dom.js?v=0.47.0';
-import { itemLabel } from './inventory.js?v=0.47.0';
-import { bagCapacity, bagUsed, conditionLabel, priceFor } from './rules.js?v=0.47.0';
-import { s, save } from './storage.js?v=0.47.0';
-import { render } from './ui.js?v=0.47.0';
+import { foods, rarities } from '../data/balance.js?v=0.48.0';
+import { types } from '../data/items.js?v=0.48.0';
+import { $ } from './dom.js?v=0.48.0';
+import { itemLabel } from './inventory.js?v=0.48.0';
+import { bagCapacity, bagUsed, conditionLabel, priceFor } from './rules.js?v=0.48.0';
+import { s, save } from './storage.js?v=0.48.0';
+import { render } from './ui.js?v=0.48.0';
 export function openPacking() {
   if (!s.pending) return;
   const item = s.pending,
@@ -17,6 +17,7 @@ export function openPacking() {
     r = rarities[t.rarity];
   $('packTitle').textContent = t.name;
   $('packDescription').textContent = t.country ? (t.variant || 'Обігова монета') + ' · ' + t.country : t.kind === 'trash' ? 'Польова знахідка · металеве сміття' : t.kind === 'jewel' ? 'Польова знахідка · прикраса' : 'Польова знахідка · предмет';
+  if(t.findDescription)$('packDescription').textContent=t.findDescription;
   $('packRarity').textContent = r.name;
   $('packRarity').style.color = r.color;
   $('packCondition').textContent = item.condition + '%';

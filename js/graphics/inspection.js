@@ -1,9 +1,10 @@
-import { renderMesh } from './inspection-gl.js?v=0.47.0';
-import { paintUkrainianCoin, isUkrainianCoin, coinEdgeType } from './ukrainian-coins.js?v=0.47.0';
-import { conditionProfile, metalPalette, paintWear, artRandom } from './condition.js?v=0.47.0';
-import { coinDesign, coinEdgeSpec } from '../../data/coin-art.js?v=0.47.0';
-import { coinReliefImage } from './coin-reference.js?v=0.47.0';
-import { makeReliefMap, relightFace, lightTerms } from './inspection-light.js?v=0.47.0';
+import { buildFindShape } from './find-shapes.js?v=0.48.0';
+import { renderMesh } from './inspection-gl.js?v=0.48.0';
+import { paintUkrainianCoin, isUkrainianCoin, coinEdgeType } from './ukrainian-coins.js?v=0.48.0';
+import { conditionProfile, metalPalette, paintWear, artRandom } from './condition.js?v=0.48.0';
+import { coinDesign, coinEdgeSpec } from '../../data/coin-art.js?v=0.48.0';
+import { coinReliefImage } from './coin-reference.js?v=0.48.0';
+import { makeReliefMap, relightFace, lightTerms } from './inspection-light.js?v=0.48.0';
 
 const TAU=Math.PI*2;
 const sub=(a,b)=>a.map((v,i)=>v-b[i]);
@@ -77,7 +78,9 @@ export function createInspectionModel(item, condition) {
     for(let i=0;i<4;i++){tri([0,.77,.4],ring[(i+1)%4],ring[i],mat);tri([0,.77,-.08],ring[i],ring[(i+1)%4],mat);}
   }
   const shape=item.shape;
-  if(isUkrainianCoin(item)) {
+  if(buildFindShape(item,condition,{tri,quad,disc,torus,box,material,metalTexture,base,seed,profile})) {
+    // The new object owns all of its front, back and interior geometry.
+  } else if(isUkrainianCoin(item)) {
     const front=material(texture(c=>paintUkrainianCoin(c,item,condition,0)));
     const back=material(texture(c=>paintUkrainianCoin(c,item,condition,1)));
     reliefMaps[front]={map:makeReliefMap(coinReliefImage(item,condition,0),condition),side:1};

@@ -1,5 +1,6 @@
 // Stable item IDs and catalogue assembly. Existing saves reference array positions; never reorder or remove entries.
-import { yearCatalog } from './coins.js?v=0.47.0';
+import { yearCatalog } from './coins.js?v=0.48.0';
+import { findCatalog } from './finds.js?v=0.48.0';
 export const types = [{
   "name": "Залізний цвях",
   "icon": "🔩",
@@ -517,6 +518,8 @@ types.push(...[{
 }]);
 for (const t of yearCatalog) if (!types.some(old => old.country && old.denom === t.denom && old.year === t.year)) types.push(t);
 for (const t of types) if (t.country && !t.issue) t.issue = "circulation";
+// Only append: all 208 pre-0.48 IDs and catalogue records remain untouched.
+types.push(...findCatalog);
 export const collectible = types.map((t, id) => ({
   ...t,
   id

@@ -1,16 +1,16 @@
-import { openAtlas } from './atlas-ui.js?v=0.47.0';
-import { ensureAtlas, parkCurrent, restoreSite, rememberCurrent } from './atlas-state.js?v=0.47.0';
-import { activeSite, selectedSite, siteName, siteAccessible, canScout, MAX_SITES } from '../data/atlas.js?v=0.47.0';
-import { chosenRoute, conditions } from '../data/expeditions.js?v=0.47.0';
-import { startLeg,endLeg } from './progression.js?v=0.47.0';
+import { openAtlas } from './atlas-ui.js?v=0.48.0';
+import { ensureAtlas, parkCurrent, restoreSite, rememberCurrent } from './atlas-state.js?v=0.48.0';
+import { activeSite, selectedSite, siteName, siteAccessible, canScout, MAX_SITES } from '../data/atlas.js?v=0.48.0';
+import { chosenRoute, conditions } from '../data/expeditions.js?v=0.48.0';
+import { startLeg,endLeg } from './progression.js?v=0.48.0';
 // camp responsibilities for Last Signal.
-import { modal } from './dialogs.js?v=0.47.0';
-import { $ } from './dom.js?v=0.47.0';
-import { bagCapacity, bagUsed, canLeave, emergencyAllowed, maxEnergy, priceFor, travelCost } from './rules.js?v=0.47.0';
-import { s, save } from './storage.js?v=0.47.0';
-import { busy, render, showTab } from './ui.js?v=0.47.0';
-import { currentLocation, generate, rollLocation } from './world.js?v=0.47.0';
-import { inventorySummary } from './inventory-plan.js?v=0.47.0';
+import { modal } from './dialogs.js?v=0.48.0';
+import { $ } from './dom.js?v=0.48.0';
+import { bagCapacity, bagUsed, canLeave, emergencyAllowed, maxEnergy, priceFor, travelCost } from './rules.js?v=0.48.0';
+import { s, save } from './storage.js?v=0.48.0';
+import { busy, render, showTab } from './ui.js?v=0.48.0';
+import { currentLocation, generate, rollLocation } from './world.js?v=0.48.0';
+import { inventorySummary } from './inventory-plan.js?v=0.48.0';
 export function returnHome() {
   if (s.atCamp || s.pending) return;
   s.lastTrip = {

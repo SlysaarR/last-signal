@@ -4,11 +4,13 @@ const plain=x=>JSON.parse(JSON.stringify(x));
  const run=await newRun(),m=name=>run.modules.get(root+'/js/'+name+'.js').namespace;
  const s=m('storage').s,world=m('world'),geo=run.modules.get(root+'/data/site-layout.js').namespace;
  const locations=run.modules.get(root+'/data/locations.js').namespace.locations;
+ const types=JSON.parse(run.catalog());
  const {fixtures}=JSON.parse(fs.readFileSync(root+'/tests/site-loot-fixtures.json','utf8'));
  for(const fixture of fixtures){
    let n=fixture.seed;run.context.Math.random=()=>{n=(Math.imul(n,1664525)+1013904223)>>>0;return n/4294967296;};
    Object.assign(s,{day:37,location:fixture.location,emergency:false,atCamp:false});world.generate();
-   assert.deepEqual(plain(s.objects.map(({type,condition,depth})=>({type,condition,depth}))),fixture.loot,'exact previous loot stream');
+   const comparable=items=>plain(items.map(({type,condition,depth})=>({type:['coin','trash'].includes(types[type].kind)?type:types[type].kind,condition,depth})));
+   assert.deepEqual(comparable(s.objects),comparable(fixture.loot),'exact coins/trash, category, condition and depth stream');
    assert.equal(run.context.Math.random(),fixture.next,'next RNG value unchanged');
  }
  function activityDistance(layout,p){
@@ -50,6 +52,6 @@ const plain=x=>JSON.parse(JSON.stringify(x));
  for(const mutate of [v=>v.site.version=9,v=>v.site.seed=-1,v=>v.site.seed=2**32,v=>v.fieldMarks=[{x:2,y:0}],v=>v.fieldMarks=Array(9).fill({x:.5,y:.5}),v=>v.fieldMarks=[{x:.5,y:.5},{x:.5,y:.5}]]){
    const bad=JSON.parse(source);mutate(bad.state);assert.throws(()=>backup.parseBackup(JSON.stringify(bad)));
  }
- console.log('PASS 32 pre-update loot/RNG fixtures; 512 layouts, dry-land placement and separation; type-blind coordinates; exact reload/backup and unchanged legacy trip');
+ console.log('PASS 32 pre-update category/coin/trash/condition/depth/RNG fixtures; 512 layouts, dry-land placement and separation; type-blind coordinates; exact reload/backup and unchanged legacy trip');
  console.log(JSON.stringify({targets:total,withinActivityBand:Math.round(actualNear/total*1000)/10,uniformReference:Math.round(uniformNear/total*1000)/10,outsideBand:Math.round(outside/total*1000)/10}));
 })().catch(e=>{console.error(e);process.exit(1)});

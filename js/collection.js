@@ -1,14 +1,15 @@
-import { artifactMarkup, renderArtifactThumbnails } from './graphics/thumbnails.js?v=0.47.0';
-import { albumSets, setProgress } from '../data/career.js?v=0.47.0';
-import { setupInspection, clearInspection } from './coin-flip.js?v=0.47.0';
-import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.47.0';
+import { artifactMarkup, renderArtifactThumbnails } from './graphics/thumbnails.js?v=0.48.0';
+import { albumSets, setProgress } from '../data/career.js?v=0.48.0';
+import { findMaterials } from '../data/finds.js?v=0.48.0';
+import { setupInspection, clearInspection } from './coin-flip.js?v=0.48.0';
+import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.48.0';
 // collection responsibilities for Last Signal.
-import { rarities } from '../data/balance.js?v=0.47.0';
-import { collectible, types } from '../data/items.js?v=0.47.0';
-import { $ } from './dom.js?v=0.47.0';
-import { priceFor } from './rules.js?v=0.47.0';
-import { s } from './storage.js?v=0.47.0';
-import { coinSource, coinEdgeSpec, coinDesign } from '../data/coin-art.js?v=0.47.0';
+import { rarities } from '../data/balance.js?v=0.48.0';
+import { collectible, types } from '../data/items.js?v=0.48.0';
+import { $ } from './dom.js?v=0.48.0';
+import { priceFor } from './rules.js?v=0.48.0';
+import { s } from './storage.js?v=0.48.0';
+import { coinSource, coinEdgeSpec, coinDesign } from '../data/coin-art.js?v=0.48.0';
 export let collectionCategory = 'coin',
   denomFilter = 'all',
   yearFilter = 'all',
@@ -75,13 +76,15 @@ export function showItem(id) {
   const found = s.collection.includes(id);
   $('detailTitle').textContent = t.name;
   const lines = [];
+  if(t.findDescription)lines.push(t.findDescription,'Матеріал моделі: '+findMaterials[t.findMaterial],t.note);
   if (t.country) lines.push(t.country + ' · ' + t.denom + ' · ' + t.year + ' р.', 'Різновид: ' + t.variant, t.note);else if (t.legacy) lines.push('Умовна монета раннього прототипу. Збережена як твоя попередня знахідка.');
   lines.push('Ігрова рідкість: ' + rarities[t.rarity].name, found ? 'Найкращий стан: ' + s.best[id] + '/100. Ігрова оцінка: ' + priceFor(id, s.best[id]) + ' купонів.' : 'Цю позицію ще треба знайти.');
-  if (t.source) lines.push('Шкала 0–100 — ігровий стан, не нумізматичний грейд. Ціна не є ринковою оцінкою в гривнях.');
+  if (t.source) lines.push(t.contentPack?'Стан і ціна — ігрові показники.':'Шкала 0–100 — ігровий стан, не нумізматичний грейд. Ціна не є ринковою оцінкою в гривнях.');
   const dimensions=coinDesign(t);
   if(dimensions){const edge=coinEdgeSpec(t);lines.push(`Діаметр: ${dimensions.diameter} мм · товщина: ${dimensions.thickness} мм. Гурт: ${{smooth:'гладкий',reeded:'рифлений',sector:'секторальне рифлення',lettered:'вдавлений напис'}[edge.kind]}${edge.text?' «'+edge.text+'»':''}.`);}
   $('detailText').textContent = lines.join('\n\n');
   $('detailSource').hidden = !t.source;
+  $('detailSource').textContent=t.contentPack?'Про цей тип предмета · джерело':'Відкрити статтю каталогу';
   if (t.source) $('detailSource').href = t.source;
   $('detailArtSource').hidden=!coinSource(t);
   if(coinSource(t)){

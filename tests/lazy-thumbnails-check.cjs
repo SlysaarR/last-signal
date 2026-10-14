@@ -63,5 +63,12 @@ async function fixture(withObserver=true) {
   art.renderCoinThumbnails();assert.equal(canvas.width,1);run.flushFrames();run.flushFrames();
   assert.equal(canvas.width,260);assert.equal(canvas.height,260);assert(canvas.dataset.rendered.startsWith(type+':65:0:'));
   const key=canvas.dataset.rendered;canvas.dataset.condition='20';art.renderCoinThumbnails();run.flushFrames();run.flushFrames();assert.notEqual(canvas.dataset.rendered,key);
-  console.log('PASS 250 lazy registrations, tiny initial buffers, two-per-frame/time-target batches, fast scroll cancellation, image readiness, unchanged keys, cached tabs, hidden/resumed pages, detached-node cleanup, no-observer fallback and real coin rendering');
+  const artifacts=run.modules.get(root+'/js/graphics/thumbnails.js').namespace;
+  canvas.dataset={artifact:'208',condition:'65'};canvas.width=canvas.height=1;
+  run.context.document.querySelectorAll=selector=>selector==='canvas[data-artifact]'?[canvas]:query(selector);
+  assert(artifacts.artifactMarkup(208,65).includes('width="1" height="1"'));
+  artifacts.renderArtifactThumbnails();assert.equal(canvas.width,1);run.flushFrames();run.flushFrames();
+  assert.equal(canvas.width,160);assert.equal(canvas.height,140);assert.equal(canvas.dataset.rendered,'208:65');
+  canvas.dataset.condition='12';artifacts.renderArtifactThumbnails();run.flushFrames();run.flushFrames();assert.equal(canvas.dataset.rendered,'208:12');
+  console.log('PASS 250 lazy registrations, tiny initial buffers, two-per-frame/time-target batches, fast scroll cancellation, image readiness, unchanged keys, cached tabs, hidden/resumed pages, detached-node cleanup, no-observer fallback and real coin and artifact rendering');
 })().catch(e=>{console.error(e);process.exit(1)});
