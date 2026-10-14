@@ -1,4 +1,4 @@
-import { siteRandom, shorelineAt } from '../../data/site-layout.js?v=0.50.0';
+import { siteRandom, shorelineAt } from '../../data/site-layout.js?v=0.51.0';
 const W=880,H=720;
 function trace(c,points) {
   c.beginPath();points.forEach((p,i)=>i?c.lineTo(p.x*W,p.y*H):c.moveTo(p.x*W,p.y*H));

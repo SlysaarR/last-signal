@@ -1,10 +1,10 @@
-import { chapters } from '../data/career.js?v=0.50.0';
-import { careerSnapshot, mainObjective, claimChapter, trackFocus } from './career.js?v=0.50.0';
-import { showSetItems } from './collection.js?v=0.50.0';
-import { activeOrder } from './orders.js?v=0.50.0';
-import { s } from './storage.js?v=0.50.0';
-import { $ } from './dom.js?v=0.50.0';
-import { busy, render, showTab } from './ui.js?v=0.50.0';
+import { chapters } from '../data/career.js?v=0.51.0';
+import { careerSnapshot, mainObjective, claimChapter, trackFocus } from './career.js?v=0.51.0';
+import { showSetItems } from './collection.js?v=0.51.0';
+import { activeOrder } from './orders.js?v=0.51.0';
+import { s } from './storage.js?v=0.51.0';
+import { $ } from './dom.js?v=0.51.0';
+import { busy, render, showTab } from './ui.js?v=0.51.0';
 const keys={};
 const meter=(label,value,total)=>`<div class="career-meter"><progress aria-label="${label}" value="${value}" max="${total}"></progress><span>${value} / ${total}</span></div>`;
 export function renderMainObjective(place){

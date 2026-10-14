@@ -1,14 +1,14 @@
-import { currentEnvironment, environmentKey } from '../../data/environment.js?v=0.50.0';
-import { paintEnvironmentGround } from './environment-art.js?v=0.50.0';
-import { activeSite } from '../../data/atlas.js?v=0.50.0';
-import { createSiteLayout } from '../../data/site-layout.js?v=0.50.0';
-import { paintSiteTerrain } from './site-terrain.js?v=0.50.0';
-import { drawDetector } from './detector-art.js?v=0.50.0';
+import { currentEnvironment, environmentKey } from '../../data/environment.js?v=0.51.0';
+import { paintEnvironmentGround } from './environment-art.js?v=0.51.0';
+import { activeSite } from '../../data/atlas.js?v=0.51.0';
+import { createSiteLayout } from '../../data/site-layout.js?v=0.51.0';
+import { paintSiteTerrain } from './site-terrain.js?v=0.51.0';
+import { drawDetector } from './detector-art.js?v=0.51.0';
 // field responsibilities for Last Signal.
-import { $ } from '../dom.js?v=0.50.0';
-import { signal } from '../search.js?v=0.50.0';
-import { s } from '../storage.js?v=0.50.0';
-import { currentLocation } from '../world.js?v=0.50.0';
+import { $ } from '../dom.js?v=0.51.0';
+import { signal } from '../search.js?v=0.51.0';
+import { s } from '../storage.js?v=0.51.0';
+import { currentLocation } from '../world.js?v=0.51.0';
 export const canvas = $('field'),
   ctx = canvas.getContext('2d');
 export function paintTerrain(ctx) {

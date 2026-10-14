@@ -1,5 +1,5 @@
 // Installation and release switching are separate from the player's save format.
-const VERSION = '0.50.0';
+const VERSION = '0.51.0';
 export function initOffline({save, canUpdate}) {
   const $ = id => document.getElementById(id);
   const summary=$('offlineSummary'), status=$('offlineStatus'), check=$('offlineCheck');

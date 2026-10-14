@@ -1,10 +1,11 @@
-import { buildFindShape } from './find-shapes.js?v=0.50.0';
-import { renderMesh } from './inspection-gl.js?v=0.50.0';
-import { paintUkrainianCoin, isUkrainianCoin, coinEdgeType } from './ukrainian-coins.js?v=0.50.0';
-import { conditionProfile, metalPalette, paintWear, artRandom } from './condition.js?v=0.50.0';
-import { coinDesign, coinEdgeSpec } from '../../data/coin-art.js?v=0.50.0';
-import { coinReliefImage } from './coin-reference.js?v=0.50.0';
-import { makeReliefMap, relightFace, lightTerms } from './inspection-light.js?v=0.50.0';
+import { renderSoftwareMesh } from './inspection-software.js?v=0.51.0';
+import { buildFindShape } from './find-shapes.js?v=0.51.0';
+import { renderMesh } from './inspection-gl.js?v=0.51.0';
+import { paintUkrainianCoin, isUkrainianCoin, coinEdgeType } from './ukrainian-coins.js?v=0.51.0';
+import { conditionProfile, metalPalette, paintWear, artRandom } from './condition.js?v=0.51.0';
+import { coinDesign, coinEdgeSpec } from '../../data/coin-art.js?v=0.51.0';
+import { coinReliefImage } from './coin-reference.js?v=0.51.0';
+import { makeReliefMap, relightFace, lightTerms } from './inspection-light.js?v=0.51.0';
 
 const TAU=Math.PI*2;
 const sub=(a,b)=>a.map((v,i)=>v-b[i]);
@@ -256,6 +257,8 @@ export function drawInspection(c,model,yaw=0,pitch=0,studio=true,width=600,heigh
   shadow.addColorStop(0,'#0008');shadow.addColorStop(1,'#0000');c.save();c.translate(0,height*.76);c.scale(1,.16);c.fillStyle=shadow;c.fillRect(0,0,width,height*2);c.restore();
   const gpu=renderMesh(model,yaw,pitch,width,height,zoom,light,pan);
   if(gpu){c.drawImage(gpu,0,0);return;}
+  const software=renderSoftwareMesh(model,yaw,pitch,width,height,zoom,light,pan);
+  if(software){c.drawImage(software,0,0,width,height);return;}
   // Canvas fallback keeps rotation usable if GPU contexts are unavailable.
 
   const key=[yaw,pitch,light].join(':');

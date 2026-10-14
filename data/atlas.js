@@ -1,6 +1,6 @@
-import { validEnvironment, groundTypes, environmentKey } from './environment.js?v=0.50.0';
-import { routes, chosenRoute } from './expeditions.js?v=0.50.0';
-import { locations, legacyLocation } from './locations.js?v=0.50.0';
+import { validEnvironment, groundTypes, environmentKey } from './environment.js?v=0.51.0';
+import { routes, chosenRoute } from './expeditions.js?v=0.51.0';
+import { locations, legacyLocation } from './locations.js?v=0.51.0';
 export const MAX_SITES = 6;
 export const activeSite = state => state.atlas?.sites.find(site => site.id === state.atlas.activeId) || null;
 export const selectedSite = state => state.atlas?.sites.find(site => site.id === state.atlas.selectedId) || null;

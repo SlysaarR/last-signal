@@ -1,5 +1,5 @@
 // audio responsibilities for Last Signal.
-import { $ } from './dom.js?v=0.50.0';
+import { $ } from './dom.js?v=0.51.0';
 export let audio = null,
   sound = false,
   lastBeep = -Infinity;
