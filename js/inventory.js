@@ -1,15 +1,16 @@
-import { artifactMarkup, renderArtifactThumbnails } from './graphics/thumbnails.js?v=0.49.0';
-import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.49.0';
+import { advanceGuide } from '../data/guide.js?v=0.50.0';
+import { artifactMarkup, renderArtifactThumbnails } from './graphics/thumbnails.js?v=0.50.0';
+import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.50.0';
 // inventory responsibilities for Last Signal.
-import { foods } from '../data/balance.js?v=0.49.0';
-import { types } from '../data/items.js?v=0.49.0';
-import { modal } from './dialogs.js?v=0.49.0';
-import { $ } from './dom.js?v=0.49.0';
-import { bagCapacity, bagUsed, foodAmount, foodFits, maxEnergy, priceFor } from './rules.js?v=0.49.0';
-import { eatFood, transferFood } from './shop.js?v=0.49.0';
-import { s, save } from './storage.js?v=0.49.0';
-import { inventoryEntries, inventorySummary, sortedInventory, bulkPlan, samePlan } from './inventory-plan.js?v=0.49.0';
-import { busy, render } from './ui.js?v=0.49.0';
+import { foods } from '../data/balance.js?v=0.50.0';
+import { types } from '../data/items.js?v=0.50.0';
+import { modal } from './dialogs.js?v=0.50.0';
+import { $ } from './dom.js?v=0.50.0';
+import { bagCapacity, bagUsed, foodAmount, foodFits, maxEnergy, priceFor } from './rules.js?v=0.50.0';
+import { eatFood, transferFood } from './shop.js?v=0.50.0';
+import { s, save } from './storage.js?v=0.50.0';
+import { inventoryEntries, inventorySummary, sortedInventory, bulkPlan, samePlan } from './inventory-plan.js?v=0.50.0';
+import { busy, render } from './ui.js?v=0.50.0';
 export let inventoryRenderKey = '';
 export const INVENTORY_PAGE_SIZE=24,REVIEW_PAGE_SIZE=40;
 let returnedItem = null, review = null;
@@ -95,6 +96,7 @@ export function inventoryAction(action, place, i) {
     const sell=()=>{
       if(!s.atCamp||busy()||s[place][i]!==item||item.type!==entry.type||item.condition!==entry.condition)return;
       s.coins+=entry.value;s[place].splice(i,1);
+      advanceGuide(s, 'sort');
       albumNotice(`Продано: ${types[item.type].name} · ${item.condition}%. Отримано ${entry.value} купонів.`);
       save();render();$('inventoryNotice').scrollIntoView?.({block:'nearest'});
     };
@@ -114,6 +116,7 @@ export function inventoryAction(action, place, i) {
       albumNotice(`${types[item.type].name} · ${item.condition}% — додано до альбому.`);
     }
     s.best[item.type] = item.condition;
+    advanceGuide(s, 'sort');
   } else if (action === 'move') {
     if (place === 'stash' && bagUsed() >= bagCapacity()) return;
     list.splice(i, 1);
@@ -184,6 +187,7 @@ export function confirmInventoryReview() {
     s.stash.unshift(...returned);
     albumNotice(`Альбом: нових позицій — ${added}, покращень — ${improved}. Попередніх екземплярів у сховищі: ${returned.length}.`);
   }
+  advanceGuide(s, 'sort');
   save();render();$('inventoryNotice').scrollIntoView?.({block:'nearest',behavior:'smooth'});
 }
 export function initInventory() {

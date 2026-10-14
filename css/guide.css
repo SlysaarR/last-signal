@@ -1,0 +1,25 @@
+.header-actions {display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+.header-actions button {min-height:44px;font-size:12px}
+.guide-card {padding:17px;margin:16px 0;border:1px solid #758c54;border-radius:16px;background:linear-gradient(135deg,#283c2b,#172a26)}
+.guide-card h2 {font-size:20px;line-height:1.25;margin:10px 0}
+.guide-card p {font-size:13px;line-height:1.6;color:#c0d0be;margin:8px 0 14px}
+.guide-card .eyebrow {letter-spacing:1.8px}
+.guide-actions {display:flex;flex-wrap:wrap;gap:8px}
+.guide-actions button {min-height:44px;font-size:13px}
+.guide-actions .primary {flex-basis:100%}
+.guide-actions .quiet {flex:1}
+.guide-card progress {height:5px;margin:12px 0}
+#helpDialog {max-width:540px;max-height:90dvh;overflow:auto}
+#helpDialog .sheet-heading {align-items:flex-start;gap:12px}
+#helpDialog .sheet-heading button {flex-shrink:0;min-width:44px;min-height:44px}
+#helpDialog h2 {font-size:22px;margin:0}
+#helpDialog h3 {font-size:16px;margin:20px 0 8px}
+#helpDialog details {border-top:1px solid #3d5444;padding:12px 0}
+#helpDialog summary {cursor:pointer;min-height:32px;line-height:1.5;font-weight:650}
+#helpDialog p,#helpDialog li {font-size:13px;line-height:1.65;color:#bdcdbd}
+#helpDialog ul {padding-left:20px}
+#helpDialog kbd {font:12px ui-monospace,monospace;background:#0d2119;border:1px solid #52664c;border-radius:4px;padding:2px 4px;white-space:nowrap}
+#guideToggle {width:100%;min-height:44px;margin:12px 0}
+#helpDialog .help-note {color:#9eb3a0;font-size:12px}
+:focus-visible {outline:2px solid #d4eaaa;outline-offset:3px}
+@media(max-width:360px) {header h1 {font-size:25px}.header-actions button {padding:8px}header {gap:8px}}

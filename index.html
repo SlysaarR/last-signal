@@ -9,8 +9,8 @@
     <link rel="apple-touch-icon" href="./assets/app/icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Останній сигнал">
-    <link rel="stylesheet" href="./css/atlas.css?v=0.49.0">
-    <link rel="stylesheet" href="./css/career.css?v=0.49.0">
+    <link rel="stylesheet" href="./css/atlas.css?v=0.50.0">
+    <link rel="stylesheet" href="./css/career.css?v=0.50.0">
     <link rel="stylesheet" href="./css/offline.css?v=0.45.0">
     <title>Останній сигнал</title>
     <link rel="stylesheet" href="./css/base.css?v=0.40.0">
@@ -22,8 +22,9 @@
     <link rel="stylesheet" href="./css/backup.css?v=0.40.0">
     <link rel="stylesheet" href="./css/coin-art.css?v=0.43.0">
     <link rel="stylesheet" href="./css/journal.css?v=0.41.0">
-    <link rel="stylesheet" href="./css/environment.css?v=0.49.0">
-    <script type="module" src="./js/main.js?v=0.49.0">
+    <link rel="stylesheet" href="./css/environment.css?v=0.50.0">
+    <link rel="stylesheet" href="./css/guide.css?v=0.50.0">
+    <script type="module" src="./js/main.js?v=0.50.0">
     </script>
   </head>
   <body>
@@ -34,7 +35,7 @@
           <h1>Останній сигнал</h1>
           <div class="sub">Шукай уважно. Копай влучно.</div>
         </div>
-        <button class="quiet" id="sound" aria-label="Увімкнути звук">Звук: ні</button>
+        <div class="header-actions"><button class="quiet" id="sound" aria-label="Увімкнути звук">Звук: ні</button><button class="quiet" id="openHelp" aria-haspopup="dialog" aria-controls="helpDialog">Як грати</button></div>
       </header>
       <nav>
         <button data-tab="camp">
@@ -88,6 +89,13 @@
         </div>
       </div>
       <div id="saveNote" hidden>У цьому браузері збереження недоступне. Прогрес зберігається лише до закриття гри.</div>
+      <aside id="guideCard" class="guide-card" aria-labelledby="guideTitle" hidden>
+        <div class="eyebrow" id="guideCount"></div>
+        <h2 id="guideTitle" tabindex="-1"></h2>
+        <p id="guideText"></p>
+        <progress id="guideProgress" max="4" value="0" aria-label="Перші кроки: виконано з чотирьох"></progress>
+        <div class="guide-actions"><button class="primary" id="guideAction"></button><button class="quiet" id="guideDismiss">Сховати підказки</button></div>
+      </aside>
       <section id="camp" hidden>
         <div class="camp-heading"><div class="eyebrow">ДІМ / ПІДГОТОВКА</div><h2>Твій табір</h2><p id="campStatus"></p></div>
         <div id="campLoot" class="camp-loot" hidden><h3>Розбери знахідки</h3><p id="campLootSummary"></p><button class="secondary" data-open="inventory">До рюкзака й сховища →</button></div>
@@ -179,7 +187,7 @@
         </div>
         <div class="inventory-controls">
           <h2>Розбір знахідок</h2>
-          <p id="inventorySummary" role="status" aria-live="polite"></p>
+          <p id="inventorySummary" tabindex="-1" role="status" aria-live="polite"></p>
           <div id="inventoryReviewActions" class="inventory-batch-actions"><button id="reviewAlbum" class="secondary">Кращі до альбому</button><button id="reviewSale" class="secondary">Переглянути продаж</button><small>Обидві дії враховують увесь рюкзак і сховище.</small></div>
           <p id="inventoryFieldNote" class="camp-note" hidden>Продаж і поповнення альбому доступні після повернення до табору.</p>
           <div class="inventory-filters"><label>Сортувати<select id="inventorySort"><option value="album">Спочатку для альбому</option><option value="condition">Стан: від кращого</option><option value="price">Ціна: від дорожчого</option><option value="type">Тип і назва</option><option value="stored">Порядок зберігання</option></select></label><label>Показати<select id="inventoryFilter"><option value="all">Усі знахідки</option><option value="album">Для альбому</option><option value="duplicate">Дублікати</option><option value="scrap">Металобрухт</option></select></label></div>
@@ -265,7 +273,7 @@
         <div class="search-status">
           <p class="sub" id="fieldBag">
           </p>
-          <span class="build-tag">v0.49.0</span>
+          <span class="build-tag">v0.50.0</span>
         </div>
         <div class="main-objective"><div class="eyebrow" id="fieldObjectiveKind"></div><h3 id="fieldObjectiveTitle"></h3><p id="fieldObjectiveText"></p><div class="career-meter"><progress id="fieldObjectiveMeter" aria-label="Головна мета"></progress><span id="fieldObjectiveCount"></span></div><button class="quiet" id="fieldObjectiveOpen">Деталі головної мети →</button></div>
         <div class="log" id="log" aria-live="polite">Обстежуй ділянку — кількість сигналів невідома. Шукай найчіткіший сигнал.</div>
@@ -344,8 +352,32 @@
           </div>
           <p class="sub" id="catalogNote">Натисни монету, щоб оглянути обидва боки та гурт. Рівні рідкості та ціни адаптовано для гри.</p>
         </section>
-        <footer>ПРОТОТИП 0.49.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
+        <footer>ПРОТОТИП 0.50.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
       </main>
+      <dialog id="helpDialog" aria-labelledby="helpTitle">
+        <div class="sheet-heading"><h2 id="helpTitle">Довідник шукача</h2><button class="quiet" data-close="helpDialog" aria-label="Закрити довідник">✕</button></div>
+        <p>Короткий виїзд, уважний пошук і знахідка з історією. Твоя довга мета — зібрати альбом, пройти кар’єру та відкрити краще спорядження.</p>
+        <button class="secondary" id="guideToggle">Увімкнути покрокові підказки</button>
+        <details open><summary>Від першого сигналу до колекції</summary>
+          <ul><li>У таборі віднови сили та обери місце. Якщо бракує купонів, доступне безкоштовне узбіччя.</li><li>Проводи котушкою смуга за смугою. Сильніший відгук перевір навхрест. Сканування безкоштовне; копання витрачає енергію навіть у порожній ямі.</li><li>Прибери ґрунт і оглянь предмет. Кнопка «Відкрити без жестів» дозволяє пропустити ручне очищення без зміни знахідки.</li><li>Забери знахідку в рюкзак. При повному рюкзаку можна замінити інший предмет або залишити нову знахідку.</li><li>Повернися до табору через меню виїзду. Додай кращі екземпляри до альбому, а зайві продай. Металобрухт також дає купони.</li></ul>
+        </details>
+        <details><summary>Керування на телефоні та ПК</summary>
+          <h3>Пошук</h3><p>На телефоні веди пальцем по ділянці. Мишею — рухай вказівник над нею. Для клавіатури спочатку вибери поле мишею або клавішею <kbd>Tab</kbd>: стрілки рухають котушку, <kbd>Пробіл</kbd> копає, <kbd>M</kbd> ставить чи прибирає мітку.</p>
+          <h3>Огляд знахідки</h3><p>Один палець або перетягування мишею — обертання. Два пальці — масштаб і зсув. Коли вибрано зображення: стрілки обертають, <kbd>+</kbd> / <kbd>−</kbd> змінюють масштаб, <kbd>F</kbd> перевертає, <kbd>L</kbd> перемикає світло, <kbd>Home</kbd> повертає початковий вигляд. Ці дії також мають кнопки.</p>
+          <p><kbd>Tab</kbd> переміщує фокус між кнопками, <kbd>Enter</kbd> натискає вибрану. Звук вмикається кнопкою у верхній частині гри; без звуку можна орієнтуватися за шкалою сигналу.</p>
+        </details>
+        <details><summary>Енергія, гроші й наступні виїзди</summary>
+          <p>Відпочинок і повернення до табору безкоштовні. Дорога до іншої ділянки не відновлює енергію. Їжа допомагає в полі, але за один виїзд можна спожити не більше 50% запасу енергії.</p>
+          <p>Умови перед виїздом показують витрати на копання. Ділянка може бути бідною; дорогий маршрут не гарантує цінної знахідки. Повернення на старе місце не створює нових предметів.</p>
+          <p>Замовлення й етапи кар’єри — у польовому щоденнику. Нагороди забирай у таборі. Альбом відкриває напрямки; спорядження купується в майстерні. Покращуючи екземпляр в альбомі, ти отримуєш попередній до сховища.</p>
+        </details>
+        <details><summary>Збереження, офлайн і швидкодія</summary>
+          <p>Прогрес зберігається автоматично в цьому браузері. У таборі є «Збереження та резервні копії»: завантаж JSON-файл після важливих знахідок. Цей файл можна відновити на іншому пристрої. Хмарної синхронізації немає.</p>
+          <p>Офлайн готовий, коли про це повідомить панель «Гра на телефоні». Там само перевіряються оновлення; встановлюй їх у таборі кнопкою «Зберегти й оновити гру».</p>
+          <p>Якщо анімація заважає, у таборі відкрий «Ефекти погоди» й обери мінімальні. Зменшення руху в налаштуваннях пристрою також враховується.</p>
+        </details>
+        <p class="help-note">Версія 0.50.0 · гра в розробці. Ціни, рідкість і стан предметів — ігрові показники. Випадкові знахідки не мають підтвердженої історичної атрибуції.</p>
+      </dialog>
       <dialog id="appUpdateDialog" aria-labelledby="appUpdateTitle"><h2 id="appUpdateTitle">Оновлюємо гру</h2><p>Прогрес збережено. Зачекай на перезапуск…</p></dialog>
       <dialog id="backupDialog" aria-labelledby="backupTitle">
         <h2 id="backupTitle">Відновити прогрес?</h2>

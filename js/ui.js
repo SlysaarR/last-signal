@@ -1,28 +1,29 @@
-import { syncWeatherEffects } from './environment-ui.js?v=0.49.0';
-import { currentEnvironment, environmentName } from '../data/environment.js?v=0.49.0';
-import { renderCareer, renderAlbumSets, renderMainObjective } from './career-ui.js?v=0.49.0';
-import { renderAtlas, openAtlas } from './atlas-ui.js?v=0.49.0';
-import { activeSite, siteName } from '../data/atlas.js?v=0.49.0';
-import { detectorFeatures, detectorSettings } from '../data/gear.js?v=0.49.0';
-import { initDetectorControls, renderDetectorControls } from './detector-controls.js?v=0.49.0';
-import { signalDescription } from './detector.js?v=0.49.0';
-import { renderOrders, renderOrderSummary } from './orders-ui.js?v=0.49.0';
-import { renderMarkControls } from './field-notes.js?v=0.49.0';
-import { renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.49.0';
-import { renderJournal } from './journal.js?v=0.49.0';
-import { conditions } from '../data/expeditions.js?v=0.49.0';
+import { renderGuide } from './guide-ui.js?v=0.50.0';
+import { syncWeatherEffects } from './environment-ui.js?v=0.50.0';
+import { currentEnvironment, environmentName } from '../data/environment.js?v=0.50.0';
+import { renderCareer, renderAlbumSets, renderMainObjective } from './career-ui.js?v=0.50.0';
+import { renderAtlas, openAtlas } from './atlas-ui.js?v=0.50.0';
+import { activeSite, siteName } from '../data/atlas.js?v=0.50.0';
+import { detectorFeatures, detectorSettings } from '../data/gear.js?v=0.50.0';
+import { initDetectorControls, renderDetectorControls } from './detector-controls.js?v=0.50.0';
+import { signalDescription } from './detector.js?v=0.50.0';
+import { renderOrders, renderOrderSummary } from './orders-ui.js?v=0.50.0';
+import { renderMarkControls } from './field-notes.js?v=0.50.0';
+import { renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.50.0';
+import { renderJournal } from './journal.js?v=0.50.0';
+import { conditions } from '../data/expeditions.js?v=0.50.0';
 // Shared navigation, detector readout and quick sheets. Rendering functions never award items.
-import { renderCamp } from './camp.js?v=0.49.0';
-import { foods } from '../data/balance.js?v=0.49.0';
-import { renderCollection } from './collection.js?v=0.49.0';
-import { $ } from './dom.js?v=0.49.0';
-import { draw } from './graphics/field.js?v=0.49.0';
-import { renderInventory } from './inventory.js?v=0.49.0';
-import { bagCapacity, bagUsed, canLeave, emergencyAllowed, foodAmount, foodAvailable, foodFits, maxEnergy, minDig, travelCost } from './rules.js?v=0.49.0';
-import { digInfo, signal } from './search.js?v=0.49.0';
-import { eatFood, renderShop } from './shop.js?v=0.49.0';
-import { s } from './storage.js?v=0.49.0';
-import { currentLocation } from './world.js?v=0.49.0';
+import { renderCamp } from './camp.js?v=0.50.0';
+import { foods } from '../data/balance.js?v=0.50.0';
+import { renderCollection } from './collection.js?v=0.50.0';
+import { $ } from './dom.js?v=0.50.0';
+import { draw } from './graphics/field.js?v=0.50.0';
+import { renderInventory } from './inventory.js?v=0.50.0';
+import { bagCapacity, bagUsed, canLeave, emergencyAllowed, foodAmount, foodAvailable, foodFits, maxEnergy, minDig, travelCost } from './rules.js?v=0.50.0';
+import { digInfo, signal } from './search.js?v=0.50.0';
+import { eatFood, renderShop } from './shop.js?v=0.50.0';
+import { s } from './storage.js?v=0.50.0';
+import { currentLocation } from './world.js?v=0.50.0';
 export function renderFieldChrome() {
   const choices = document.getElementById('quickFoodChoices');
   if (!choices) return;
@@ -58,7 +59,7 @@ export function renderFieldChrome() {
   });
 }
 export function busy(except=null) {
-  return !!s.pending || ['modal','excavate','packDialog','tripMenu','quickFood','coinDetail','backupDialog','inventoryReview','fieldNotes','appUpdateDialog'].some(id => id!==except&&$(id).open);
+  return !!s.pending || ['modal','excavate','packDialog','tripMenu','quickFood','coinDetail','backupDialog','inventoryReview','fieldNotes','appUpdateDialog','helpDialog'].some(id => id!==except&&$(id).open);
 }
 export function showTab(tab) {
   if (tab === 'search' && s.atCamp) tab = 'camp';
@@ -69,6 +70,7 @@ export function showTab(tab) {
   renderCoinThumbnails();
 }
 export function render() {
+  renderGuide();
   syncWeatherEffects();
   const loc = currentLocation();
   const site=activeSite(s);

@@ -1,12 +1,12 @@
-import { foods } from '../data/balance.js?v=0.49.0';
-import { forecastEnvironment, currentEnvironment, environmentKey, environmentName, groundTypes } from '../data/environment.js?v=0.49.0';
-import { selectedSite } from '../data/atlas.js?v=0.49.0';
-import { chosenRoute, conditions } from '../data/expeditions.js?v=0.49.0';
-import { s, save } from './storage.js?v=0.49.0';
-import { $ } from './dom.js?v=0.49.0';
-import { digCostFor, emergencyAllowed, foodAmount, maxEnergy } from './rules.js?v=0.49.0';
-import { setWeatherAmbience } from './audio.js?v=0.49.0';
-import { busy, render } from './ui.js?v=0.49.0';
+import { foods } from '../data/balance.js?v=0.50.0';
+import { forecastEnvironment, currentEnvironment, environmentKey, environmentName, groundTypes } from '../data/environment.js?v=0.50.0';
+import { selectedSite } from '../data/atlas.js?v=0.50.0';
+import { chosenRoute, conditions } from '../data/expeditions.js?v=0.50.0';
+import { s, save } from './storage.js?v=0.50.0';
+import { $ } from './dom.js?v=0.50.0';
+import { digCostFor, emergencyAllowed, foodAmount, maxEnergy } from './rules.js?v=0.50.0';
+import { setWeatherAmbience } from './audio.js?v=0.50.0';
+import { busy, render } from './ui.js?v=0.50.0';
 let pageActive=true,media=null;
 const prepKeys=new Map();
 export function departureConditions(){
@@ -64,6 +64,6 @@ export function initEnvironment(){
  // Stop behind dialogs too, including dialogs opened without a full UI render.
  if(typeof MutationObserver!=='undefined'){
    const observer=new MutationObserver(syncWeatherEffects);
-   for(const id of ['modal','excavate','packDialog','tripMenu','quickFood','coinDetail','backupDialog','inventoryReview','fieldNotes','appUpdateDialog'])observer.observe($(id),{attributes:true,attributeFilter:['open']});
+   for(const id of ['modal','excavate','packDialog','tripMenu','quickFood','coinDetail','backupDialog','inventoryReview','fieldNotes','appUpdateDialog','helpDialog'])observer.observe($(id),{attributes:true,attributeFilter:['open']});
  }
 }
