@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="uk">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Last Signal · перевірка компонування</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:12px;background:#273343;color:#f4f5f7;font:14px system-ui}header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}h1{font-size:16px;margin:0}select,button{font:inherit;padding:8px;border-radius:6px;border:1px solid #70869b;background:#142534;color:inherit}iframe{display:block;border:0;background:#101923;box-shadow:0 0 0 1px #8b9da9}p{margin:0;color:#c4d0db}output{font-variant-numeric:tabular-nums}
+</style>
+<header>
+<h1>Перевірка компонування</h1>
+<label>Екран <select id="viewport">
+<option value="320x568">320 × 568</option>
+<option value="390x844" selected>390 × 844</option>
+<option value="844x390">844 × 390</option>
+<option value="1280x720">1280 × 720</option>
+<option value="1920x1080">1920 × 1080</option>
+</select></label>
+<output id="size">390 × 844 CSS px</output>
+<p>Справжній екран гри. Використовує збереження цього браузера; розміри не імітують телефон чи сенсорний ввід.</p>
+</header>
+<iframe id="game" title="Гра у вибраному розмірі" src="../" width="390" height="844"></iframe>
+<script>
+const frame=document.getElementById('game'),viewport=document.getElementById('viewport');
+viewport.addEventListener('change',()=>{
+ const [width,height]=viewport.value.split('x').map(Number);
+ frame.width=width;frame.height=height;
+ document.getElementById('size').textContent=`${width} × ${height} CSS px`;
+});
+</script>
+</html>
