@@ -225,6 +225,9 @@ public final class MainActivity extends Activity {
             if ("\"exit\"".equals(result)) moveTaskToBack(true);
         });
     }
+    // Legacy Android 8–12 fallback. API 33+ uses the framework
+    // OnBackInvokedDispatcher registered in onCreate, including Android 16 gestures.
+    @SuppressLint("GestureBackNavigation")
     @Override public void onBackPressed() { handleBack(); }
     @Override protected void onPause() {
         if (web != null) { web.evaluateJavascript("window.LastSignalApp?.pause()", null); web.onPause(); }
