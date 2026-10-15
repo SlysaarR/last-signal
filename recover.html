@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="uk">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#152131">
+<title>Останній сигнал — оновлення</title>
+<style>
+  *{box-sizing:border-box}body{margin:0;background:#101925;color:#edf3f7;font:17px/1.55 system-ui,sans-serif;min-height:100svh;display:grid;place-items:center;padding:24px 16px}main{width:100%;max-width:460px;background:#1b2a3d;border:1px solid #35485f;border-radius:20px;padding:clamp(20px,5vw,32px)}.label{color:#e8ba6b;font-size:12px;font-weight:700;letter-spacing:.16em}h1{font-size:28px;line-height:1.2;margin:12px 0 20px}p{margin:16px 0}.muted{color:#b9c8d9;font-size:14px}button,a{font:inherit;display:block;width:100%;border:0;border-radius:12px;padding:14px 18px;background:#e8ba6b;color:#182332;font-weight:700;text-align:center;text-decoration:none;cursor:pointer}button:disabled{opacity:.6;cursor:wait}a{background:#a8d7e9;margin-top:12px}[hidden]{display:none!important}#status{min-height:3em;color:#d0e5f2;overflow-wrap:anywhere}:focus-visible{outline:3px solid #fff;outline-offset:4px}
+</style>
+<main>
+  <div class="label">LAST SIGNAL</div>
+  <h1>Оновити завислу гру</h1>
+  <p>Закрий інші вкладки та вікна «Останнього сигналу». Залиш відкритою тільки цю сторінку.</p>
+  <p class="muted">Відкрий її в тому самому браузері, де граєш, і ввімкни інтернет. Сторінка не змінює збереження гри та не очищує дані.</p>
+  <button id="update" type="button">Завантажити й застосувати оновлення</button>
+  <p id="status" role="status" aria-live="polite">Завершувати знахідку або повертатися до табору не потрібно.</p>
+  <a id="open" href="./" hidden>Відкрити гру</a>
+</main>
+<script>
+// Deliberately self-contained: old workers must not supply old game modules here.
+// No save reads/writes, cache deletion, unregister, or game startup on this page.
+const button=document.getElementById('update'),status=document.getElementById('status'),openGame=document.getElementById('open');
+const base=new URL('./',location.href),minimum=[0,55,1];
+let registration=null;
+function supported(version){const parts=String(version).split('.').map(Number);if(parts.length!==3||parts.some(n=>!Number.isInteger(n)||n<0))return false;for(let i=0;i<3;i++){if(parts[i]>minimum[i])return true;if(parts[i]<minimum[i])return false;}return true;}
+function ask(worker,type,timeout=15000){
+  return new Promise((resolve,reject)=>{
+    const channel=new MessageChannel();
+    const finish=(error,data)=>{clearTimeout(timer);channel.port1.close();channel.port2.close();error?reject(error):resolve(data);};
+    const timer=setTimeout(()=>finish(new Error('Не отримано відповіді. Перевір інтернет і спробуй ще раз.')),timeout);
+    channel.port1.onmessage=event=>finish(null,event.data);
+    try{worker.postMessage({type},[channel.port2]);}catch(error){finish(error);}
+  });
+}
+function waitFor(worker,states){
+  return new Promise((resolve,reject)=>{
+    const finish=error=>{clearTimeout(timer);worker.removeEventListener('statechange',check);error?reject(error):resolve();};
+    const check=()=>{if(states.includes(worker.state))finish();else if(worker.state==='redundant')finish(new Error('Завантаження не завершилося. Перевір інтернет і повтори оновлення.'));};
+    const timer=setTimeout(()=>finish(new Error('Оновлення триває довше, ніж очікувалося. Перевір інтернет і спробуй ще раз.')),150000);
+    worker.addEventListener('statechange',check);check();
+  });
+}
+if(!window.isSecureContext||!('serviceWorker' in navigator)){
+  button.disabled=true;status.textContent='Відкрий це посилання у браузері, де встановлено гру. Цей переглядач не підтримує її оновлення.';
+}else{
+  navigator.serviceWorker.addEventListener('message',event=>{
+    if(!button.disabled||!registration||![registration.installing,registration.waiting,registration.active].includes(event.source))return;
+    if(event.data?.type==='OFFLINE_PROGRESS')status.textContent='Завантажуємо й перевіряємо файли: '+event.data.done+' / '+event.data.total+'. Не закривай цю сторінку.';
+  });
+  button.onclick=async()=>{
+    button.disabled=true;openGame.hidden=true;status.textContent='Перевіряємо й завантажуємо оновлення…';
+    try{
+      if(navigator.onLine===false)throw new Error('Під’єднай інтернет і натисни кнопку ще раз.');
+      registration=await navigator.serviceWorker.register(new URL('sw.js',base).href,{scope:base.href,updateViaCache:'none'});
+      if(!registration.installing)await registration.update();
+      if(registration.installing)await waitFor(registration.installing,['installed','activated']);
+      const worker=registration.waiting||registration.active;
+      if(!worker)throw new Error('Оновлення ще не готове. Зачекай трохи й натисни кнопку ще раз.');
+      let info=await ask(worker,'OFFLINE_STATUS');
+      if(!info.ok||!supported(info.version))throw new Error('Виправлена версія ще не завантажилась. Перевір інтернет і повтори оновлення.');
+      if(!info.ready){status.textContent='Відновлюємо відсутні файли гри…';info=await ask(worker,'OFFLINE_REPAIR',150000);}
+      if(!info.ok||!info.ready)throw new Error('Не всі файли завантажились. Перевір інтернет і повтори оновлення.');
+      status.textContent='Застосовуємо оновлення…';
+      const reply=await ask(worker,'OFFLINE_APPLY');
+      if(!reply.ok)throw new Error(reply.reason==='tabs'?'Закрий інші вкладки та встановлені вікна гри, включно з головним меню. Залиш тільки цю сторінку й натисни кнопку ще раз.':'Оновлення не застосовано. Перевір інтернет і повтори спробу.');
+      await waitFor(worker,['activated']);
+      status.textContent='Версія '+info.version+' готова. Відкрий гру й натисни «Продовжити», щоб повернутися до знахідки.';
+      openGame.hidden=false;
+    }catch(error){status.textContent=error.message||'Не вдалося оновити гру. Перевір інтернет і повтори спробу.';}
+    finally{button.disabled=false;}
+  };
+}
+</script>
+</html>

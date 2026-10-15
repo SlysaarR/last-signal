@@ -89,6 +89,7 @@ async function ui({activeVersion=release.version,waiting=false,available=true,re
  assert.equal(await a.fetch('https://catalog.test/coin','navigate'),undefined);
  assert.equal(await a.fetch('../other-app/','navigate'),undefined);
  assert.equal(await a.fetch('./legacy.html','navigate'),undefined);
+ assert.equal(await a.fetch('./recover.html','navigate'),undefined,'standalone recovery bypasses the cached game document');
  assert.equal(await a.fetch('index.html','same-origin','POST'),undefined);
  assert.equal(await a.message('OFFLINE_APPLY',{id:'bad',url:'https://example.test/other-app/'}),undefined);
  assert.equal(a.stats.skip,0);
