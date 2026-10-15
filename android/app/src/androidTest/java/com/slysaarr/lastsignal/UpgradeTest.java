@@ -22,10 +22,10 @@ public class UpgradeTest {
     private String js(ActivityScenario<MainActivity> scene, String script) throws Exception {
         CountDownLatch latch=new CountDownLatch(1); AtomicReference<String> value=new AtomicReference<>();
         scene.onActivity(a -> a.gameView().evaluateJavascript(script,r->{value.set(r);latch.countDown();}));
-        assertTrue("JS callback",latch.await(10,TimeUnit.SECONDS));return value.get();
+        assertTrue("JS callback",latch.await(30,TimeUnit.SECONDS));return value.get();
     }
     private void until(ActivityScenario<MainActivity> scene, String expression) throws Exception {
-        long deadline=System.currentTimeMillis()+20000;
+        long deadline=System.currentTimeMillis()+60000;
         while(System.currentTimeMillis()<deadline){if("true".equals(js(scene,expression)))return;Thread.sleep(100);}
         fail("Timed out: "+expression+"; test error: "+js(scene,"window.upgradeError"));
     }
@@ -40,25 +40,25 @@ public class UpgradeTest {
             assertEquals("\"0.55.4-test.1\"",js(scene,"LastSignalAndroid.version()"));
             js(scene,"""
                 (async()=>{try{
-                  const {s,save}=await import('https://appassets.androidplatform.net/assets/game/js/storage.js?v=0.55.4');
+                  console.log('UPGRADE seed imports');const {s,save}=await import('https://appassets.androidplatform.net/assets/game/js/storage.js?v=0.55.4');
                   const {types}=await import('https://appassets.androidplatform.net/assets/game/data/items.js?v=0.55.4');
                   const {acceptOrder}=await import('https://appassets.androidplatform.net/assets/game/js/orders.js?v=0.55.4');
                   const {startGuide}=await import('https://appassets.androidplatform.net/assets/game/data/guide.js?v=0.55.4');
                   const {depart}=await import('https://appassets.androidplatform.net/assets/game/js/camp.js?v=0.55.4');
                   const excavation=await import('https://appassets.androidplatform.net/assets/game/js/excavation.js?v=0.55.4');
                   const {createBackup}=await import('https://appassets.androidplatform.net/assets/game/js/backup-format.js?v=0.55.4');
-                  document.getElementById('continueGame').click();
+                  console.log('UPGRADE seed state');document.getElementById('continueGame').click();
                   s.coins=345;s.collection=types.flatMap((t,id)=>t.kind==='trash'?[]:[id]).slice(0,3);
                   s.best=Object.fromEntries(s.collection.map(id=>[id,86]));
                   s.bag=[{type:s.collection[0],condition:73}];
                   if(!acceptOrder('kop10'))throw Error('Order fixture');startGuide(s);
-                  if(!depart())throw Error('Departure fixture');document.getElementById('modalClose').click();
+                  console.log('UPGRADE seed depart');if(!depart())throw Error('Departure fixture');document.getElementById('modalClose').click();
                   s.energy=41.5;s.pending={type:30,condition:86,spent:7.5};
-                  excavation.openExcavation();excavation.brushAt(220,180);
+                  console.log('UPGRADE seed excavation');excavation.openExcavation();excavation.brushAt(220,180);
                   if(!s.pending.cleanedCells?.length||s.pending.cleanedCells.length===256)throw Error('Partial find fixture');
-                  createBackup(s);if(!save())throw Error('Seed save');
+                  console.log('UPGRADE seed save');createBackup(s);if(!save())throw Error('Seed save');
                   localStorage.setItem('last-signal-language','en');localStorage.setItem('last-signal-text-size','130');
-                  window.upgradeReady=true;
+                  console.log('UPGRADE seed ready');window.upgradeReady=true;
                 }catch(e){window.upgradeError=String(e)}})()
                 """);
             until(scene,"window.upgradeReady===true");

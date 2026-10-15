@@ -3,6 +3,8 @@ set -euo pipefail
 package=com.slysaarr.lastsignal.preview
 runner="$package.test/androidx.test.runner.AndroidJUnitRunner"
 mkdir -p android/app/build/outputs/upgrade-results
+adb logcat -c
+trap 'adb logcat -d > android/app/build/outputs/upgrade-results/logcat.txt' EXIT
 adb install -r "$LAST_SIGNAL_PREVIOUS_APK"
 adb install -r android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
 for phase in seed verify; do
