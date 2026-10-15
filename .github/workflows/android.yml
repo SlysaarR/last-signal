@@ -26,6 +26,7 @@ jobs:
         run: |
           npm run check
           node scripts/build-android-assets.mjs
+      - uses: android-actions/setup-android@v3
       - name: Ensure Android SDK packages
         run: sdkmanager "platforms;android-36" "build-tools;35.0.0"
       - name: Build unsigned delivery APK and debug test APK
