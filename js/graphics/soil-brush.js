@@ -1,4 +1,4 @@
-import { brushPoint } from '../../data/cleaning.js?v=0.55.2';
+import { brushPoint } from '../../data/cleaning.js?v=0.55.3';
 // Identical stamps during play and restore: no square holes or bitmap snapshots.
 export function createSoilBrush(makeCanvas=()=>document.createElement('canvas')) {
   let brush,legacy;

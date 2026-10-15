@@ -1,14 +1,14 @@
-import { openFinds } from './inventory.js?v=0.55.2';
-import { setPane } from './layout.js?v=0.55.2';
-import { t as localize } from './i18n.js?v=0.55.2';
-import { currentScreen } from './interface.js?v=0.55.2';
-import { resumeGame } from './menu.js?v=0.55.2';
-import { firstStepsOffer, startGuide, guideCard } from '../data/guide.js?v=0.55.2';
-import { s, save } from './storage.js?v=0.55.2';
-import { $ } from './dom.js?v=0.55.2';
-import { busy, render, showTab } from './ui.js?v=0.55.2';
-import { confirmDeparture, confirmReturnHome } from './camp.js?v=0.55.2';
-import { syncWeatherEffects } from './environment-ui.js?v=0.55.2';
+import { openFinds } from './inventory.js?v=0.55.3';
+import { setPane } from './layout.js?v=0.55.3';
+import { t as localize } from './i18n.js?v=0.55.3';
+import { currentScreen } from './interface.js?v=0.55.3';
+import { resumeGame } from './menu.js?v=0.55.3';
+import { firstStepsOffer, startGuide, guideCard } from '../data/guide.js?v=0.55.3';
+import { s, save } from './storage.js?v=0.55.3';
+import { $ } from './dom.js?v=0.55.3';
+import { busy, render, showTab } from './ui.js?v=0.55.3';
+import { confirmDeparture, confirmReturnHome } from './camp.js?v=0.55.3';
+import { syncWeatherEffects } from './environment-ui.js?v=0.55.3';
 
 let lastCard = '';
 export function renderGuide() {

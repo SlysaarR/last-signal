@@ -1,11 +1,11 @@
-import { currentEnvironment, groundFactor } from '../data/environment.js?v=0.55.2';
-import { selectedSite, siteRoute, siteAccessible, canScout } from '../data/atlas.js?v=0.55.2';
-import { capacityAt, detectorAt, energyLimit, shovelAt, upgradePrice } from '../data/gear.js?v=0.55.2';
-import { chosenRoute, conditions } from '../data/expeditions.js?v=0.55.2';
+import { currentEnvironment, groundFactor } from '../data/environment.js?v=0.55.3';
+import { selectedSite, siteRoute, siteAccessible, canScout } from '../data/atlas.js?v=0.55.3';
+import { capacityAt, detectorAt, energyLimit, shovelAt, upgradePrice } from '../data/gear.js?v=0.55.3';
+import { chosenRoute, conditions } from '../data/expeditions.js?v=0.55.3';
 // rules responsibilities for Last Signal.
-import { foods, rarities } from '../data/balance.js?v=0.55.2';
-import { types } from '../data/items.js?v=0.55.2';
-import { s } from './storage.js?v=0.55.2';
+import { foods, rarities } from '../data/balance.js?v=0.55.3';
+import { types } from '../data/items.js?v=0.55.3';
+import { s } from './storage.js?v=0.55.3';
 export function rollCondition() {
   return Math.floor(Math.random() * 101);
 }

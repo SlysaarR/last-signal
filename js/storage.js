@@ -1,13 +1,13 @@
-import { t as localize } from './i18n.js?v=0.55.2';
-import { GEAR_VERSION, migrateGear } from '../data/gear.js?v=0.55.2';
-import { routes, validProgress } from '../data/expeditions.js?v=0.55.2';
+import { t as localize } from './i18n.js?v=0.55.3';
+import { GEAR_VERSION, migrateGear } from '../data/gear.js?v=0.55.3';
+import { routes, validProgress } from '../data/expeditions.js?v=0.55.3';
 // Save loading, legacy migration and persistence. Keep KEY and the version-1 envelope compatible.
-import { surveyCols, surveyRows } from '../data/balance.js?v=0.55.2';
-import { locations } from '../data/locations.js?v=0.55.2';
-import { $ } from './dom.js?v=0.55.2';
-import { bagCapacity, bagUsed, maxEnergy, rollCondition } from './rules.js?v=0.55.2';
-import { currentLocation, rollDepth, rollLocation } from './world.js?v=0.55.2';
-import { validateBackupState } from './backup-format.js?v=0.55.2';
+import { surveyCols, surveyRows } from '../data/balance.js?v=0.55.3';
+import { locations } from '../data/locations.js?v=0.55.3';
+import { $ } from './dom.js?v=0.55.3';
+import { bagCapacity, bagUsed, maxEnergy, rollCondition } from './rules.js?v=0.55.3';
+import { currentLocation, rollDepth, rollLocation } from './world.js?v=0.55.3';
+import { validateBackupState } from './backup-format.js?v=0.55.3';
 export const KEY = 'last-signal-v1';
 export function fresh() {
   return {

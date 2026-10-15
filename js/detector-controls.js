@@ -1,9 +1,9 @@
-import { t as localize } from './i18n.js?v=0.55.2';
-import { detectorFeatures, detectorSettings, detectorLook } from '../data/gear.js?v=0.55.2';
-import { $ } from './dom.js?v=0.55.2';
-import { s, save } from './storage.js?v=0.55.2';
-import { busy, renderDetector } from './ui.js?v=0.55.2';
-import { draw } from './graphics/field.js?v=0.55.2';
+import { t as localize } from './i18n.js?v=0.55.3';
+import { detectorFeatures, detectorSettings, detectorLook } from '../data/gear.js?v=0.55.3';
+import { $ } from './dom.js?v=0.55.3';
+import { s, save } from './storage.js?v=0.55.3';
+import { busy, renderDetector } from './ui.js?v=0.55.3';
+import { draw } from './graphics/field.js?v=0.55.3';
 let trail=[],trailScope=null;
 export function recordReading(reading,scope) {
   if(scope!==trailScope){trail=[];trailScope=scope;}

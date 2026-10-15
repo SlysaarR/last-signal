@@ -1,12 +1,12 @@
-import { pageWindow, layoutRevision } from './layout.js?v=0.55.2';
-import { t as localize, translateHTML } from './i18n.js?v=0.55.2';
-import { orderOffers } from '../data/orders.js?v=0.55.2';
-import { detectorFeatures } from '../data/gear.js?v=0.55.2';
-import { $ } from './dom.js?v=0.55.2';
-import { s } from './storage.js?v=0.55.2';
-import { activeOrder, orderReady, acceptOrder, cancelOrder, claimOrder } from './orders.js?v=0.55.2';
-import { modal } from './dialogs.js?v=0.55.2';
-import { busy, render } from './ui.js?v=0.55.2';
+import { pageWindow, layoutRevision } from './layout.js?v=0.55.3';
+import { t as localize, translateHTML } from './i18n.js?v=0.55.3';
+import { orderOffers } from '../data/orders.js?v=0.55.3';
+import { detectorFeatures } from '../data/gear.js?v=0.55.3';
+import { $ } from './dom.js?v=0.55.3';
+import { s } from './storage.js?v=0.55.3';
+import { activeOrder, orderReady, acceptOrder, cancelOrder, claimOrder } from './orders.js?v=0.55.3';
+import { modal } from './dialogs.js?v=0.55.3';
+import { busy, render } from './ui.js?v=0.55.3';
 
 function progressText(order) {
   return order.needs.map((need,i)=>`${need.label}: ${s.orders.active.counts[i]} / ${need.count}`).join(' · ');

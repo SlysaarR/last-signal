@@ -48,7 +48,7 @@ progress{accent-color:#64bacb}.screen-pane{display:flex;flex-direction:column;fl
 .trip-grid{gap:8px}.trip-grid>div{padding:10px;background:#182c3d;border-color:#3e5b71}.trip-grid span{min-height:0;color:#aec5d7;font-size:.75rem}.trip-grid strong{color:#edc58a;font-size:1.25rem}
 .camp-loot{margin:0;padding:10px;background:#3b3124;border-color:#a7804f}.camp-loot h3{color:#f3cf99}.camp-loot p{font-size:.8125rem}
 /* Field: the landscape is the flexible part; the detector and actions are bounded. */
-#search{display:flex;flex-direction:column;gap:7px;overflow:hidden}.field-stage{flex:1 1 0;min-height:140px;height:auto;max-height:none;border:1px solid #7b9395;border-radius:15px;box-shadow:0 3px 18px #0004}
+#search{display:flex;flex-direction:column;gap:7px;overflow:auto}.field-stage{flex:1 1 0;min-height:140px;height:auto;max-height:none;border:1px solid #7b9395;border-radius:15px;box-shadow:0 3px 18px #0004}
 .field-hud{padding:9px}.field-hud .location b{font-size:.9375rem}.location::before{display:none}.field-hud .location .sub{font-size:.75rem;color:#dee8cf}.field-caption{padding:7px 10px;font-size:.75rem;letter-spacing:.04em}
 #instrument{flex:none;margin:0;padding:9px 12px;background:#d8e1e5;border:1px solid #f4fafb;border-radius:13px;color:#192d3d;box-shadow:0 3px 0 #415d70}.instrument-model{display:none}
 #instrument .readout{margin:0;align-items:center}.readout .eyebrow{font-size:.75rem;color:#475f6d}.readout .sub{font-size:.75rem;color:#415765}.readout strong{font-size:2rem;line-height:1;color:#183c4c}
@@ -117,7 +117,7 @@ html:is([data-text-size="large"],[data-text-size="largest"]):not([data-screen="m
 #coinFilters label[for]{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 #coinFilters select{grid-row:1;min-height:38px;font-size:.8125rem;margin:0;padding:7px}#coinFilters #denomFilter{grid-column:1}#coinFilters #yearFilter{grid-column:2}#coinFilters .missing-label{grid-row:2;min-height:28px;display:flex;align-items:center;gap:6px;margin:0}
 #items .collect .coin-variant,#items .collect .ownership{min-height:0}#items .collect{align-items:stretch}
-#instrument .readout strong{color:#183c4c;font-size:2rem;line-height:1}.signal-readings>div{flex-direction:row}
+#instrument .readout>div{min-width:0;flex:1}#instrument .readout strong{color:#183c4c;font-size:2rem;line-height:1;flex:none;white-space:nowrap}.signal-readings>div{flex-direction:row}
 .find-metrics{padding:0;border:0}.find-metrics strong{margin:0}.find-metrics span{letter-spacing:0}
 #inventory[data-pane-view="pantry"] .inventory-controls,html[data-at-camp="false"] [data-pane="inventory:pantry"]{display:none}
 #inventoryPane-food .card,#inventoryPane-pantry .card{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px;margin:0 0 8px;background:#243d50;border-color:#5a7a91;color:#d3e5f0;line-height:1.4;font-size:.8125rem}
@@ -158,7 +158,7 @@ main>.stats,body:has(#search:not([hidden])) .stats{grid-template-columns:repeat(
 #packDecisionNote{font-size:.75rem;line-height:1.3;margin:0;color:#b5cddd}
 .pack-replacement{display:flex;align-items:center;gap:8px;font-size:.75rem;min-width:0}
 .pack-replacement>span{flex:0 0 4.5rem}.pack-replacement select{min-width:0;flex:1;width:100%;margin:0;min-height:44px;font-size:.8125rem;padding:6px}
-#excavate .find-dialog-actions{display:flex;flex-direction:column;gap:8px}
+#excavate .find-dialog-actions{display:flex;flex-direction:column;gap:8px}#excavate .find-dialog-actions>button{flex:none}
 #excavate #excNext{margin:0;min-height:46px;padding:10px;font-size:.875rem}
 #excavate #excSkip{min-height:42px;padding:7px;margin:0;background:#294155;border:1px solid #526e83;color:#d6e5ef;font-size:.8125rem}
 #excavate:has(#excNext:disabled) #excNext{display:none}
@@ -221,3 +221,9 @@ main>.stats,body:has(#search:not([hidden])) .stats{grid-template-columns:repeat(
 #search>.actions #dig,#search>.actions #fieldExit{grid-column:1;grid-row:1}
 #search>.actions #foodQuick{grid-column:2;grid-row:1}
 @media(min-width:960px){#campPane-report .trip-report{padding:20px}.trip-report .trip-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.report-actions{grid-template-columns:1fr 1fr}.report-actions #reportSort{grid-column:1/-1}}
+
+/* Keep field controls reachable when readable text outgrows the viewport. */
+@media(max-width:599px){
+ #instrument .signal-readings>div{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:2px}
+ html:is([data-text-size="large"],[data-text-size="largest"]) .field-stage{min-height:220px}
+}
