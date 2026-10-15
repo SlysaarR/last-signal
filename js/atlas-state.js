@@ -1,5 +1,5 @@
-import { activeSite, selectedSite, routeForCurrent, canScout, MAX_SITES } from '../data/atlas.js?v=0.54.0';
-import { s } from './storage.js?v=0.54.0';
+import { activeSite, selectedSite, routeForCurrent, canScout, MAX_SITES } from '../data/atlas.js?v=0.54.1';
+import { s } from './storage.js?v=0.54.1';
 export function ensureAtlas() {
   if(!s.atlas)s.atlas={version:1,nextId:1,activeId:null,selectedId:null,sites:[]};
   if(!s.atCamp&&!activeSite(s))rememberCurrent(routeForCurrent(s).id);

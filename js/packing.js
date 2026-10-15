@@ -1,17 +1,17 @@
-import { t as localize, translateHTML } from './i18n.js?v=0.54.0';
-import { advanceGuide } from '../data/guide.js?v=0.54.0';
-import { recordFind } from './progression.js?v=0.54.0';
-import { recordCareerFind } from './career.js?v=0.54.0';
-import { orderReady } from './orders.js?v=0.54.0';
-import { setupInspection, clearInspection } from './coin-flip.js?v=0.54.0';
+import { t as localize, translateHTML } from './i18n.js?v=0.54.1';
+import { advanceGuide } from '../data/guide.js?v=0.54.1';
+import { recordFind } from './progression.js?v=0.54.1';
+import { recordCareerFind } from './career.js?v=0.54.1';
+import { orderReady } from './orders.js?v=0.54.1';
+import { setupInspection, clearInspection } from './coin-flip.js?v=0.54.1';
 // Revealed-find card and the take/swap/leave decision.
-import { foods, rarities } from '../data/balance.js?v=0.54.0';
-import { types } from '../data/items.js?v=0.54.0';
-import { $ } from './dom.js?v=0.54.0';
-import { itemLabel } from './inventory.js?v=0.54.0';
-import { bagCapacity, bagUsed, conditionLabel, priceFor } from './rules.js?v=0.54.0';
-import { s, save } from './storage.js?v=0.54.0';
-import { render } from './ui.js?v=0.54.0';
+import { foods, rarities } from '../data/balance.js?v=0.54.1';
+import { types } from '../data/items.js?v=0.54.1';
+import { $ } from './dom.js?v=0.54.1';
+import { itemLabel } from './inventory.js?v=0.54.1';
+import { bagCapacity, bagUsed, conditionLabel, priceFor } from './rules.js?v=0.54.1';
+import { s, save } from './storage.js?v=0.54.1';
+import { render } from './ui.js?v=0.54.1';
 export function openPacking() {
   if (!s.pending) return;
   const item = s.pending,
@@ -25,10 +25,18 @@ export function openPacking() {
   $('packCondition').textContent = localize(item.condition + '%');
   $('packConditionLabel').textContent = localize(conditionLabel(item.condition));
   $('packValue').textContent = localize(priceFor(item.type, item.condition));
-  $('packCapacity').textContent = localize('Рюкзак ' + bagUsed() + ' / ' + bagCapacity() + ' · витрачено ' + (item.spent || 0) + ' енергії');
+  $('packCapacity').textContent = localize('Рюкзак ' + bagUsed() + ' / ' + bagCapacity());
+  $('packCapacity').title=localize('Витрачено енергії: '+(item.spent||0));
   $('packArt').setAttribute('aria-label', localize(t.name + ', стан ' + item.condition + ' відсотків'));
   setupInspection($('packArt'), $('packFlip'), item.type, item.condition);
-  $('packChoices').innerHTML = translateHTML(bagUsed() < bagCapacity() ? '<button class="primary" data-pack="take">Забрати в рюкзак</button>' : '<p>Рюкзак повний. Залиш знахідку або заміни один предмет:</p>' + s.bag.map((it, i) => '<button class="secondary" style="width:100%;margin:4px 0" data-pack="swap" data-index="' + i + '">Замінити: ' + itemLabel(it) + '</button>').join('') + foods.map((f, i) => s.food[i] ? '<button class="secondary" style="width:100%;margin:4px 0" data-pack="food" data-index="' + i + '">Викинути 1 × ' + f.name + ' і забрати знахідку</button>' : '').join(''));
+  const full=bagUsed()>=bagCapacity();
+  $('packReplacementField').hidden=!full;
+  $('packTake').hidden=full;$('packSwap').hidden=!full;$('packSwap').disabled=true;
+  $('packReplacement').innerHTML=full?translateHTML('<option value="">Обери предмет для заміни</option>'+s.bag.map((it,i)=>'<option value="swap:'+i+'">'+itemLabel(it)+'</option>').join('')+foods.map((f,i)=>s.food[i]?'<option value="food:'+i+'">1 × '+f.name+'</option>':'').join('')):'';
+  $('packReplacement').value='';
+  $('packBody').scrollTop=0;
+
+  $('packBody').querySelector('.inspection-options').open=false;
   if (!$('packDialog').open) $('packDialog').showModal();
 }
 export function resolvePacking(action, index) {
@@ -59,11 +67,22 @@ export function resolvePacking(action, index) {
   $('log').textContent = localize(action === 'leave' ? 'Знахідку залишено. Повторно забрати її не можна.' : types[item.type].name + ' у рюкзаку. Продати чи додати в альбом можна вдома.');
   if(orderAdvanced)$('log').textContent=localize((orderReady()?'Замовлення виконано — нагорода чекає в таборі. ':'+1 до польового замовлення. ')+$('log').textContent);
 }
+function replacementChoice() {
+  const match=/^(swap|food):(\d+)$/.exec($('packReplacement').value);
+  if(!match)return null;
+  const action=match[1],index=Number(match[2]);
+  if(!Number.isSafeInteger(index)||!(action==='swap'?s.bag[index]:foods[index]&&s.food[index]>0))return null;
+  return {action,index};
+}
 export function initPacking() {
   $('packDialog').addEventListener('close',()=>clearInspection($('packArt')));
+  $('packReplacement').onchange=()=>{ $('packSwap').disabled=!replacementChoice(); };
   $('packChoices').addEventListener('click', e => {
     const b = e.target.closest('[data-pack]');
-    if (b) resolvePacking(b.dataset.pack, Number(b.dataset.index));
+    if (!b) return;
+    if (b.dataset.pack==='replace') {
+      const choice=replacementChoice();if(choice)resolvePacking(choice.action,choice.index);
+    } else if (b.dataset.pack==='take') resolvePacking('take');
   });
   $('leaveFind').onclick = () => resolvePacking('leave');
   $('packDialog').addEventListener('cancel', e => e.preventDefault());

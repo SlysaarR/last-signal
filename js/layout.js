@@ -1,5 +1,5 @@
-import { t as localize } from './i18n.js?v=0.54.0';
-import { $ } from './dom.js?v=0.54.0';
+import { t as localize } from './i18n.js?v=0.54.1';
+import { $ } from './dom.js?v=0.54.1';
 
 // Presentation only: panes and pages never enter the game save.
 export const panes = {

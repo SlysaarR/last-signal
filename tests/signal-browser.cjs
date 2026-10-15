@@ -23,8 +23,8 @@ withBrowser(async(page,{version,screenshot})=>{
  const audio=await page.evaluate(async version=>{const a=await import('./js/audio.js?v='+version);return {state:a.audio.state,sound:a.sound};},version);assert(audio.sound);assert.equal(audio.state,'running');
  await screenshot('search-034');
  console.log('PASS native touch sweep, uncertain conductivity, weak deep peak, depth hint and real WebAudio');
- await page.locator('#dig').click();assert(await page.locator('#excavate').isVisible());assert((await page.locator('#energy').textContent()).startsWith('85 /'));
- await page.reload();assert(await page.locator('#excavate').isVisible());assert((await page.locator('#energy').textContent()).startsWith('85 /'));
+ await page.locator('#dig').click();assert(await page.locator('#excavate').isVisible());assert((await page.locator('#energy').textContent())==='85');
+ await page.reload();assert(await page.locator('#excavate').isVisible());assert((await page.locator('#energy').textContent())==='85');
  await page.locator('#excSkip').click();assert((await page.locator('#packTitle').textContent()).includes('підвіска'));
  console.log('PASS updated search digs correct saved target and survives reload without duplicate cost');
  await page.evaluate(async version=>{document.querySelector('#packDialog').close();const {s}=await import('./js/storage.js?v='+version);s.pending=null;s.atCamp=true;},version);

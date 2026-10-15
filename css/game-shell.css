@@ -128,3 +128,83 @@ html:is([data-text-size="large"],[data-text-size="largest"]):not([data-screen="m
 @media(min-width:960px){#items .collect{align-items:center}}
 @media(max-height:540px){#instrument .readout strong{font-size:1.75rem}}
 #fieldPanel{margin:0;padding:0;border:0;background:none}#fieldPanel>h3{display:none}#instrument .readout strong{text-shadow:none}
+
+/* 0.54.1: keep bitmap proportions and reserve room for decisions. */
+main>.stats,body:has(#search:not([hidden])) .stats{grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible}
+.stats>.resource-stat{position:relative;min-width:0;gap:6px;padding:0 4px;cursor:help;color:#efb86e}
+.stats>.resource-stat:first-child{color:#8fd6e2}.stats>.resource-stat:last-child{color:#e8eef3}
+.resource-stat svg{width:18px;height:18px;flex:none}
+.stats strong{font-size:.9375rem;line-height:1.2;font-variant-numeric:tabular-nums;white-space:nowrap;overflow-wrap:normal;min-width:0}
+.resource-stat::after{content:attr(data-tooltip);position:absolute;left:0;top:calc(100% + 8px);z-index:60;display:none;width:max-content;max-width:min(76vw,22rem);padding:9px 11px;background:#101f2c;border:1px solid #69879c;border-radius:9px;box-shadow:0 5px 18px #0006;color:#edf4f8;font-size:.8125rem;line-height:1.4;pointer-events:none}
+.resource-stat:nth-child(2)::after{left:50%;transform:translateX(-50%)}.resource-stat:last-child::after{left:auto;right:0}.resource-stat:focus::after{display:block}
+@media(hover:hover){.resource-stat:hover::after{display:block}}
+/* Intrinsic canvas sizing preserves the entire map and its pointer rectangle. */
+#field{width:auto;height:auto;max-width:100%;max-height:100%;aspect-ratio:880 / 720;margin:auto}
+.field-stage{background:radial-gradient(ellipse,#34433b,#182923)}
+#excavate,#packDialog,#coinDetail{width:calc(100% - 24px);max-width:460px;height:min(780px,calc(100dvh - 24px));max-height:calc(100dvh - 24px);padding:14px;border-radius:18px;overflow:hidden;gap:10px}
+#excavate[open],#packDialog[open]{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto}
+#coinDetail[open]{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+.find-dialog-header{display:block;min-width:0;margin:0;padding:0;min-height:0;height:auto;flex:none}
+.find-dialog-header .eyebrow{font-size:.75rem;letter-spacing:.06em;color:#a7c5d8}
+#packDialog .find-heading{gap:8px;flex-wrap:nowrap}.find-rarity{flex:none;padding:3px 6px;font-size:.75rem}
+#packTitle,#excavate h2{font-size:1.125rem;line-height:1.25;margin:5px 0 0;letter-spacing:0}
+#excavate #excHint{font-size:.75rem;line-height:1.35;margin:5px 0 0}
+.find-dialog-body{min-height:0;min-width:0;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#648398 transparent;padding:2px 2px 4px}
+.find-dialog-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin:0;padding:10px 0 0;border-top:1px solid #49667b;min-width:0;letter-spacing:0;text-align:left;color:#b7cddd}
+.find-dialog-actions>p,.find-dialog-actions>label{grid-column:1/-1}
+.find-dialog-actions>button,#packChoices button{width:100%;min-height:46px;margin:0;padding:9px 6px;font-size:.8125rem;line-height:1.3}
+#packChoices{min-width:0}#packDialog #leaveFind{margin:0;min-height:46px;color:#cee0ec;border-color:#637f92;background:#1c3041}
+#packCapacity{font-size:.75rem;line-height:1.3;margin:0;color:#b5cddd}
+#packDecisionNote{font-size:.75rem;line-height:1.3;margin:0;color:#b5cddd}
+.pack-replacement{display:flex;align-items:center;gap:8px;font-size:.75rem;min-width:0}
+.pack-replacement>span{flex:0 0 4.5rem}.pack-replacement select{min-width:0;flex:1;width:100%;margin:0;min-height:44px;font-size:.8125rem;padding:6px}
+#excavate .find-dialog-actions{display:flex;flex-direction:column;gap:8px}
+#excavate #excNext{margin:0;min-height:46px;padding:10px;font-size:.875rem}
+#excavate #excSkip{min-height:42px;padding:7px;margin:0;background:#294155;border:1px solid #526e83;color:#d6e5ef;font-size:.8125rem}
+#excavate:has(#excNext:disabled) #excNext{display:none}
+/* 600 × 500 pixels always use 6:5 display geometry. Soil and dust share it. */
+#excavate .excavation{width:min(100%,48dvh);height:auto;aspect-ratio:6 / 5;margin:0 auto 10px;flex:none;border:0;box-shadow:inset 0 0 0 1px #8e9c93,0 4px 14px #0003}
+.excavation canvas{width:100%;height:100%;object-fit:contain}
+#packDialog .find-display{margin:0 0 8px;background:#142939;border:1px solid #53778e;border-radius:12px}
+#packDialog .pack-art-stage,#coinDetail .inspection-stage{width:min(100%,36dvh);height:auto;aspect-ratio:6 / 5;margin:0 auto;position:relative}
+#detailArt,#packArt{display:block;width:100%;height:auto;aspect-ratio:6 / 5;max-height:none;object-fit:contain;margin:0}
+#coinDetail .inspection-stage:has(#detailArt[hidden]){display:none}
+#packDialog .find-facts{gap:8px;margin:8px 0}
+#packDialog .find-facts>div{padding:7px 9px;background:#112737;border:1px solid #45677d;border-radius:9px;min-width:0}
+#packDialog .find-facts span{font-size:.75rem;letter-spacing:.03em;margin:0;color:#a9c5d8}
+#packDialog .find-facts strong{font-size:1.125rem;color:#efd0a0}.find-facts small{font-size:.75rem;color:#b1c8d9;margin:2px 0 0}
+#packDescription{font-size:.75rem;line-height:1.4;margin:6px 0;color:#b7cddd}
+#excavate .exc-progress-row{font-size:.75rem;color:#abc6d9;margin-top:6px}
+#excavate #excProgress{margin:6px 0;height:5px;accent-color:#82cad8}
+#excavate #excStatus{min-height:0;margin:6px 0;font-size:.75rem;line-height:1.35;color:#bdd1df}
+.inspection-options{margin-top:7px;border-top:1px solid #3f5f75;padding-top:2px}
+.inspection-options>summary{font-size:.8125rem;color:#a9cddd;min-height:40px;line-height:1.3;padding:10px 0;cursor:pointer}
+.inspection-options .inspection-tools{margin:2px 0 8px;gap:6px}
+.inspection-tools button{min-height:44px;font-size:.8125rem;padding:6px}
+.inspection-zoom{background:#102738;border-color:#4a6b82}.inspection-zoom output{color:#d4e5ef}
+.inspection-options figcaption,.inspection-options .inspection-hint{font-size:.75rem;line-height:1.4;margin:4px 0;color:#adc5d8;text-align:left}
+#coinDetail .inspection-heading{position:static;top:auto;padding:0;margin:4px 0 0;background:transparent;align-items:center}
+#coinDetail .inspection-heading h2{font-size:1.125rem;line-height:1.25}
+#coinDetail .condition-preview{margin-top:8px}.condition-preview p{min-height:0}
+#coinDetail .condition-preview input{margin:2px 0}
+#detailText{font-size:.8125rem;line-height:1.5}
+@media(min-width:600px) and (max-height:540px){
+ #excavate,#packDialog{max-width:840px;padding:12px;gap:8px}
+ #excavate[open],#packDialog[open]{grid-template-columns:minmax(0,1fr) minmax(240px,.8fr);grid-template-rows:auto minmax(0,1fr)}
+ #excavate .find-dialog-header,#packDialog .find-dialog-header{grid-column:1/-1}
+ #excavate .find-dialog-body,#packDialog .find-dialog-body{grid-column:1;grid-row:2}
+ #excavate .find-dialog-actions,#packDialog .find-dialog-actions{grid-column:2;grid-row:2;align-content:start;align-self:stretch;overflow:auto;margin:0;padding:6px 0 0 12px;border-top:0;border-left:1px solid #49667b}
+ #excavate .excavation{width:min(100%,48dvh)}
+ #packDialog .pack-art-stage{width:min(100%,40dvh)}
+}
+@media(max-width:340px){
+ #excavate,#packDialog,#coinDetail{width:calc(100% - 16px);padding:10px;gap:8px}
+ .stats>.resource-stat{gap:4px;padding-inline:2px}.resource-stat svg{width:16px;height:16px}
+ .find-dialog-header .eyebrow{font-size:.75rem;letter-spacing:0}
+}
+
+/* Tiny portrait windows keep a last-resort scroll instead of clipping a decision. */
+@media(max-height:380px) and (max-width:599px){
+ #excavate[open],#packDialog[open],#coinDetail[open]{display:block;height:auto;overflow:auto}
+ .find-dialog-body{overflow:visible;margin-block:8px}
+}

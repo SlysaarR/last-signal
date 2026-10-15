@@ -9,26 +9,26 @@
     <link rel="apple-touch-icon" href="./assets/app/icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Останній сигнал">
-    <link rel="stylesheet" href="./css/atlas.css?v=0.54.0">
-    <link rel="stylesheet" href="./css/career.css?v=0.54.0">
-    <link rel="stylesheet" href="./css/offline.css?v=0.54.0">
+    <link rel="stylesheet" href="./css/atlas.css?v=0.54.1">
+    <link rel="stylesheet" href="./css/career.css?v=0.54.1">
+    <link rel="stylesheet" href="./css/offline.css?v=0.54.1">
     <title>Останній сигнал</title>
-    <link rel="stylesheet" href="./css/base.css?v=0.54.0">
-    <link rel="stylesheet" href="./css/search.css?v=0.54.0">
-    <link rel="stylesheet" href="./css/excavation.css?v=0.54.0">
-    <link rel="stylesheet" href="./css/inventory.css?v=0.54.0">
-    <link rel="stylesheet" href="./css/workshop.css?v=0.54.0">
-    <link rel="stylesheet" href="./css/camp.css?v=0.54.0">
-    <link rel="stylesheet" href="./css/backup.css?v=0.54.0">
-    <link rel="stylesheet" href="./css/coin-art.css?v=0.54.0">
-    <link rel="stylesheet" href="./css/journal.css?v=0.54.0">
-    <link rel="stylesheet" href="./css/environment.css?v=0.54.0">
-    <link rel="stylesheet" href="./css/guide.css?v=0.54.0">
-    <link rel="stylesheet" href="./css/interface.css?v=0.54.0">
-    <link rel="stylesheet" href="./css/menu.css?v=0.54.0">
-    <script type="module" src="./js/main.js?v=0.54.0">
+    <link rel="stylesheet" href="./css/base.css?v=0.54.1">
+    <link rel="stylesheet" href="./css/search.css?v=0.54.1">
+    <link rel="stylesheet" href="./css/excavation.css?v=0.54.1">
+    <link rel="stylesheet" href="./css/inventory.css?v=0.54.1">
+    <link rel="stylesheet" href="./css/workshop.css?v=0.54.1">
+    <link rel="stylesheet" href="./css/camp.css?v=0.54.1">
+    <link rel="stylesheet" href="./css/backup.css?v=0.54.1">
+    <link rel="stylesheet" href="./css/coin-art.css?v=0.54.1">
+    <link rel="stylesheet" href="./css/journal.css?v=0.54.1">
+    <link rel="stylesheet" href="./css/environment.css?v=0.54.1">
+    <link rel="stylesheet" href="./css/guide.css?v=0.54.1">
+    <link rel="stylesheet" href="./css/interface.css?v=0.54.1">
+    <link rel="stylesheet" href="./css/menu.css?v=0.54.1">
+    <script type="module" src="./js/main.js?v=0.54.1">
     </script>
-  <link rel="stylesheet" href="./css/game-shell.css?v=0.54.0">
+  <link rel="stylesheet" href="./css/game-shell.css?v=0.54.1">
 </head>
   <body>
     <a class="skip-link" id="skipToScreen" href="#campTitle">До поточного розділу</a>
@@ -78,21 +78,9 @@
         </button>
       </nav>
       <div class="stats">
-        <div>
-          <span>ЕНЕРГІЯ</span>
-          <strong id="energy">
-          </strong>
-        </div>
-        <div>
-          <span>КУПОНИ</span>
-          <strong id="coins">
-          </strong>
-        </div>
-        <div>
-          <span>ВИЇЗД</span>
-          <strong id="day">
-          </strong>
-        </div>
+        <div id="energyStat" class="resource-stat" tabindex="0" role="img" aria-label="Енергія" title="Енергія"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m13 2-9 12h7l-1 8 10-13h-7l1-7Z"/></svg><strong id="energy" aria-hidden="true"></strong></div>
+        <div id="coinsStat" class="resource-stat" tabindex="0" role="img" aria-label="Купони" title="Купони"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h18v4a2 2 0 0 0 0 4v4H3v-4a2 2 0 0 0 0-4V7Z"/><path d="M15 7v2m0 3v2m0 3v2"/></svg><strong id="coins" aria-hidden="true"></strong></div>
+        <div id="dayStat" class="resource-stat" tabindex="0" role="img" aria-label="Виїзд" title="Виїзд"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 20 6-16h6l6 16M12 6v3m0 3v3m0 3v3"/></svg><strong id="day" aria-hidden="true"></strong></div>
       </div>
       <div id="saveNote" hidden>У цьому браузері збереження недоступне. Прогрес зберігається лише до закриття гри.</div>
       <section id="menu" class="main-menu" aria-labelledby="menuTitle">
@@ -106,7 +94,7 @@
           <button class="quiet" id="openHelp" aria-haspopup="dialog" aria-controls="helpDialog">Як грати</button>
         </div>
         <p id="menuStatus" class="sub"></p>
-        <small class="menu-version">0.54.0</small>
+        <small class="menu-version">0.54.1</small>
       </section>
       <section id="settings" hidden aria-labelledby="settingsTitle">
         <h2 id="settingsTitle" tabindex="-1">Налаштування</h2>
@@ -546,7 +534,7 @@
 </div>
 </div>
 </section>
-        <footer>ПРОТОТИП 0.54.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
+        <footer>ПРОТОТИП 0.54.1 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
       </main>
       <dialog id="helpDialog" aria-labelledby="helpTitle">
         <div class="sheet-heading">
@@ -582,7 +570,7 @@
           <p>Офлайн готовий, коли про це повідомить панель «Гра на телефоні». Відкрий її в налаштуваннях головного меню; встановлюй оновлення у таборі кнопкою «Зберегти й оновити гру».</p>
           <p>Якщо анімація заважає, у налаштуваннях відкрий «Вигляд і зручність» й обери мінімальні ефекти погоди. Зменшення руху в налаштуваннях пристрою також враховується.</p>
         </details>
-        <p class="help-note">Версія 0.54.0 · гра в розробці. Ціни, рідкість і стан предметів — ігрові показники. Випадкові знахідки не мають підтвердженої історичної атрибуції.</p>
+        <p class="help-note">Версія 0.54.1 · гра в розробці. Ціни, рідкість і стан предметів — ігрові показники. Випадкові знахідки не мають підтвердженої історичної атрибуції.</p>
       </dialog>
       <dialog id="appUpdateDialog" aria-labelledby="appUpdateTitle"><h2 id="appUpdateTitle">Оновлюємо гру</h2>
 <p>Прогрес збережено. Зачекай на перезапуск…</p></dialog>
@@ -614,7 +602,7 @@
         <div class="search-status">
           <p class="sub" id="fieldBag">
           </p>
-          <span class="build-tag">v0.54.0</span>
+          <span class="build-tag">v0.54.1</span>
         </div>
         <div class="hint" id="hint">Сканування безкоштовне. Що ближче до предмета, то сильніший сигнал.</div>
         <p class="sub">⚡ Їжа відновлює до 50% запасу за виїзд · дорога за тарифом обраного місця</p>
@@ -641,27 +629,20 @@
         </div>
       </dialog>
       <dialog id="packDialog" aria-labelledby="packTitle">
-        <div class="find-heading">
+        <header class="find-dialog-header"><div class="find-heading">
           <div class="eyebrow">ЗНАХІДКУ ВІДКРИТО</div>
           <span class="find-rarity" id="packRarity">
           </span>
         </div>
         <h2 id="packTitle" tabindex="-1" autofocus></h2>
-        <p id="packDescription"></p>
-        <figure class="find-display">
+        </header><div class="find-dialog-body" id="packBody">
+<figure class="find-display">
           <div class="pack-art-stage">
 <canvas id="packArt" width="600" height="500" role="img" aria-label="Знайдений предмет">
           </canvas>
           <button id="packFlip" class="secondary coin-flip" hidden aria-label="Початковий ракурс">↺</button>
 </div>
-          <div id="packArtTools" class="inspection-tools" role="group" aria-label="Керування оглядом" hidden>
-          <div class="inspection-zoom">
-<button id="packArtZoomOut" class="secondary" aria-label="Зменшити знахідку">−</button><output id="packArtZoomValue" aria-label="Масштаб огляду">100%</output><button id="packArtZoomIn" class="secondary" aria-label="Збільшити знахідку">+</button>
-</div>
-          <button id="packArtTurn" class="secondary">Перевернути</button><button id="packArtLight" class="secondary">Світло ↖</button>
-        </div>
-          <figcaption>Один палець — обертання · два — масштаб і зсув</figcaption>
-        </figure>
+          </figure>
         <div class="find-facts">
           <div>
             <span>СТАН</span>
@@ -677,13 +658,23 @@
             <small>купонів</small>
           </div>
         </div>
-        <p id="packCapacity">
-        </p>
-        <div id="packChoices">
+        <p id="packDescription"></p>
+        <details class="inspection-options"><summary>Огляд і керування</summary><div id="packArtTools" class="inspection-tools" role="group" aria-label="Керування оглядом" hidden>
+          <div class="inspection-zoom">
+<button id="packArtZoomOut" class="secondary" aria-label="Зменшити знахідку">−</button><output id="packArtZoomValue" aria-label="Масштаб огляду">100%</output><button id="packArtZoomIn" class="secondary" aria-label="Збільшити знахідку">+</button>
+</div>
+          <button id="packArtTurn" class="secondary">Перевернути</button><button id="packArtLight" class="secondary">Світло ↖</button>
         </div>
-        <button class="secondary" id="leaveFind" style="width:100%;margin-top:12px">Залишити знахідку</button>
-        <p class="camp-note">Залишені знахідки й предмети, віддані під час заміни, не можна забрати повторно.</p>
-      </dialog>
+          <p class="inspection-hint">Один палець — обертання · два — масштаб і зсув</p>
+        </details>
+</div>
+<footer class="find-dialog-actions"><p id="packCapacity">
+        </p>
+        <label id="packReplacementField" class="pack-replacement" hidden><span>Звільнити місце</span><select id="packReplacement" aria-describedby="packDecisionNote"><option value="">Обери предмет для заміни</option></select></label><div id="packChoices" aria-describedby="packDecisionNote"><button class="primary" id="packTake" data-pack="take">Забрати в рюкзак</button><button class="primary" id="packSwap" data-pack="replace" hidden disabled>Замінити й забрати</button></div>
+        <button class="secondary" id="leaveFind" aria-describedby="packDecisionNote">Залишити знахідку</button>
+        <p class="camp-note" id="packDecisionNote">Залишені й замінені предмети втрачаються назавжди.</p>
+      </footer></dialog>
+
       <dialog id="inventoryReview" aria-labelledby="reviewTitle" aria-describedby="reviewDescription">
         <div class="review-heading">
 <h2 id="reviewTitle"></h2>
@@ -715,10 +706,11 @@
         <button class="quiet" id="modalCancel" style="width:100%;margin-top:10px" hidden>Скасувати</button>
       </dialog>
       <dialog id="excavate" aria-labelledby="excTitle">
-        <div class="eyebrow" id="excStage">РОЗКОПКА / 01</div>
+        <header class="find-dialog-header"><div class="eyebrow" id="excStage">РОЗКОПКА / 01</div>
         <h2 id="excTitle">Щось є під землею</h2>
         <p id="excHint">Знімай пухкий ґрунт пальцем у центрі ямки.</p>
-        <div class="excavation">
+        </header><div class="find-dialog-body" id="excBody">
+<div class="excavation">
           <canvas id="artifact" width="600" height="500">
           </canvas>
           <canvas id="soil" width="600" height="500" aria-label="Проведи пальцем, щоб прибрати землю зі знахідки">
@@ -727,12 +719,6 @@
           </canvas>
           <button id="excFlip" class="secondary coin-flip" hidden aria-label="Початковий ракурс">↺</button>
         </div>
-        <div id="artifactTools" class="inspection-tools" role="group" aria-label="Керування оглядом" hidden>
-          <div class="inspection-zoom">
-<button id="artifactZoomOut" class="secondary" aria-label="Зменшити знахідку">−</button><output id="artifactZoomValue" aria-label="Масштаб огляду">100%</output><button id="artifactZoomIn" class="secondary" aria-label="Збільшити знахідку">+</button>
-</div>
-          <button id="artifactTurn" class="secondary">Перевернути</button><button id="artifactLight" class="secondary">Світло ↖</button>
-        </div>
         <div class="exc-progress-row">
           <span>ОЧИЩЕННЯ ПРЕДМЕТА</span>
           <strong id="excPercent">0%</strong>
@@ -740,29 +726,37 @@
         <progress id="excProgress" max="100" value="0" aria-label="Прогрес очищення">
         </progress>
         <p id="excStatus" aria-live="polite">Землю прибрано: 0%</p>
-        <button class="primary" id="excNext" disabled>Спочатку прибери землю</button>
-        <div class="exc-footer">
-          <button class="secondary" id="excSkip">Відкрити без жестів</button>
+        <details class="inspection-options" id="excInspectionOptions" hidden><summary>Огляд і керування</summary><div id="artifactTools" class="inspection-tools" role="group" aria-label="Керування оглядом" hidden>
+          <div class="inspection-zoom">
+<button id="artifactZoomOut" class="secondary" aria-label="Зменшити знахідку">−</button><output id="artifactZoomValue" aria-label="Масштаб огляду">100%</output><button id="artifactZoomIn" class="secondary" aria-label="Збільшити знахідку">+</button>
+</div>
+          <button id="artifactTurn" class="secondary">Перевернути</button><button id="artifactLight" class="secondary">Світло ↖</button>
         </div>
-      </dialog>
+        </details>
+</div>
+<footer class="find-dialog-actions"><button class="primary" id="excNext" disabled>Спочатку прибери землю</button>
+        <button class="secondary" id="excSkip">Відкрити без жестів</button>
+        </footer></dialog>
+
       <dialog id="coinDetail" aria-labelledby="detailTitle">
-        <div class="eyebrow">КАРТКА КОЛЕКЦІЇ</div>
+        <header class="find-dialog-header"><div class="eyebrow">КАРТКА КОЛЕКЦІЇ</div>
         <div class="inspection-heading">
 <h2 id="detailTitle" tabindex="-1" autofocus></h2>
 <button id="detailClose" class="quiet" aria-label="Закрити огляд знахідки">✕</button>
 </div>
-        <div class="inspection-stage">
+        </header><div class="find-dialog-body" id="detailBody">
+<div class="inspection-stage">
 <canvas id="detailArt" width="600" height="500" role="img" aria-label="Зображення монети" hidden></canvas>
         <button id="detailFlip" class="secondary coin-flip" hidden aria-label="Початковий ракурс">↺</button>
 </div>
-        <div id="detailArtTools" class="inspection-tools" role="group" aria-label="Керування оглядом" hidden>
+        <details class="inspection-options"><summary>Огляд і керування</summary><div id="detailArtTools" class="inspection-tools" role="group" aria-label="Керування оглядом" hidden>
           <div class="inspection-zoom">
 <button id="detailArtZoomOut" class="secondary" aria-label="Зменшити знахідку">−</button><output id="detailArtZoomValue" aria-label="Масштаб огляду">100%</output><button id="detailArtZoomIn" class="secondary" aria-label="Збільшити знахідку">+</button>
 </div>
           <button id="detailArtTurn" class="secondary">Перевернути</button><button id="detailArtLight" class="secondary">Світло ↖</button>
         </div>
         <p class="inspection-hint">Один палець — обертання · два — масштаб і зсув<br>Клавіатура: стрілки, +/− · Home — скинути</p>
-        <div id="wearExamples" class="condition-preview" hidden>
+        </details><div id="wearExamples" class="condition-preview" hidden>
           <label for="conditionPreview">Порівняти стан <output id="conditionPreviewValue" for="conditionPreview">75%</output></label>
           <input id="conditionPreview" type="range" min="0" max="100" step="1" value="75" aria-describedby="conditionPreviewNote">
           <div class="condition-scale">
@@ -775,7 +769,8 @@
         </p>
         <a id="detailSource" target="_blank" rel="noopener noreferrer">Відкрити статтю каталогу</a>
         <a id="detailArtSource" target="_blank" rel="noopener noreferrer" hidden>Зображення зразка · Національний банк України / Numista</a>
-      </dialog>
+      </div></dialog>
+
     <dialog id="coachDialog" aria-labelledby="coachDialogTitle"><div class="sheet-heading">
 <h2 id="coachDialogTitle">Підказка</h2>
 <button class="quiet" data-close="coachDialog" aria-label="Закрити">✕</button>

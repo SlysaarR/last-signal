@@ -1,10 +1,10 @@
-import { $ } from './dom.js?v=0.54.0';
-import { s, save, KEY } from './storage.js?v=0.54.0';
-import { busy, showTab } from './ui.js?v=0.54.0';
-import { currentScreen } from './interface.js?v=0.54.0';
-import { openExcavation } from './excavation.js?v=0.54.0';
-import { openPacking } from './packing.js?v=0.54.0';
-import { t as localize, language, changeLanguage } from './i18n.js?v=0.54.0';
+import { $ } from './dom.js?v=0.54.1';
+import { s, save, KEY } from './storage.js?v=0.54.1';
+import { busy, showTab } from './ui.js?v=0.54.1';
+import { currentScreen } from './interface.js?v=0.54.1';
+import { openExcavation } from './excavation.js?v=0.54.1';
+import { openPacking } from './packing.js?v=0.54.1';
+import { t as localize, language, changeLanguage } from './i18n.js?v=0.54.1';
 
 let returnScreen = null, started = false;
 export function renderMenu() {

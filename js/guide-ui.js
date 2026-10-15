@@ -1,13 +1,13 @@
-import { setPane } from './layout.js?v=0.54.0';
-import { t as localize } from './i18n.js?v=0.54.0';
-import { currentScreen } from './interface.js?v=0.54.0';
-import { resumeGame } from './menu.js?v=0.54.0';
-import { firstStepsOffer, startGuide, guideCard } from '../data/guide.js?v=0.54.0';
-import { s, save } from './storage.js?v=0.54.0';
-import { $ } from './dom.js?v=0.54.0';
-import { busy, render, showTab } from './ui.js?v=0.54.0';
-import { confirmDeparture, confirmReturnHome } from './camp.js?v=0.54.0';
-import { syncWeatherEffects } from './environment-ui.js?v=0.54.0';
+import { setPane } from './layout.js?v=0.54.1';
+import { t as localize } from './i18n.js?v=0.54.1';
+import { currentScreen } from './interface.js?v=0.54.1';
+import { resumeGame } from './menu.js?v=0.54.1';
+import { firstStepsOffer, startGuide, guideCard } from '../data/guide.js?v=0.54.1';
+import { s, save } from './storage.js?v=0.54.1';
+import { $ } from './dom.js?v=0.54.1';
+import { busy, render, showTab } from './ui.js?v=0.54.1';
+import { confirmDeparture, confirmReturnHome } from './camp.js?v=0.54.1';
+import { syncWeatherEffects } from './environment-ui.js?v=0.54.1';
 
 let lastCard = '';
 export function renderGuide() {

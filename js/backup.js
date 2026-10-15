@@ -1,7 +1,7 @@
-import { t as localize, dateLocale } from './i18n.js?v=0.54.0';
-import { $ } from './dom.js?v=0.54.0';
-import { createBackup, parseBackup, MAX_BACKUP_SIZE } from './backup-format.js?v=0.54.0';
-import { s, RECOVERY_KEY, installBackupState } from './storage.js?v=0.54.0';
+import { t as localize, dateLocale } from './i18n.js?v=0.54.1';
+import { $ } from './dom.js?v=0.54.1';
+import { createBackup, parseBackup, MAX_BACKUP_SIZE } from './backup-format.js?v=0.54.1';
+import { s, RECOVERY_KEY, installBackupState } from './storage.js?v=0.54.1';
 let candidate = null, reading = 0;
 function message(text) { $('backupStatus').textContent = localize(text); }
 function download(text, prefix) {

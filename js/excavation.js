@@ -1,14 +1,14 @@
-import { t as localize } from './i18n.js?v=0.54.0';
-import { setupInspection, clearInspection } from './coin-flip.js?v=0.54.0';
-import { onCoinImagesReady } from './graphics/coin-reference.js?v=0.54.0';
-import { brushMark, cleaningPercent, visitBrushSegment } from '../data/cleaning.js?v=0.54.0';
-import { createSoilBrush } from './graphics/soil-brush.js?v=0.54.0';
+import { t as localize } from './i18n.js?v=0.54.1';
+import { setupInspection, clearInspection } from './coin-flip.js?v=0.54.1';
+import { onCoinImagesReady } from './graphics/coin-reference.js?v=0.54.1';
+import { brushMark, cleaningPercent, visitBrushSegment } from '../data/cleaning.js?v=0.54.1';
+import { createSoilBrush } from './graphics/soil-brush.js?v=0.54.1';
 // Soil canvas, finger cleaning, dust and reveal progress.
-import { types } from '../data/items.js?v=0.54.0';
-import { $ } from './dom.js?v=0.54.0';
-import { drawArtifact, seededArt } from './graphics/artifacts.js?v=0.54.0';
-import { openPacking } from './packing.js?v=0.54.0';
-import { s, save } from './storage.js?v=0.54.0';
+import { types } from '../data/items.js?v=0.54.1';
+import { $ } from './dom.js?v=0.54.1';
+import { drawArtifact, seededArt } from './graphics/artifacts.js?v=0.54.1';
+import { openPacking } from './packing.js?v=0.54.1';
+import { s, save } from './storage.js?v=0.54.1';
 export const soil = $('soil'),
   dirt = soil.getContext('2d'),
   art = $('artifact').getContext('2d');
@@ -107,6 +107,8 @@ export function openExcavation() {
   stopBrush(false);stopDust();cleaningItem=s.pending;
   clearInspection($('artifact'));
   $('excFlip').hidden = true;
+  $('excInspectionOptions').hidden=true;$('excInspectionOptions').open=false;
+  $('excBody').scrollTop=0;
   $('artifact').onclick = null;
   $('artifact').onkeydown = null;
   $('artifact').tabIndex = -1;
@@ -200,6 +202,7 @@ function updateCleaning() {
     $('excNext').textContent = localize('Оглянути знахідку');
     $('excStatus').textContent = localize('Очищення завершено. Обертай знахідку пальцем.');
     $('excSkip').hidden = true;
+    $('excInspectionOptions').hidden=false;
     setupInspection($('artifact'), $('excFlip'), s.pending.type, s.pending.condition, false);
     save();
   }

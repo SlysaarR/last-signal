@@ -1,5 +1,5 @@
-import { refreshLayout } from './layout.js?v=0.54.0';
-import { t as localize } from './i18n.js?v=0.54.0';
+import { refreshLayout } from './layout.js?v=0.54.1';
+import { t as localize } from './i18n.js?v=0.54.1';
 // Device-local presentation settings; never part of the game save or backup.
 export const TEXT_SIZE_KEY = 'last-signal-text-size';
 const textSizes = new Set(['normal', 'large', 'largest']);
