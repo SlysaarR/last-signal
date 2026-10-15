@@ -7,8 +7,8 @@ android {
         applicationId 'com.slysaarr.lastsignal.preview'
         minSdk 26
         targetSdk 36
-        versionCode 550401
-        versionName '0.55.4-test.1'
+        versionCode 550502
+        versionName '0.55.5-test.2'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     buildFeatures { buildConfig true }

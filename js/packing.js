@@ -1,17 +1,17 @@
-import { t as localize, translateHTML } from './i18n.js?v=0.55.4';
-import { advanceGuide } from '../data/guide.js?v=0.55.4';
-import { recordFind } from './progression.js?v=0.55.4';
-import { recordCareerFind } from './career.js?v=0.55.4';
-import { orderReady } from './orders.js?v=0.55.4';
-import { setupInspection, clearInspection } from './coin-flip.js?v=0.55.4';
+import { t as localize, translateHTML } from './i18n.js?v=0.55.5';
+import { advanceGuide } from '../data/guide.js?v=0.55.5';
+import { recordFind } from './progression.js?v=0.55.5';
+import { recordCareerFind } from './career.js?v=0.55.5';
+import { orderReady } from './orders.js?v=0.55.5';
+import { setupInspection, clearInspection } from './coin-flip.js?v=0.55.5';
 // Revealed-find card and the take/swap/leave decision.
-import { foods, rarities } from '../data/balance.js?v=0.55.4';
-import { types } from '../data/items.js?v=0.55.4';
-import { $ } from './dom.js?v=0.55.4';
-import { itemLabel } from './inventory.js?v=0.55.4';
-import { bagCapacity, bagUsed, conditionLabel, priceFor } from './rules.js?v=0.55.4';
-import { s, save } from './storage.js?v=0.55.4';
-import { render } from './ui.js?v=0.55.4';
+import { foods, rarities } from '../data/balance.js?v=0.55.5';
+import { types } from '../data/items.js?v=0.55.5';
+import { $ } from './dom.js?v=0.55.5';
+import { itemLabel } from './inventory.js?v=0.55.5';
+import { bagCapacity, bagUsed, conditionLabel, priceFor } from './rules.js?v=0.55.5';
+import { s, save } from './storage.js?v=0.55.5';
+import { render } from './ui.js?v=0.55.5';
 export function openPacking() {
   if (!s.pending) return;
   const item = s.pending,

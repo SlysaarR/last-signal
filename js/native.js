@@ -1,10 +1,10 @@
-import { $ } from './dom.js?v=0.55.4';
-import { save } from './storage.js?v=0.55.4';
-import { openMainMenu } from './menu.js?v=0.55.4';
-import { currentScreen } from './interface.js?v=0.55.4';
-import { showTab } from './ui.js?v=0.55.4';
+import { $ } from './dom.js?v=0.55.5';
+import { save } from './storage.js?v=0.55.5';
+import { openMainMenu } from './menu.js?v=0.55.5';
+import { currentScreen } from './interface.js?v=0.55.5';
+import { showTab } from './ui.js?v=0.55.5';
 
-import { androidBridge } from './platform.js?v=0.55.4';
+import { androidBridge } from './platform.js?v=0.55.5';
 
 // Called only by the packaged Activity. The normal browser keeps its own lifecycle.
 export function initNative() {

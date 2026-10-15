@@ -26,7 +26,7 @@ public class GameSmokeTest {
         assertEquals(android.content.pm.PackageManager.PERMISSION_DENIED, InstrumentationRegistry.getInstrumentation().getTargetContext().checkSelfPermission("android.permission.INTERNET"));
         try(ActivityScenario<MainActivity> scenario=ActivityScenario.launch(MainActivity.class)){
             ready(scenario);
-            assertEquals("true",js(scenario,"document.getElementById('menuVersion').textContent.includes('0.55.4-test.1')"));
+            assertEquals("true",js(scenario,"document.getElementById('menuVersion').textContent === LastSignalAndroid.version()"));
             assertEquals("true",js(scenario,"document.getElementById('offlineCheck').hidden && document.getElementById('appUpdate').hidden"));
             assertEquals("true",js(scenario,"document.getElementById('continueGame').click(); !document.getElementById('camp').hidden"));
             assertEquals("\"handled\"",js(scenario,"window.LastSignalApp.back()"));

@@ -1,6 +1,6 @@
-import { coinDesign, coinDesignKey } from '../../data/coin-art.js?v=0.55.4';
-import { conditionProfile, metalPalette, paintWear } from './condition.js?v=0.55.4';
-import { wornCoinFace } from './coin-surface.js?v=0.55.4';
+import { coinDesign, coinDesignKey } from '../../data/coin-art.js?v=0.55.5';
+import { conditionProfile, metalPalette, paintWear } from './condition.js?v=0.55.5';
+import { wornCoinFace } from './coin-surface.js?v=0.55.5';
 const images=new Map(),faces=new Map(),listeners=new Set();
 let revision=0;
 export const coinImageRevision=()=>revision;

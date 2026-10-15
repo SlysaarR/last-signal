@@ -1,13 +1,13 @@
-import { pageWindow, layoutRevision, setPane, resetPage } from './layout.js?v=0.55.4';
-import { journalGoals, openVisitRoute } from './journal.js?v=0.55.4';
-import { t as localize, translateHTML } from './i18n.js?v=0.55.4';
-import { chapters } from '../data/career.js?v=0.55.4';
-import { careerSnapshot, mainObjective, claimChapter, trackFocus } from './career.js?v=0.55.4';
-import { showSetItems } from './collection.js?v=0.55.4';
-import { activeOrder } from './orders.js?v=0.55.4';
-import { s } from './storage.js?v=0.55.4';
-import { $ } from './dom.js?v=0.55.4';
-import { busy, render, showTab } from './ui.js?v=0.55.4';
+import { pageWindow, layoutRevision, setPane, resetPage } from './layout.js?v=0.55.5';
+import { journalGoals, openVisitRoute } from './journal.js?v=0.55.5';
+import { t as localize, translateHTML } from './i18n.js?v=0.55.5';
+import { chapters } from '../data/career.js?v=0.55.5';
+import { careerSnapshot, mainObjective, claimChapter, trackFocus } from './career.js?v=0.55.5';
+import { showSetItems } from './collection.js?v=0.55.5';
+import { activeOrder } from './orders.js?v=0.55.5';
+import { s } from './storage.js?v=0.55.5';
+import { $ } from './dom.js?v=0.55.5';
+import { busy, render, showTab } from './ui.js?v=0.55.5';
 const keys={};
 const meter=(label,value,total)=>`<div class="career-meter"><progress aria-label="${label}" value="${value}" max="${total}"></progress><span>${value} / ${total}</span></div>`;
 export function renderMainObjective(place){

@@ -1,13 +1,13 @@
-import { conditionProfile, metalPalette, paintWear } from './condition.js?v=0.55.4';
-import { coinEdgeSpec } from '../../data/coin-art.js?v=0.55.4';
-import { paintCoinReference, onCoinImagesReady, coinFaceImageKey } from './coin-reference.js?v=0.55.4';
-import { paintLaterHryvniaPortrait } from './hryvnia-portraits.js?v=0.55.4';
-import { paintHryvniaPortrait } from './hryvnia.js?v=0.55.4';
+import { conditionProfile, metalPalette, paintWear } from './condition.js?v=0.55.5';
+import { coinEdgeSpec } from '../../data/coin-art.js?v=0.55.5';
+import { paintCoinReference, onCoinImagesReady, coinFaceImageKey } from './coin-reference.js?v=0.55.5';
+import { paintLaterHryvniaPortrait } from './hryvnia-portraits.js?v=0.55.5';
+import { paintHryvniaPortrait } from './hryvnia.js?v=0.55.5';
 // Original Canvas rendition of the 25-kopiyok reverse; not an exact mint-die reproduction.
 // References: museum.mincult.gov.ua/collections/moneta-25-kopiyok-1992-r-125364
 // commons.wikimedia.org/wiki/File:Ukraine-25-kopiyok-1992.jpg
-import { types } from '../../data/items.js?v=0.55.4';
-import { createLazyThumbnails } from './lazy-thumbnails.js?v=0.55.4';
+import { types } from '../../data/items.js?v=0.55.5';
+import { createLazyThumbnails } from './lazy-thumbnails.js?v=0.55.5';
 // Shared denomination-side artwork; mint die micro-varieties are intentionally not simulated.
 export function isUkrainianCoin(t) {
   return t?.country === 'Україна' && (t.unit?.startsWith('коп') || ([1,2,5,10].includes(t.value) && t.unit?.startsWith('гр')));

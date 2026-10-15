@@ -853,7 +853,7 @@ export const phrases = {
   "Повернутися до всього альбому": "Show the whole album",
   "Про колекцію": "About the collection",
   "Натисни предмет для огляду.": "Press an item to inspect it.",
-  "ПРОТОТИП 0.55.4 · БЕЗ РЕКЛАМИ ТА ПОКУПОК": "PROTOTYPE 0.55.4 · NO ADS OR PURCHASES",
+  "ПРОТОТИП 0.55.5 · БЕЗ РЕКЛАМИ ТА ПОКУПОК": "PROTOTYPE 0.55.5 · NO ADS OR PURCHASES",
   "Довідник шукача": "Searcher's handbook",
   "Закрити довідник": "Close handbook",
   "Короткий виїзд, уважний пошук і знахідка з історією. Твоя довга мета — зібрати альбом, пройти кар’єру та відкрити краще спорядження.": "A short trip, a careful search and a find with a story. Your long-term goal: build your album, complete your career and unlock better equipment.",
@@ -886,7 +886,7 @@ export const phrases = {
   "Прогрес зберігається автоматично в цьому браузері. У налаштуваннях є «Збереження та резервні копії»: завантаж JSON-файл після важливих знахідок. Цей файл можна відновити на іншому пристрої. Хмарної синхронізації немає.": "Progress saves automatically in this browser. Open Saves and backups in Settings and export a JSON file after important finds. Restore it on another device if needed. There is no cloud sync.",
   "Готовність до офлайну видно в налаштуваннях → «Офлайн». Там само можна зберегти й оновити гру, навіть із незавершеним виїздом або знахідкою.": "Offline readiness is shown in Settings → Offline. You can also save and update there, even with an unfinished trip or find.",
   "Якщо анімація заважає, у налаштуваннях відкрий «Вигляд і зручність» й обери мінімальні ефекти погоди. Зменшення руху в налаштуваннях пристрою також враховується.": "If animation is distracting, choose minimal weather effects in Settings → Display and comfort. Your device's reduced-motion setting is also respected.",
-  "Версія 0.55.4 · гра в розробці. Ціни, рідкість і стан предметів — ігрові показники. Випадкові знахідки не мають підтвердженої історичної атрибуції.": "Version 0.55.4 · in development. Prices, rarity and condition are game statistics. Random finds have no confirmed historical attribution.",
+  "Версія 0.55.5 · гра в розробці. Ціни, рідкість і стан предметів — ігрові показники. Випадкові знахідки не мають підтвердженої історичної атрибуції.": "Version 0.55.5 · in development. Prices, rarity and condition are game statistics. Random finds have no confirmed historical attribution.",
   "Оновлюємо гру": "Updating the game",
   "Прогрес збережено. Зачекай на перезапуск…": "Progress saved. Waiting for restart…",
   "Відновити прогрес?": "Restore progress?",
@@ -1461,5 +1461,14 @@ export const phrases = {
   "Копію збережено у вибраний файл.": "Backup saved to the selected file.",
   "Збереження файлу скасовано. Прогрес гри не змінено.": "File save cancelled. Your game progress is unchanged.",
   "Не вдалося записати файл. Спробуй іншу папку.": "Could not write the file. Try another folder.",
-  "Обери, куди зберегти копію.": "Choose where to save your backup."
+  "Обери, куди зберегти копію.": "Choose where to save your backup.",
+  "Прогрес зберігається на цьому пристрої. Файл допоможе перенести його або відновити після втрати даних.": "Progress is stored on this device. Export a file to transfer it or recover after data loss.",
+  "Відновити автокопію": "Restore automatic backup",
+  "Автокопії ще немає.": "No automatic backup yet.",
+  "Автокопія: ": "Automatic backup: ",
+  "Автокопію не оновлено. Збережи прогрес у файл.": "Automatic backup was not updated. Export your progress to a file.",
+  "Автокопію не вдалося прочитати. Збережи прогрес у файл.": "Could not read the automatic backup. Export your progress to a file.",
+  "Автокопія оновлюється під час гри, виходу в меню та згортання. Перед видаленням гри збережи копію у файл.": "The automatic backup updates during play, when returning to the menu and when leaving the app. Export a file before uninstalling.",
+  "Відновлення замінить поточний прогрес. Його копія залишиться на цьому пристрої; також збережи її у файл.": "Restoring will replace your current progress. A copy will remain on this device; export it to a file too.",
+  "Відновлення не виконано. Не вдалося безпечно записати прогрес на пристрої. Поточна гра не змінена. Збережи її у файл.": "Restoration was not completed. Progress could not be safely saved on this device. The current game is unchanged. Export it to a file."
 };

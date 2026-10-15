@@ -1,8 +1,9 @@
-import { t as localize, dateLocale } from './i18n.js?v=0.55.4';
-import { androidBridge } from './platform.js?v=0.55.4';
-import { $ } from './dom.js?v=0.55.4';
-import { createBackup, parseBackup, MAX_BACKUP_SIZE } from './backup-format.js?v=0.55.4';
-import { s, RECOVERY_KEY, installBackupState } from './storage.js?v=0.55.4';
+import { t as localize, dateLocale } from './i18n.js?v=0.55.5';
+import { androidBridge } from './platform.js?v=0.55.5';
+import { $ } from './dom.js?v=0.55.5';
+import { createBackup, parseBackup, MAX_BACKUP_SIZE } from './backup-format.js?v=0.55.5';
+import { s, RECOVERY_KEY, installBackupState } from './storage.js?v=0.55.5';
+import { readCheckpoint, onCheckpointChange } from './checkpoint.js?v=0.55.5';
 let candidate = null, reading = 0;
 function message(text) { $('backupStatus').textContent = localize(text); }
 function download(text, prefix) {
@@ -19,11 +20,26 @@ function download(text, prefix) {
 function preview(data) {
   candidate = data;
   const next = data.state;
-  $('backupPreview').textContent = localize('Дата копії: ' + new Date(data.createdAt).toLocaleString(dateLocale()) + '\nДетектор / лопата / рюкзак: ' + [next.level,next.shovel,next.backpack].join(' / ') + '\nКупони: ' + next.coins + '\nКолекція: ' + next.collection.length + ' позицій\nВиїзд: ' + next.day + (next.atCamp ? ' · у таборі' : ' · у полі') + (next.pending ? '\nЄ незавершена знахідка — її буде відновлено.' : '') + '\n\nЗараз: ' + s.coins + ' купонів, ' + s.collection.length + ' позицій у колекції.\nВідновлення замінить поточний прогрес. Його копія залишиться в цьому браузері; також збережи її у файл.');
+  $('backupPreview').textContent = localize('Дата копії: ' + new Date(data.createdAt).toLocaleString(dateLocale()) + '\nДетектор / лопата / рюкзак: ' + [next.level,next.shovel,next.backpack].join(' / ') + '\nКупони: ' + next.coins + '\nКолекція: ' + next.collection.length + ' позицій\nВиїзд: ' + next.day + (next.atCamp ? ' · у таборі' : ' · у полі') + (next.pending ? '\nЄ незавершена знахідка — її буде відновлено.' : '') + '\n\nЗараз: ' + s.coins + ' купонів, ' + s.collection.length + ' позицій у колекції.\nВідновлення замінить поточний прогрес. Його копія залишиться на цьому пристрої; також збережи її у файл.');
   $('backupConfirm').disabled = false;
   $('backupDialog').showModal();
 }
 export function initBackup() {
+  function refreshCheckpoint(ok = true) {
+    let copy = null;
+    try { copy = readCheckpoint(); } catch { ok = false; }
+    $('backupAutoRecovery').disabled = !copy;
+    $('backupAutoStatus').textContent = localize(!ok ? 'Автокопію не оновлено. Збережи прогрес у файл.' : copy ? 'Автокопія: ' : 'Автокопії ще немає.') + (ok && copy ? new Date(copy.createdAt).toLocaleString(dateLocale()) : '');
+  }
+  refreshCheckpoint();
+  onCheckpointChange(refreshCheckpoint);
+  $('backupAutoRecovery').onclick = () => {
+    try {
+      const copy = readCheckpoint();
+      if (!copy) { message('Автокопії ще немає.'); return; }
+      preview(copy); message('Копію перевірено. Прогрес ще не змінено.');
+    } catch { message('Автокопію не вдалося прочитати. Збережи прогрес у файл.'); }
+  };
   window.addEventListener('last-signal-backup-export', e => {
     if (!androidBridge()) return;
     message(e.detail?.status === 'saved' ? 'Копію збережено у вибраний файл.' : e.detail?.status === 'cancelled' ? 'Збереження файлу скасовано. Прогрес гри не змінено.' : 'Не вдалося записати файл. Спробуй іншу папку.');
@@ -51,7 +67,7 @@ export function initBackup() {
       const next = parseBackup(JSON.stringify(candidate)).state;
       installBackupState(next, createBackup(s));
     } catch (error) {
-      $('backupPreview').textContent += localize('\n\nВідновлення не виконано. Не вдалося безпечно записати прогрес у браузері. Поточна гра не змінена. Збережи її у файл.');
+      $('backupPreview').textContent += localize('\n\nВідновлення не виконано. Не вдалося безпечно записати прогрес на пристрої. Поточна гра не змінена. Збережи її у файл.');
       return;
     }
     candidate = null; $('backupConfirm').disabled = true;

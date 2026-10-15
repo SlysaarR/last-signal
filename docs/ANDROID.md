@@ -1,6 +1,6 @@
 # Android preview
 
-Version: 0.55.4-test.1 (550401). Application ID: `com.slysaarr.lastsignal.preview`.
+Version: 0.55.5-test.2 (550502). Application ID: `com.slysaarr.lastsignal.preview`.
 Requires Android 8+ and an up-to-date Android System WebView (Chromium 108+).
 
 ## Install and transfer progress
@@ -14,6 +14,14 @@ Install future APKs over the existing app. Do not uninstall first: uninstalling 
 the local save. Export a backup before uninstalling or moving to another device.
 This preview uses its own application ID; a future production ID would require a backup transfer.
 
+## Automatic recovery
+
+A validated automatic backup is refreshed at most once a minute during ordinary saves,
+and after changed progress when returning to the menu or leaving the app. No polling
+timer is added. Settings → Backups → Restore automatic backup opens a preview and
+requires confirmation. A malformed primary save cannot overwrite the automatic copy.
+It is stored locally: export a JSON file before uninstalling or clearing app data.
+
 ## Build
 
 Use Java 17, Gradle 8.13, Android platform 36 and build tools 35.0.0.
@@ -25,7 +33,8 @@ gradle -p android :app:assembleRelease :app:testDebugUnitTest :app:lintRelease
 ```
 
 The Android workflow builds an unsigned release APK and runs instrumentation tests on
-an Android 15 emulator. It packages only resources verified against `sw.js` hashes.
+an Android 15 emulator, including an in-place update from 0.55.4-test.1,
+a partially cleaned find, preferences, 20 background/resume cycles and automatic recovery. It packages only resources verified against `sw.js` hashes.
 Release signing happens outside GitHub with the private preview key. The same key and
 application ID, and an increasing version code, are required for in-place updates.
 Never commit the signing key or passwords. CI artifacts intentionally contain no secrets.

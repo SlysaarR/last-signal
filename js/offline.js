@@ -1,7 +1,7 @@
-import { t as localize } from './i18n.js?v=0.55.4';
-import { androidBridge } from './platform.js?v=0.55.4';
+import { t as localize } from './i18n.js?v=0.55.5';
+import { androidBridge } from './platform.js?v=0.55.5';
 // Installation and release switching are separate from the player's save format.
-const VERSION = '0.55.4';
+const VERSION = '0.55.5';
 export function initOffline({save, canUpdate}) {
   const $ = id => document.getElementById(id);
   const summary=$('offlineSummary'), status=$('offlineStatus'), check=$('offlineCheck');

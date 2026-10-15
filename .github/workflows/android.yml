@@ -2,7 +2,7 @@ name: Android APK
 on:
   push:
     branches: [main]
-    paths: ['android/**', 'js/**', 'data/**', 'locales/**', 'css/**', 'assets/**', 'index.html', 'scripts/build-android-assets.mjs', '.github/workflows/android.yml']
+    paths: ['android/**', 'js/**', 'data/**', 'locales/**', 'css/**', 'assets/**', 'index.html', 'scripts/*android*', '.github/workflows/android.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -54,6 +54,13 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+      - name: Build previous app for in-place upgrade test
+        run: |
+          git fetch --depth=1 origin 3af160ad1c3286491612656adc78211e84a57c58
+          git worktree add --detach "$RUNNER_TEMP/last-signal-previous" 3af160ad1c3286491612656adc78211e84a57c58
+          node "$RUNNER_TEMP/last-signal-previous/scripts/build-android-assets.mjs"
+          gradle -p "$RUNNER_TEMP/last-signal-previous/android" --no-daemon :app:assembleDebug
+          echo "LAST_SIGNAL_PREVIOUS_APK=$RUNNER_TEMP/last-signal-previous/android/app/build/outputs/apk/debug/app-debug.apk" >> "$GITHUB_ENV"
       - uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35
@@ -61,7 +68,7 @@ jobs:
           arch: x86_64
           profile: pixel_2
           disable-animations: true
-          script: gradle -p android --no-daemon :app:connectedDebugAndroidTest
+          script: bash scripts/test-android-upgrade.sh
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -69,4 +76,5 @@ jobs:
           path: |
             android/app/build/reports/
             android/app/build/outputs/androidTest-results/
+            android/app/build/outputs/upgrade-results/
           retention-days: 30
