@@ -40,13 +40,13 @@ public class UpgradeTest {
             assertEquals("\"0.55.4-test.1\"",js(scene,"LastSignalAndroid.version()"));
             js(scene,"""
                 (async()=>{try{
-                  const {s,save}=await import('./js/storage.js?v=0.55.4');
-                  const {types}=await import('./data/items.js?v=0.55.4');
-                  const {acceptOrder}=await import('./js/orders.js?v=0.55.4');
-                  const {startGuide}=await import('./data/guide.js?v=0.55.4');
-                  const {depart}=await import('./js/camp.js?v=0.55.4');
-                  const excavation=await import('./js/excavation.js?v=0.55.4');
-                  const {createBackup}=await import('./js/backup-format.js?v=0.55.4');
+                  const {s,save}=await import('https://appassets.androidplatform.net/assets/game/js/storage.js?v=0.55.4');
+                  const {types}=await import('https://appassets.androidplatform.net/assets/game/data/items.js?v=0.55.4');
+                  const {acceptOrder}=await import('https://appassets.androidplatform.net/assets/game/js/orders.js?v=0.55.4');
+                  const {startGuide}=await import('https://appassets.androidplatform.net/assets/game/data/guide.js?v=0.55.4');
+                  const {depart}=await import('https://appassets.androidplatform.net/assets/game/js/camp.js?v=0.55.4');
+                  const excavation=await import('https://appassets.androidplatform.net/assets/game/js/excavation.js?v=0.55.4');
+                  const {createBackup}=await import('https://appassets.androidplatform.net/assets/game/js/backup-format.js?v=0.55.4');
                   document.getElementById('continueGame').click();
                   s.coins=345;s.collection=types.flatMap((t,id)=>t.kind==='trash'?[]:[id]).slice(0,3);
                   s.best=Object.fromEntries(s.collection.map(id=>[id,86]));
