@@ -9,25 +9,27 @@
     <link rel="apple-touch-icon" href="./assets/app/icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Останній сигнал">
-    <link rel="stylesheet" href="./css/atlas.css?v=0.51.0">
-    <link rel="stylesheet" href="./css/career.css?v=0.51.0">
-    <link rel="stylesheet" href="./css/offline.css?v=0.45.0">
+    <link rel="stylesheet" href="./css/atlas.css?v=0.52.0">
+    <link rel="stylesheet" href="./css/career.css?v=0.52.0">
+    <link rel="stylesheet" href="./css/offline.css?v=0.52.0">
     <title>Останній сигнал</title>
-    <link rel="stylesheet" href="./css/base.css?v=0.40.0">
-    <link rel="stylesheet" href="./css/search.css?v=0.43.0">
-    <link rel="stylesheet" href="./css/excavation.css?v=0.40.0">
-    <link rel="stylesheet" href="./css/inventory.css?v=0.42.0">
-    <link rel="stylesheet" href="./css/workshop.css?v=0.40.0">
-    <link rel="stylesheet" href="./css/camp.css?v=0.40.0">
-    <link rel="stylesheet" href="./css/backup.css?v=0.40.0">
-    <link rel="stylesheet" href="./css/coin-art.css?v=0.43.0">
-    <link rel="stylesheet" href="./css/journal.css?v=0.41.0">
-    <link rel="stylesheet" href="./css/environment.css?v=0.51.0">
-    <link rel="stylesheet" href="./css/guide.css?v=0.51.0">
-    <script type="module" src="./js/main.js?v=0.51.0">
+    <link rel="stylesheet" href="./css/base.css?v=0.52.0">
+    <link rel="stylesheet" href="./css/search.css?v=0.52.0">
+    <link rel="stylesheet" href="./css/excavation.css?v=0.52.0">
+    <link rel="stylesheet" href="./css/inventory.css?v=0.52.0">
+    <link rel="stylesheet" href="./css/workshop.css?v=0.52.0">
+    <link rel="stylesheet" href="./css/camp.css?v=0.52.0">
+    <link rel="stylesheet" href="./css/backup.css?v=0.52.0">
+    <link rel="stylesheet" href="./css/coin-art.css?v=0.52.0">
+    <link rel="stylesheet" href="./css/journal.css?v=0.52.0">
+    <link rel="stylesheet" href="./css/environment.css?v=0.52.0">
+    <link rel="stylesheet" href="./css/guide.css?v=0.52.0">
+    <link rel="stylesheet" href="./css/interface.css?v=0.52.0">
+    <script type="module" src="./js/main.js?v=0.52.0">
     </script>
   </head>
   <body>
+    <a class="skip-link" id="skipToScreen" href="#campTitle">До поточного розділу</a>
     <main>
       <header>
         <div>
@@ -37,7 +39,7 @@
         </div>
         <div class="header-actions"><button class="quiet" id="sound" aria-label="Увімкнути звук">Звук: ні</button><button class="quiet" id="openHelp" aria-haspopup="dialog" aria-controls="helpDialog">Як грати</button></div>
       </header>
-      <nav>
+      <nav id="gameNav" aria-label="Розділи гри">
         <button data-tab="camp">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="m3 19 9-15 9 15H3Zm5 0 4-7 4 7M12 4v8"/>
@@ -96,30 +98,37 @@
         <progress id="guideProgress" max="4" value="0" aria-label="Перші кроки: виконано з чотирьох"></progress>
         <div class="guide-actions"><button class="primary" id="guideAction"></button><button class="quiet" id="guideDismiss">Сховати підказки</button></div>
       </aside>
-      <section id="camp" hidden>
-        <div class="camp-heading"><div class="eyebrow">ДІМ / ПІДГОТОВКА</div><h2>Твій табір</h2><p id="campStatus"></p></div>
+      <section id="camp" hidden aria-labelledby="campTitle">
+        <div class="camp-heading"><div class="eyebrow">ДІМ / ПІДГОТОВКА</div><h2 id="campTitle" tabindex="-1">Твій табір</h2><p id="campStatus"></p></div>
         <div id="campLoot" class="camp-loot" hidden><h3>Розбери знахідки</h3><p id="campLootSummary"></p><button class="secondary" data-open="inventory">До рюкзака й сховища →</button></div>
-        <div class="main-objective"><div class="eyebrow" id="campObjectiveKind"></div><h3 id="campObjectiveTitle"></h3><p id="campObjectiveText"></p><div class="career-meter"><progress id="campObjectiveMeter" aria-label="Головна мета"></progress><span id="campObjectiveCount"></span></div><button class="secondary" id="campObjectiveOpen">До головної мети →</button><button class="quiet" data-open="journal">Кар’єра та щоденник</button><p id="journalBadge"></p></div>
-        <div class="camp-order"><div class="eyebrow">МЕТА НА ВИЇЗД</div><h3>Польові замовлення</h3><p id="campOrderSummary"></p><button class="secondary" data-open="journal">До замовлень →</button></div>
-        <div class="camp-ready">
+        <div class="camp-layout">
+          <div class="camp-preparation">
+            <div class="camp-ready">
           <div class="camp-energy"><span>ЕНЕРГІЯ</span><strong id="campEnergy"></strong></div>
           <progress id="campEnergyBar" aria-label="Запас енергії" value="0" max="100"></progress>
           <div class="camp-supplies"><div><span>ЇЖА В РЮКЗАКУ</span><strong id="campFood"></strong></div><div><span>ВІЛЬНІ МІСЦЯ</span><strong id="campSpace"></strong></div></div>
           <p id="campReadiness" class="camp-note"></p>
           <button class="secondary" id="restHome">Відпочити · безкоштовно</button>
         </div>
-        <div class="camp-links">
-          <button data-open="atlas"><b>Карта пошуку</b><small id="campMapSummary">Знайомі ділянки та розвідка нових місць</small><span aria-hidden="true">→</span></button>
+            <div class="camp-links camp-map-link"><button data-open="atlas"><b>Карта пошуку</b><small id="campMapSummary">Знайомі ділянки та розвідка нових місць</small><span aria-hidden="true">→</span></button></div>
+            <details class="route-panel"><summary><span class="eyebrow">НАПРЯМОК ВИЇЗДУ</span><b id="routeName"></b><small id="routeHint">Натисни, щоб обрати</small></summary><div id="routeCards"></div><p class="camp-note">Доступ відкривається за кількістю різних позицій у твоєму альбомі. Будь-який напрямок може виявитися бідним на знахідки.</p></details>
+            <section class="conditions-card" id="campConditions" aria-label="Умови перед виїздом"></section>
+            <div class="camp-departure"><button class="primary" id="startTrip">Вирушити · 25 купонів</button><p id="departureNote" class="camp-note"></p></div>
+          </div>
+          <div class="camp-followup">
+            <div class="main-objective"><div class="eyebrow" id="campObjectiveKind"></div><h3 id="campObjectiveTitle"></h3><p id="campObjectiveText"></p><div class="career-meter"><progress id="campObjectiveMeter" aria-label="Головна мета"></progress><span id="campObjectiveCount"></span></div><button class="secondary" id="campObjectiveOpen">До головної мети →</button><button class="quiet" data-open="journal">Кар’єра та щоденник</button><p id="journalBadge"></p></div>
+            <div class="camp-order"><div class="eyebrow">МЕТА НА ВИЇЗД</div><h3>Польові замовлення</h3><p id="campOrderSummary"></p><button class="secondary" data-open="journal">До замовлень →</button></div>
+            <div class="camp-links">
           <button data-open="inventory"><b>Рюкзак і сховище</b><small>Звільнити місце · продати знахідки</small><span aria-hidden="true">→</span></button>
           <button data-open="gear"><b>Майстерня та провізія</b><small>Спорядження · їжа на виїзд</small><span aria-hidden="true">→</span></button>
           <button data-open="collection"><b>Твоя колекція</b><small>Переглянути альбоми знахідок</small><span aria-hidden="true">→</span></button>
         </div>
-        <details class="route-panel"><summary><span class="eyebrow">НАПРЯМОК ВИЇЗДУ</span><b id="routeName"></b><small id="routeHint">Натисни, щоб обрати</small></summary><div id="routeCards"></div><p class="camp-note">Доступ відкривається за кількістю різних позицій у твоєму альбомі. Будь-який напрямок може виявитися бідним на знахідки.</p></details>
-        <section class="conditions-card" id="campConditions" aria-label="Умови перед виїздом"></section>
-        <div class="camp-departure"><button class="primary" id="startTrip">Вирушити · 25 купонів</button><p id="departureNote" class="camp-note"></p></div>
-        <div class="camp-summary"><div class="eyebrow">ПОЛЬОВИЙ ЩОДЕННИК</div><h2>Минулий виїзд</h2><div id="tripSummary"></div></div>
-        <details class="weather-settings"><summary>Ефекти погоди</summary><label for="weatherEffects">Деталізація</label><select id="weatherEffects"><option value="auto">Автоматично</option><option value="full">Повні ефекти</option><option value="low">Мінімальні · без анімації</option></select><p id="weatherEffectsNote"></p></details>
-        <details class="offline-panel" id="offlinePanel">
+            <div class="camp-summary"><div class="eyebrow">ПОЛЬОВИЙ ЩОДЕННИК</div><h2>Минулий виїзд</h2><div id="tripSummary"></div></div>
+          </div>
+        </div>
+        <div class="camp-settings">
+          <details class="weather-settings"><summary>Вигляд і зручність</summary><label for="textSize">Розмір тексту</label><select id="textSize" aria-describedby="textSizeNote"><option value="normal">Звичайний · 100%</option><option value="large">Збільшений · 115%</option><option value="largest">Великий · 130%</option></select><p id="textSizeNote" role="status" aria-live="polite">Розмір запам’ятовується на цьому пристрої. Масштаб браузера також працює.</p><label for="weatherEffects">Ефекти погоди</label><select id="weatherEffects"><option value="auto">Автоматично</option><option value="full">Повні ефекти</option><option value="low">Мінімальні · без анімації</option></select><p id="weatherEffectsNote"></p></details>
+          <details class="offline-panel" id="offlinePanel">
           <summary><span>Гра на телефоні</span><small id="offlineSummary">Підготовка офлайну…</small></summary>
           <p id="offlineStatus" role="status" aria-live="polite">Завантажуємо гру для роботи без інтернету.</p>
           <button class="primary" id="appUpdate" hidden>Зберегти й оновити гру</button>
@@ -128,7 +137,7 @@
           <p id="installHelp">Щоб додати іконку гри, відкрий меню браузера → «Встановити застосунок» або «На головний екран». Якщо такого пункту немає, відкрий посилання у звичайному браузері.</p>
           <p class="offline-note">Офлайн готовий лише після повного завантаження. Посилання на зовнішні каталоги потребують інтернету. Прогрес зберігається в цьому браузері; резервну копію можна зробити нижче.</p>
         </details>
-        <details class="backup-panel"><summary>Збереження та резервні копії</summary>
+          <details class="backup-panel"><summary>Збереження та резервні копії</summary>
           <p>Прогрес зберігається в цьому браузері. Файл допоможе перенести його на інший пристрій або відновити після втрати даних.</p>
           <button class="secondary" id="backupExport">Зберегти прогрес у файл</button>
           <label for="backupFile">Вибрати копію для відновлення</label>
@@ -136,10 +145,11 @@
           <button class="quiet" id="backupRecovery">Копія перед останнім відновленням</button>
           <p id="backupStatus" role="status" aria-live="polite">Зберігай копію після важливих знахідок. Це ручна копія, а не хмарна синхронізація.</p>
         </details>
+        </div>
       </section>
       <section id="atlas" hidden aria-labelledby="atlasTitle">
         <button id="atlasBack" class="quiet">← До табору</button>
-        <div class="atlas-heading"><div><div class="eyebrow">ТВОЇ МІСЦЯ / РОЗВІДКА</div><h2 id="atlasTitle">Карта пошуку</h2></div><small id="atlasCount">0 / 6 ділянок</small></div>
+        <div class="atlas-heading"><div><div class="eyebrow">ТВОЇ МІСЦЯ / РОЗВІДКА</div><h2 id="atlasTitle" tabindex="-1">Карта пошуку</h2></div><small id="atlasCount">0 / 6 ділянок</small></div>
         <p id="atlasNotice" role="status" aria-live="polite" tabindex="-1"></p>
         <div class="atlas-map">
           <svg viewBox="0 0 420 246" preserveAspectRatio="none" aria-hidden="true">
@@ -159,8 +169,8 @@
         <div class="atlas-scout"><div class="eyebrow">НОВА ДІЛЯНКА</div><h3>Розвідати незнайоме місце</h3><label for="atlasRoute">Напрямок розвідки</label><select id="atlasRoute"></select><p id="atlasRouteNote"></p><button class="secondary" id="atlasScout">Обрати розвідку нового місця</button><p id="atlasCapacity"></p></div>
         <p class="camp-note">Пройдені відсотки показують рух котушки, а не частку знайдених предметів. Повернення не відновлює здобич. На карті зберігаються до шести ділянок; прибирай їх у таборі, коли вирішиш рухатися далі.</p>
       </section>
-      <section id="journal" hidden>
-        <div class="journal-heading"><div class="eyebrow">ЗАВДАННЯ / СТАТИСТИКА</div><h2>Польовий щоденник</h2></div>
+      <section id="journal" hidden aria-labelledby="journalTitle">
+        <div class="journal-heading"><div class="eyebrow">ЗАВДАННЯ / СТАТИСТИКА</div><h2 id="journalTitle" tabindex="-1">Польовий щоденник</h2></div>
         <div class="career-heading"><div class="eyebrow">КАР’ЄРА ШУКАЧА</div><h2 id="careerTitle" tabindex="-1">Твій шлях</h2><strong id="careerRank"></strong><p id="careerProgress"></p><button class="secondary" id="trackCareer" aria-pressed="true">Головна мета: кар’єра</button></div>
         <p class="career-note">Умови майбутніх етапів рахуються вже зараз. Альбом, відвідані місцевості, завершені цілі й замовлення враховано. Відзнаки отримуй послідовно в таборі. Глибокі знахідки та повернення до мітки рахуються з версії 0.47.</p>
         <p id="careerNotice" role="status" aria-live="polite"></p><div id="careerCards"></div>
@@ -180,13 +190,13 @@
         <details class="journal-panel"><summary>Атлас місцевостей <span>8 місць</span></summary><div id="visitedPlaces"></div></details>
         <details class="journal-panel" open><summary>Історія виїздів <span>останні 12</span></summary><div id="tripHistory"></div></details>
       </section>
-      <section id="inventory" hidden>
+      <section id="inventory" hidden aria-labelledby="inventoryTitle">
         <div id="inventoryNotice" hidden>
           <p id="inventoryNoticeText" role="status" aria-live="polite"></p>
           <button class="secondary" id="showReturnedItem" hidden>Показати попередній екземпляр у сховищі</button>
         </div>
         <div class="inventory-controls">
-          <h2>Розбір знахідок</h2>
+          <h2 id="inventoryTitle" tabindex="-1">Розбір знахідок</h2>
           <p id="inventorySummary" tabindex="-1" role="status" aria-live="polite"></p>
           <div id="inventoryReviewActions" class="inventory-batch-actions"><button id="reviewAlbum" class="secondary">Кращі до альбому</button><button id="reviewSale" class="secondary">Переглянути продаж</button><small>Обидві дії враховують увесь рюкзак і сховище.</small></div>
           <p id="inventoryFieldNote" class="camp-note" hidden>Продаж і поповнення альбому доступні після повернення до табору.</p>
@@ -217,7 +227,7 @@
           </div>
         </div>
       </section>
-      <section id="search">
+      <section id="search" aria-label="Пошук на ділянці">
         <div class="field-stage">
           <canvas id="field" width="880" height="720" tabindex="0" role="img" aria-label="Поле пошуку. Ведіть пальцем або стрілками клавіатури, пробіл — копати, M — позначити місце.">
           </canvas>
@@ -273,7 +283,7 @@
         <div class="search-status">
           <p class="sub" id="fieldBag">
           </p>
-          <span class="build-tag">v0.51.0</span>
+          <span class="build-tag">v0.52.0</span>
         </div>
         <div class="main-objective"><div class="eyebrow" id="fieldObjectiveKind"></div><h3 id="fieldObjectiveTitle"></h3><p id="fieldObjectiveText"></p><div class="career-meter"><progress id="fieldObjectiveMeter" aria-label="Головна мета"></progress><span id="fieldObjectiveCount"></span></div><button class="quiet" id="fieldObjectiveOpen">Деталі головної мети →</button></div>
         <div class="log" id="log" aria-live="polite">Обстежуй ділянку — кількість сигналів невідома. Шукай найчіткіший сигнал.</div>
@@ -283,9 +293,9 @@
           <div id="fieldOrder" class="field-order" hidden><span id="fieldOrderText"></span><button class="quiet" data-open="journal">Деталі замовлення →</button></div>
         </details>
       </section>
-      <section id="gear" hidden>
+      <section id="gear" hidden aria-labelledby="gearTitle">
         <div class="eyebrow">ТАБІР / СПОРЯДЖЕННЯ</div>
-        <h2>Майстерня</h2>
+        <h2 id="gearTitle" tabindex="-1">Майстерня</h2>
         <p id="workshopStatus" class="workshop-intro"></p>
         <article class="gear-card">
           <div class="gear-heading"><h2 id="level"></h2><span id="detectorBadge" class="gear-badge"></span></div>
@@ -319,19 +329,19 @@
           <p>Рюкзак вміщує знахідки та їжу: кожен предмет займає одне місце. 10 ступенів дають 8–40 місць. У полі немає автоматичного продажу чи поповнення альбому. Повний рюкзак: залиш нову знахідку або заміни предмет. У таборі продай здобич, збережи у сховищі чи додай до альбому. Магазин і прокачка доступні лише вдома. Відпочинок удома відновлює енергію. Переїзд за тарифом обраної ділянки чи напрямку розвідки не поповнює сили й не скидає ліміт їжі. Повернення до табору безкоштовне. Ділянка та мітки залишаються на карті; здобич повторно не з’являється. Якщо немає 25 купонів, із табору можна безкоштовно вирушити на бідне узбіччя.</p>
         </div>
       </section>
-      <section id="collection" hidden>
-        <h2>Твоя колекція</h2>
+      <section id="collection" hidden aria-labelledby="collectionTitle">
+        <h2 id="collectionTitle" tabindex="-1">Твоя колекція</h2>
         <p class="sub" id="collectionCount">
         </p>
-        <details class="album-sets journal-panel" id="albumSets"><summary>Тематичні набори <span id="albumSetCount"></span></summary><p>Зараховуються лише монети в альбомі. Для кожної частини достатньо одного відповідного екземпляра. Набори не витрачають монети й можуть перетинатися; відзнаки за них входять до кар’єри.</p><p id="albumSetNotice" role="status" aria-live="polite"></p><div id="albumSetCards"></div></details>
-        <div class="set-filter" id="setFilterBar" hidden><div id="setFilterText"></div><button class="secondary" id="clearSetFilter">Повернутися до всього альбому</button></div>
-        <div class="category-tabs" id="categories">
+        <div class="collection-layout">
+          <div class="collection-filters">
+            <div class="category-tabs" id="categories">
           <button data-category="coin">Монети України</button>
           <button data-category="jewel">Прикраси</button>
           <button data-category="relic">Інші знахідки</button>
           <button data-category="legacy" id="archiveTab">Архів прототипу</button>
         </div>
-        <div id="coinFilters">
+            <div id="coinFilters">
           <label for="denomFilter">Номінал</label>
           <select id="denomFilter">
             <option value="all">Усі номінали</option>
@@ -343,16 +353,21 @@
           <label class="missing-label">
             <input type="checkbox" id="missingFilter"> Лише незнайдені позиції</label>
             <p class="sub" id="albumScope">Річний альбом · 10 номіналів. Обігові та наборні випуски; без пробних, пам’ятних та інвестиційних серій. Пропущені роки не створюються автоматично.</p>
-            <div id="albumProgress" class="album-progress">
-            </div>
+            <details class="album-progress-panel"><summary>Прогрес за номіналами</summary><div id="albumProgress" class="album-progress"></div></details>
           </div>
-          <p class="sub" id="categoryCount">
+            <details class="album-sets journal-panel" id="albumSets"><summary>Тематичні набори <span id="albumSetCount"></span></summary><p>Зараховуються лише монети в альбомі. Для кожної частини достатньо одного відповідного екземпляра. Набори не витрачають монети й можуть перетинатися; відзнаки за них входять до кар’єри.</p><p id="albumSetNotice" role="status" aria-live="polite"></p><div id="albumSetCards"></div></details>
+          </div>
+          <div class="collection-results">
+            <div class="set-filter" id="setFilterBar" hidden><div id="setFilterText"></div><button class="secondary" id="clearSetFilter">Повернутися до всього альбому</button></div>
+            <p class="sub" id="categoryCount" role="status" aria-live="polite">
           </p>
           <div class="grid" id="items">
           </div>
           <p class="sub" id="catalogNote">Натисни монету, щоб оглянути обидва боки та гурт. Рівні рідкості та ціни адаптовано для гри.</p>
-        </section>
-        <footer>ПРОТОТИП 0.51.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
+          </div>
+        </div>
+      </section>
+        <footer>ПРОТОТИП 0.52.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
       </main>
       <dialog id="helpDialog" aria-labelledby="helpTitle">
         <div class="sheet-heading"><h2 id="helpTitle">Довідник шукача</h2><button class="quiet" data-close="helpDialog" aria-label="Закрити довідник">✕</button></div>
@@ -364,6 +379,7 @@
         <details><summary>Керування на телефоні та ПК</summary>
           <h3>Пошук</h3><p>На телефоні веди пальцем по ділянці. Мишею — рухай вказівник над нею. Для клавіатури спочатку вибери поле мишею або клавішею <kbd>Tab</kbd>: стрілки рухають котушку, <kbd>Пробіл</kbd> копає, <kbd>M</kbd> ставить чи прибирає мітку.</p>
           <h3>Огляд знахідки</h3><p>Один палець або перетягування мишею — обертання. Два пальці — масштаб і зсув. Коли вибрано зображення: стрілки обертають, <kbd>+</kbd> / <kbd>−</kbd> змінюють масштаб, <kbd>F</kbd> перевертає, <kbd>L</kbd> перемикає світло, <kbd>Home</kbd> повертає початковий вигляд. Ці дії також мають кнопки.</p>
+          <p>У таборі → «Вигляд і зручність» можна збільшити текст. Налаштування діє лише на цьому пристрої; масштаб браузера залишається доступним.</p>
           <p><kbd>Tab</kbd> переміщує фокус між кнопками, <kbd>Enter</kbd> натискає вибрану. Звук вмикається кнопкою у верхній частині гри; без звуку можна орієнтуватися за шкалою сигналу.</p>
         </details>
         <details><summary>Енергія, гроші й наступні виїзди</summary>
@@ -374,9 +390,9 @@
         <details><summary>Збереження, офлайн і швидкодія</summary>
           <p>Прогрес зберігається автоматично в цьому браузері. У таборі є «Збереження та резервні копії»: завантаж JSON-файл після важливих знахідок. Цей файл можна відновити на іншому пристрої. Хмарної синхронізації немає.</p>
           <p>Офлайн готовий, коли про це повідомить панель «Гра на телефоні». Там само перевіряються оновлення; встановлюй їх у таборі кнопкою «Зберегти й оновити гру».</p>
-          <p>Якщо анімація заважає, у таборі відкрий «Ефекти погоди» й обери мінімальні. Зменшення руху в налаштуваннях пристрою також враховується.</p>
+          <p>Якщо анімація заважає, у таборі відкрий «Вигляд і зручність» й обери мінімальні ефекти погоди. Зменшення руху в налаштуваннях пристрою також враховується.</p>
         </details>
-        <p class="help-note">Версія 0.51.0 · гра в розробці. Ціни, рідкість і стан предметів — ігрові показники. Випадкові знахідки не мають підтвердженої історичної атрибуції.</p>
+        <p class="help-note">Версія 0.52.0 · гра в розробці. Ціни, рідкість і стан предметів — ігрові показники. Випадкові знахідки не мають підтвердженої історичної атрибуції.</p>
       </dialog>
       <dialog id="appUpdateDialog" aria-labelledby="appUpdateTitle"><h2 id="appUpdateTitle">Оновлюємо гру</h2><p>Прогрес збережено. Зачекай на перезапуск…</p></dialog>
       <dialog id="backupDialog" aria-labelledby="backupTitle">

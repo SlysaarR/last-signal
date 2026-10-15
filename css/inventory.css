@@ -1,108 +1,108 @@
 /* Inventory and album: compact phone layouts with consistent touch targets. */
-#inventory h2, #collection h2 { margin:22px 0 10px; font-size:22px }
+#inventory h2, #collection h2 { margin:22px 0 10px; font-size:1.375rem }
 #inventory > h2:first-child, #collection > h2:first-child { margin-top:16px }
-#bagStatus, #collectionCount { color:#becbac; font-size:13px; line-height:1.6; margin:6px 0 }
+#bagStatus, #collectionCount { color:#becbac; font-size:0.8125rem; line-height:1.6; margin:6px 0 }
 #bagCapacity { height:8px; margin:10px 0 20px; accent-color:#c4de87 }
 .find-card { padding:16px; margin:12px 0; border:1px solid #3d4d3b; border-radius:18px; background:linear-gradient(135deg,#202e23,#16231c) }
 .find-heading { display:flex; gap:12px; align-items:center }
 .find-heading > div { min-width:0 }
-.find-heading h3 { font-size:16px; margin:0 0 4px; line-height:1.35; overflow-wrap:anywhere }
-.item-symbol { display:grid; place-items:center; flex:none; width:52px; height:56px; font-size:28px; border:1px solid #526043; border-radius:14px; background:#2b3827 }
-.find-heading small { color:#bace94; font-size:11px }
-.find-variant { margin:3px 0; color:#aab8a5; font-size:12px; line-height:1.4 }
+.find-heading h3 { font-size:1rem; margin:0 0 4px; line-height:1.35; overflow-wrap:anywhere }
+.item-symbol { display:grid; place-items:center; flex:none; width:52px; height:56px; font-size:1.75rem; border:1px solid #526043; border-radius:14px; background:#2b3827 }
+.find-heading small { color:#bace94; font-size:0.75rem }
+.find-variant { margin:3px 0; color:#aab8a5; font-size:0.75rem; line-height:1.4 }
 .find-metrics { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0; padding:13px 0; border-block:1px solid #384633 }
 .find-metrics > div + div { border-left:1px solid #384633; padding-left:16px }
-.find-metrics span { display:block; color:#a9b696; font-size:9px; letter-spacing:1.5px }
-.find-metrics strong { display:block; margin-top:5px; font-size:23px; color:#e2edc8; font-variant-numeric:tabular-nums }
-.find-metrics strong small { font-size:11px; font-weight:400; color:#adbaa2 }
+.find-metrics span { display:block; color:#a9b696; font-size:0.75rem; letter-spacing:1.5px }
+.find-metrics strong { display:block; margin-top:5px; font-size:1.4375rem; color:#e2edc8; font-variant-numeric:tabular-nums }
+.find-metrics strong small { font-size:0.75rem; font-weight:400; color:#adbaa2 }
 .find-metrics progress { height:5px; margin:6px 0 0 }
 .find-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px }
-.find-actions button { min-height:44px; padding:10px 7px; font-size:12px; line-height:1.35; margin:0 }
+.find-actions button { min-height:44px; padding:10px 7px; font-size:0.75rem; line-height:1.35; margin:0 }
 .find-actions button[data-itemaction="album"],.find-actions button:only-child { grid-column:1/-1; border-color:#718253; color:#d9e6be }
 .empty-state { padding:22px 18px; border:1px dashed #46533d; border-radius:16px; background:#142118; margin:14px 0 }
-.empty-state b { font-size:14px; color:#ccd7ba }
-.empty-state p { font-size:12px; line-height:1.6; color:#9eaf98; margin:8px 0 0 }
-#inventory .card { padding:14px; font-size:14px; line-height:1.7; background:#1b291e; border-color:#3c4b35 }
-#inventory .card button { display:block; min-height:44px; margin-top:10px; font-size:12px }
+.empty-state b { font-size:0.875rem; color:#ccd7ba }
+.empty-state p { font-size:0.75rem; line-height:1.6; color:#9eaf98; margin:8px 0 0 }
+#inventory .card { padding:14px; font-size:0.875rem; line-height:1.7; background:#1b291e; border-color:#3c4b35 }
+#inventory .card button { display:block; min-height:44px; margin-top:10px; font-size:0.75rem }
 #warehousePanel { border-top:1px solid #394833; margin-top:24px; padding-top:4px }
 #inventoryNotice { padding:14px; margin:14px 0; border:1px solid #849b61; border-radius:14px; background:#273923; scroll-margin-top:16px }
-#inventoryNotice p { margin:0; font-size:13px; line-height:1.6; color:#e1edc9 }
-#inventoryNotice button { width:100%; min-height:44px; margin-top:10px; font-size:12px }
+#inventoryNotice p { margin:0; font-size:0.8125rem; line-height:1.6; color:#e1edc9 }
+#inventoryNotice button { width:100%; min-height:44px; margin-top:10px; font-size:0.75rem }
 .find-card:focus { outline:2px solid #c7e292; outline-offset:3px }
-#warehousePanel > p { font-size:12px; line-height:1.6; color:#a8b69e }
-#unload { width:100%; min-height:44px; font-size:13px }
+#warehousePanel > p { font-size:0.75rem; line-height:1.6; color:#a8b69e }
+#unload { width:100%; min-height:44px; font-size:0.8125rem }
 #collection .category-tabs { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px }
 #collection .category-tabs button { min-height:44px }
 #coinFilters { padding:14px; border:1px solid #3b4b35; border-radius:16px; background:#17251c; display:grid; grid-template-columns:1fr 1fr; column-gap:10px }
 #coinFilters label[for=denomFilter] { grid-column:1; grid-row:1 }
 #coinFilters label[for=yearFilter] { grid-column:2; grid-row:1 }
-#coinFilters select { min-width:0; margin:6px 0 8px; font-size:13px; min-height:44px }
+#coinFilters select { min-width:0; margin:6px 0 8px; font-size:0.8125rem; min-height:44px }
 #coinFilters .missing-label, #albumScope, #albumProgress { grid-column:1/-1 }
-.missing-label { min-height:44px; margin:4px 0; font-size:12px }
-#albumScope { font-size:11px; line-height:1.6; margin:4px 0 }
+.missing-label { min-height:44px; margin:4px 0; font-size:0.75rem }
+#albumScope { font-size:0.75rem; line-height:1.6; margin:4px 0 }
 .album-progress { gap:4px; margin:10px 0 0 }
-.album-row { grid-template-columns:76px minmax(0,1fr) 52px; font-size:11px; gap:8px }
+.album-row { grid-template-columns:76px minmax(0,1fr) 52px; font-size:0.75rem; gap:8px }
 .album-row progress { margin:8px 0; height:6px }
 #categoryCount { line-height:1.6; margin:16px 0 4px }
 #items { grid-template-columns:repeat(2,minmax(0,1fr)); align-items:stretch; gap:10px }
-#items .album-heading { display:flex; justify-content:space-between; align-items:center; gap:8px; margin:18px 0 2px; padding-bottom:10px; border-bottom:1px solid #3b4934; font-size:17px }
-.album-heading small { font-size:10px; font-weight:400; color:#9dad91 }
+#items .album-heading { display:flex; justify-content:space-between; align-items:center; gap:8px; margin:18px 0 2px; padding-bottom:10px; border-bottom:1px solid #3b4934; font-size:1.0625rem }
+.album-heading small { font-size:0.75rem; font-weight:400; color:#9dad91 }
 #items .collect { display:flex; flex-direction:column; align-items:center; padding:12px 9px; border-radius:16px; min-width:0; background:#1c2b20 }
 #items .collect.unfound { background:#121e17; border-color:#3e4c38 }
 #items .collect.owned { border-color:#8b9b61 }
-#items .ownership { font-size:10px; color:#bbce96; margin:0; min-height:18px }
+#items .ownership { font-size:0.75rem; color:#bbce96; margin:0; min-height:18px }
 #items .unfound .ownership { color:#9baa94 }
-#items .collection-symbol { display:grid; place-items:center; height:50px; margin:6px 0 0; font-size:30px }
-#items .collect b { font-size:17px; margin:5px 0 0; line-height:1.3 }
-#items .collect small { font-size:11px; line-height:1.45 }
+#items .collection-symbol { display:grid; place-items:center; height:50px; margin:6px 0 0; font-size:1.875rem }
+#items .collect b { font-size:1.0625rem; margin:5px 0 0; line-height:1.3 }
+#items .collect small { font-size:0.75rem; line-height:1.45 }
 #items .coin-variant { min-height:32px; color:#bec9b3 }
 #items .rarity { margin-top:auto; padding-top:12px }
 #items .collection-condition { width:100%; border-top:1px solid #35442f; padding-top:8px; margin-top:10px }
 #catalogNote { line-height:1.7 }
 #inventory button:focus-visible, #collection button:focus-visible, #collection select:focus-visible { outline:2px solid #d5e9a3; outline-offset:3px }
-@media(max-width:350px) { .find-metrics strong { font-size:20px } #coinFilters { padding:10px } #items .collect { padding:11px 7px } }
+@media(max-width:350px) { .find-metrics strong { font-size:1.25rem } #coinFilters { padding:10px } #items .collect { padding:11px 7px } }
 
-.album-return-hint { margin:0 0 12px; color:#bed298; font-size:12px; line-height:1.5 }
+.album-return-hint { margin:0 0 12px; color:#bed298; font-size:0.75rem; line-height:1.5 }
 
 /* One shared view for sorting; all mutations still use the original item index. */
 .inventory-controls { padding:15px; border:1px solid #475b3c; border-radius:16px; background:#1b2b1f; margin:18px 0 }
-#inventory .inventory-controls h2 { margin:0 0 10px; font-size:20px }
-#inventorySummary { font-size:13px; line-height:1.65; color:#c4d5b0; margin:0 0 12px }
+#inventory .inventory-controls h2 { margin:0 0 10px; font-size:1.25rem }
+#inventorySummary { font-size:0.8125rem; line-height:1.65; color:#c4d5b0; margin:0 0 12px }
 .inventory-batch-actions,.inventory-filters { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px }
-.inventory-batch-actions button { min-height:48px; margin:0; padding:10px 7px; font-size:12px; line-height:1.4; white-space:normal }
-.inventory-batch-actions small { grid-column:1/-1; color:#aebe9f; font-size:11px; line-height:1.5; margin:0 0 14px }
-.inventory-filters label { min-width:0; font-size:11px; color:#c4d2b5 }
-.inventory-filters select { display:block; width:100%; min-width:0; min-height:44px; margin:6px 0 0; padding:8px 5px; font-size:12px }
-#inventoryFilterReset { min-height:44px; margin:8px 0 0; padding:7px 0; color:#d4e5af; font-size:12px; text-decoration:underline }
-.inventory-count { color:#acbe99; font-size:12px; margin:10px 0 }
-.item-status { display:inline-block; border:1px solid #506046; border-radius:6px; padding:4px 7px; font-size:11px; line-height:1.4; color:#c5d3b6 }
+.inventory-batch-actions button { min-height:48px; margin:0; padding:10px 7px; font-size:0.75rem; line-height:1.4; white-space:normal }
+.inventory-batch-actions small { grid-column:1/-1; color:#aebe9f; font-size:0.75rem; line-height:1.5; margin:0 0 14px }
+.inventory-filters label { min-width:0; font-size:0.75rem; color:#c4d2b5 }
+.inventory-filters select { display:block; width:100%; min-width:0; min-height:44px; margin:6px 0 0; padding:8px 5px; font-size:0.75rem }
+#inventoryFilterReset { min-height:44px; margin:8px 0 0; padding:7px 0; color:#d4e5af; font-size:0.75rem; text-decoration:underline }
+.inventory-count { color:#acbe99; font-size:0.75rem; margin:10px 0 }
+.item-status { display:inline-block; border:1px solid #506046; border-radius:6px; padding:4px 7px; font-size:0.75rem; line-height:1.4; color:#c5d3b6 }
 .item-status.new { color:#deefb2; background:#384b28; border-color:#8fa562 }
 .item-status.upgrade { color:#cce5d5; background:#254237; border-color:#64967d }
 .item-status.scrap { color:#bdc2b6 }
 .item-status-note { display:block; margin-top:6px; line-height:1.5 }
 .camp-loot { padding:17px; margin:16px 0; border:1px solid #768b50; border-radius:16px; background:#293c25 }
-.camp-loot h3 { font-size:18px; margin:0 0 8px }.camp-loot p { font-size:13px; line-height:1.65; color:#c9dbb5; margin:0 0 12px }
-.camp-loot button { width:100%; min-height:44px; margin:0; font-size:13px }
+.camp-loot h3 { font-size:1.125rem; margin:0 0 8px }.camp-loot p { font-size:0.8125rem; line-height:1.65; color:#c9dbb5; margin:0 0 12px }
+.camp-loot button { width:100%; min-height:44px; margin:0; font-size:0.8125rem }
 .review-heading { display:flex; gap:8px; justify-content:space-between; align-items:center }
-.review-heading h2 { margin:0; min-width:0; font-size:22px; overflow-wrap:anywhere }
+.review-heading h2 { margin:0; min-width:0; font-size:1.375rem; overflow-wrap:anywhere }
 .review-heading button { width:44px; height:44px; flex:none; padding:0; margin:0 }
-.review-scrap,.review-item { display:flex; align-items:center; gap:12px; min-height:44px; font-size:13px; line-height:1.5 }
+.review-scrap,.review-item { display:flex; align-items:center; gap:12px; min-height:44px; font-size:0.8125rem; line-height:1.5 }
 .review-scrap input,.review-item input { width:22px; height:22px; flex:none; accent-color:#c5df98; margin:0 }
 #reviewItems { max-height:38dvh; overflow-y:auto; overscroll-behavior:contain; border-block:1px solid #526044; margin:8px 0; padding:0 3px }
 .review-item { padding:12px 0; border-bottom:1px solid #384932; align-items:flex-start }
 .review-item:last-child { border:0 }.review-item span { min-width:0; overflow-wrap:anywhere }
 .review-item b,.review-item small,.review-item strong { display:block }
-.review-item b { font-size:13px; color:#e0e9cf }.review-item small { font-size:11px; color:#b0c09f; margin:3px 0 }
-.review-item strong { font-size:12px; color:#d4e7a6; font-weight:500 }
-#reviewNotice { color:#e4d59b; font-size:12px }#reviewNotice:empty { display:none }
-#reviewSelectAll { min-height:44px; padding:7px 0; font-size:12px; color:#cce2a5; text-decoration:underline }
+.review-item b { font-size:0.8125rem; color:#e0e9cf }.review-item small { font-size:0.75rem; color:#b0c09f; margin:3px 0 }
+.review-item strong { font-size:0.75rem; color:#d4e7a6; font-weight:500 }
+#reviewNotice { color:#e4d59b; font-size:0.75rem }#reviewNotice:empty { display:none }
+#reviewSelectAll { min-height:44px; padding:7px 0; font-size:0.75rem; color:#cce2a5; text-decoration:underline }
 .review-footer { padding-top:4px; background:#18261e }
-#reviewTotal { color:#d7e9b7; font-size:14px; font-weight:600; font-variant-numeric:tabular-nums }
-.review-footer button { width:100%; min-height:46px; margin:7px 0 0; font-size:13px; white-space:normal }
+#reviewTotal { color:#d7e9b7; font-size:0.875rem; font-weight:600; font-variant-numeric:tabular-nums }
+.review-footer button { width:100%; min-height:46px; margin:7px 0 0; font-size:0.8125rem; white-space:normal }
 .inventory-batch-actions[hidden],#inventoryFilterReset[hidden],.review-scrap[hidden],.camp-loot[hidden] { display:none }
 #inventoryReview input:focus-visible,#inventoryReview button:focus-visible,#inventory select:focus-visible { outline:2px solid #d5e9a3; outline-offset:3px }
 @media(max-width:360px) { .inventory-controls { padding:11px } .inventory-filters { grid-template-columns:minmax(0,1fr) } #inventoryReview { padding:18px } }
 .list-pager{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin:12px 0 22px}
-.list-pager[hidden]{display:none}.list-pager button{min-height:44px;font-size:11px;padding:8px;white-space:normal}
-.list-pager span{font-size:10px;color:#b8cda4;text-align:center;font-variant-numeric:tabular-nums}
+.list-pager[hidden]{display:none}.list-pager button{min-height:44px;font-size:0.75rem;padding:8px;white-space:normal}
+.list-pager span{font-size:0.75rem;color:#b8cda4;text-align:center;font-variant-numeric:tabular-nums}
 #reviewPager{margin:8px 0}.inventory-count{scroll-margin-top:14px}

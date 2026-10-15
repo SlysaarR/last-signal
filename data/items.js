@@ -1,6 +1,6 @@
 // Stable item IDs and catalogue assembly. Existing saves reference array positions; never reorder or remove entries.
-import { yearCatalog } from './coins.js?v=0.51.0';
-import { findCatalog } from './finds.js?v=0.51.0';
+import { yearCatalog } from './coins.js?v=0.52.0';
+import { findCatalog } from './finds.js?v=0.52.0';
 export const types = [{
   "name": "Залізний цвях",
   "icon": "🔩",

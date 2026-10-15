@@ -1,5 +1,5 @@
 // Cached ground detail only. It has no knowledge of target or hole positions.
-import { siteRandom } from '../../data/site-layout.js?v=0.51.0';
+import { siteRandom } from '../../data/site-layout.js?v=0.52.0';
 export function paintEnvironmentGround(c,environment,seed=1){
  if(!environment)return;
  const {ground}=environment,random=siteRandom(seed^0x492649);

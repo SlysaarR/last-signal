@@ -1,7 +1,7 @@
 .conditions-card{border:1px solid #536147;border-radius:16px;background:linear-gradient(135deg,#263329,#19261f);padding:15px;margin:14px 0;color:#e5ead9;overflow-wrap:anywhere}
-.conditions-card h3{font-size:17px;line-height:1.4;margin:7px 0 9px}.conditions-card p{font-size:12px;line-height:1.6;margin:9px 0}.conditions-card>small{display:block;color:#aab9a4;font-size:10px;line-height:1.6}
-.condition-costs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:12px 0}.condition-costs div{padding:9px 5px;background:#101e176e;border:1px solid #71806335;border-radius:10px;text-align:center;min-width:0}.condition-costs span{display:block;font-size:10px;color:#bac9ac}.condition-costs b{display:block;margin-top:4px;font-size:19px;font-variant-numeric:tabular-nums}.condition-costs small{font-size:9px;font-weight:400}.condition-budget{color:#cfdbbf}
-.weather-settings{margin:16px 0;padding:13px 15px;border:1px solid #354b3d;border-radius:13px;background:#17251d}.weather-settings summary{font-size:13px;cursor:pointer;min-height:30px}.weather-settings label{display:block;font-size:12px;margin:13px 0 7px}.weather-settings select{width:100%;min-height:44px;border:1px solid #617257;border-radius:8px;background:#223526;color:#ecf1dd;padding:8px;font:inherit}.weather-settings p{font-size:11px;line-height:1.6;color:#b3c2aa}
+.conditions-card h3{font-size:1.0625rem;line-height:1.4;margin:7px 0 9px}.conditions-card p{font-size:0.75rem;line-height:1.6;margin:9px 0}.conditions-card>small{display:block;color:#aab9a4;font-size:0.75rem;line-height:1.6}
+.condition-costs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:12px 0}.condition-costs div{padding:9px 5px;background:#101e176e;border:1px solid #71806335;border-radius:10px;text-align:center;min-width:0}.condition-costs span{display:block;font-size:0.75rem;color:#bac9ac}.condition-costs b{display:block;margin-top:4px;font-size:1.1875rem;font-variant-numeric:tabular-nums}.condition-costs small{font-size:0.75rem;font-weight:400}.condition-budget{color:#cfdbbf}
+.weather-settings{margin:16px 0;padding:13px 15px;border:1px solid #354b3d;border-radius:13px;background:#17251d}.weather-settings summary{font-size:0.8125rem;cursor:pointer;min-height:30px}.weather-settings label{display:block;font-size:0.75rem;margin:13px 0 7px}.weather-settings select{width:100%;min-height:44px;border:1px solid #617257;border-radius:8px;background:#223526;color:#ecf1dd;padding:8px;font:inherit}.weather-settings p{font-size:0.75rem;line-height:1.6;color:#b3c2aa}
 .route-forecast{color:#d1dfb8!important}.field-hud{z-index:2}.field-caption{z-index:2}
 .weather-layer{position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden;contain:paint}
 .weather-layer[data-weather="clear"]{background:linear-gradient(145deg,#f2da8714,transparent 60%)}
@@ -12,4 +12,4 @@
 .weather-layer[data-level="low"]::after{display:none}
 @keyframes field-rain{from{transform:translate3d(0,-32px,0)}to{transform:translate3d(-12px,39px,0)}}
 @media(prefers-reduced-motion:reduce){.weather-layer::after{display:none!important}}
-@media(max-width:350px){.conditions-card{padding:12px}.condition-costs span{font-size:9px}.condition-costs b{font-size:17px}}
+@media(max-width:350px){.conditions-card{padding:12px}.condition-costs span{font-size:0.75rem}.condition-costs b{font-size:1.0625rem}}

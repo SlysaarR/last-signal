@@ -1,9 +1,9 @@
-import { firstStepsOffer, startGuide, guideCard } from '../data/guide.js?v=0.51.0';
-import { s, save } from './storage.js?v=0.51.0';
-import { $ } from './dom.js?v=0.51.0';
-import { busy, render, showTab } from './ui.js?v=0.51.0';
-import { confirmDeparture, confirmReturnHome } from './camp.js?v=0.51.0';
-import { syncWeatherEffects } from './environment-ui.js?v=0.51.0';
+import { firstStepsOffer, startGuide, guideCard } from '../data/guide.js?v=0.52.0';
+import { s, save } from './storage.js?v=0.52.0';
+import { $ } from './dom.js?v=0.52.0';
+import { busy, render, showTab } from './ui.js?v=0.52.0';
+import { confirmDeparture, confirmReturnHome } from './camp.js?v=0.52.0';
+import { syncWeatherEffects } from './environment-ui.js?v=0.52.0';
 
 let lastCard = '';
 export function renderGuide() {

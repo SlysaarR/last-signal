@@ -8,17 +8,17 @@
   border:1px solid #526347
 }
 #excavate .eyebrow,#packDialog .eyebrow {
-  font-size:9px;
+  font-size:0.75rem;
   letter-spacing:2.2px;
   color:#bacc9c
 }
 #excavate h2 {
-  font-size:22px;
+  font-size:1.375rem;
   margin:7px 0 5px;
   line-height:1.15
 }
 #excavate #excHint {
-  font-size:12px;
+  font-size:0.75rem;
   line-height:1.5;
   margin:0;
   color:#adbea4
@@ -57,11 +57,11 @@
   justify-content:space-between;
   gap:10px;
   color:#b5c5a8;
-  font-size:11px
+  font-size:0.75rem
 }
 .exc-progress-row strong {
   color:#deecbc;
-  font:600 15px ui-monospace,monospace
+  font:600 0.9375rem ui-monospace,monospace
 }
 #excProgress {
   margin:8px 0 10px;
@@ -84,7 +84,7 @@
   background:#bdd98d
 }
 #excavate #excStatus {
-  font-size:12px;
+  font-size:0.75rem;
   line-height:1.45;
   min-height:18px;
   margin:0 0 12px;
@@ -106,7 +106,7 @@
   margin:0;
   padding:8px;
   color:#9db18f;
-  font-size:11px;
+  font-size:0.75rem;
   box-shadow:none
 }
 #packDialog .find-heading {
@@ -116,7 +116,7 @@
   gap:8px
 }
 .find-rarity {
-  font-size:10px;
+  font-size:0.75rem;
   border:1px solid currentColor;
   border-radius:20px;
   padding:4px 8px
@@ -140,18 +140,18 @@
   padding:9px 12px 11px;
   text-align:center;
   color:#98ad8b;
-  font-size:11px;
+  font-size:0.75rem;
   line-height:1.4;
   pointer-events:none
 }
 #packTitle {
-  font-size:23px;
+  font-size:1.4375rem;
   line-height:1.2;
   margin:12px 0 5px;
   letter-spacing:-.5px
 }
 #packDescription {
-  font-size:12px;
+  font-size:0.75rem;
   line-height:1.5;
   margin:0 0 12px;
   color:#a8b99d
@@ -170,24 +170,24 @@
 }
 .find-facts span {
   display:block;
-  font-size:9px;
+  font-size:0.75rem;
   letter-spacing:1px;
   color:#91a582;
   margin-bottom:4px
 }
 .find-facts strong {
-  font-size:21px;
+  font-size:1.3125rem;
   color:#d2e6a3;
   font-variant-numeric:tabular-nums
 }
 .find-facts small {
   display:block;
-  font-size:10px;
+  font-size:0.75rem;
   color:#a3b694;
   margin-top:3px
 }
 #packCapacity {
-  font-size:11px;
+  font-size:0.75rem;
   color:#b6c6a7;
   margin:8px 0 12px
 }
@@ -199,17 +199,17 @@
 }
 #packChoices .secondary {
   text-align:left;
-  font-size:12px
+  font-size:0.75rem
 }
 #packChoices p {
-  font-size:12px
+  font-size:0.75rem
 }
 #leaveFind {
   min-height:42px;
   background:transparent;
   color:#a6b998;
   border:1px solid #42553a;
-  font-size:12px
+  font-size:0.75rem
 }
 @media(prefers-reduced-motion:reduce) {
   .excavation.done #artifact {
@@ -229,7 +229,7 @@
     padding:16px
   }
   #excavate h2,#packTitle {
-    font-size:20px
+    font-size:1.25rem
   }
   .excavation {
     width:min(100%,40.8dvh);

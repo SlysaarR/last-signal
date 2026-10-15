@@ -5,7 +5,7 @@ body {
   margin:0;
   background:#0b1416;
   color:#e7ede2;
-  font:15px system-ui,sans-serif
+  font:1rem/1.5 system-ui,sans-serif
 }
 button {
   font:inherit;
@@ -29,21 +29,21 @@ header {
 }
 .eyebrow {
   color:#a9bd84;
-  font-size:10px;
+  font-size:0.75rem;
   letter-spacing:3px;
   font-weight:800
 }
 h1 {
-  font-size:29px;
+  font-size:1.8125rem;
   letter-spacing:-1px;
   margin:5px 0
 }
 h2 {
-  font-size:22px;
+  font-size:1.375rem;
   margin:8px 0
 }
 .sub {
-  font-size:12px;
+  font-size:0.75rem;
   color:#92aaa3
 }
 button.quiet {
@@ -65,7 +65,7 @@ nav button {
   background:transparent;
   color:#8b9f98;
   padding:10px 0;
-  font-size:13px
+  font-size:0.8125rem
 }
 nav button.active {
   color:#d4eaaa;
@@ -83,11 +83,11 @@ nav button.active {
 .stats span {
   display:block;
   color:#8ca69d;
-  font-size:10px;
+  font-size:0.75rem;
   letter-spacing:1px
 }
 .stats strong {
-  font-size:19px
+  font-size:1.1875rem
 }
 .location {
   display:flex;
@@ -96,7 +96,7 @@ nav button.active {
   margin:18px 0 10px
 }
 .tag {
-  font-size:10px;
+  font-size:0.75rem;
   border:1px solid #495c47;
   padding:5px 8px;
   border-radius:30px;
@@ -125,7 +125,7 @@ nav button.active {
   align-items:center
 }
 .readout strong {
-  font:700 28px monospace;
+  font:700 1.75rem monospace;
   color:#d6ed9c
 }
 .bars {
@@ -140,7 +140,7 @@ nav button.active {
   border-radius:2px
 }
 .hint {
-  font-size:12px;
+  font-size:0.75rem;
   color:#a5b9af;
   min-height:32px;
   line-height:1.4
@@ -166,7 +166,7 @@ nav button.active {
   padding:12px
 }
 .log {
-  font-size:13px;
+  font-size:0.8125rem;
   color:#b8cbbd;
   line-height:1.5;
   min-height:43px;
@@ -180,7 +180,7 @@ nav button.active {
   margin:12px 0
 }
 .card p {
-  font-size:13px;
+  font-size:0.8125rem;
   color:#aebfb5;
   line-height:1.6
 }
@@ -203,10 +203,10 @@ nav button.active {
 .collect b {
   display:block;
   margin:8px 0;
-  font-size:13px
+  font-size:0.8125rem
 }
 .collect span {
-  font-size:28px
+  font-size:1.75rem
 }
 .collect small {
   color:#a2b49e
@@ -228,7 +228,7 @@ dialog::backdrop {
   backdrop-filter:blur(5px)
 }
 dialog p {
-  font-size:14px;
+  font-size:0.875rem;
   line-height:1.6;
   color:#b6c7b7
 }
@@ -236,12 +236,12 @@ dialog .primary {
   width:100%
 }
 .find-icon {
-  font-size:55px;
+  font-size:3.4375rem;
   text-align:center;
   margin:12px
 }
 footer {
-  font-size:10px;
+  font-size:0.75rem;
   color:#617c70;
   text-align:center;
   margin-top:20px;
@@ -252,7 +252,7 @@ footer {
 }
 #saveNote {
   color:#dcb985;
-  font-size:11px
+  font-size:0.75rem
 }
 .excavation {
   position:relative;
@@ -283,7 +283,7 @@ footer {
 }
 #excavate p {
   margin:8px 0;
-  font-size:13px
+  font-size:0.8125rem
 }
 progress {
   width:100%;
@@ -295,7 +295,7 @@ progress {
 #excavate .exc-footer .secondary {
   width:100%;
   margin-top:10px;
-  font-size:12px
+  font-size:0.75rem
 }
 #excavate .primary {
   width:100%
@@ -304,13 +304,13 @@ progress {
   gap:12px
 }
 .location b {
-  font-size:16px
+  font-size:1rem
 }
 .tag {
   flex-shrink:0
 }
 .location-note {
-  font-size:12px;
+  font-size:0.75rem;
   color:#b2c3aa;
   line-height:1.5;
   margin:0 0 12px
@@ -330,7 +330,7 @@ progress {
   border-radius:12px;
   background:#182a22;
   color:#b8cdb5;
-  font-size:12px
+  font-size:0.75rem
 }
 .category-tabs button.active {
   background:#c4de87;
@@ -365,7 +365,7 @@ select {
   font:inherit
 }
 label {
-  font-size:12px;
+  font-size:0.75rem;
   color:#a6bea2
 }
 a {
@@ -388,7 +388,7 @@ a {
   grid-template-columns:90px 1fr 65px;
   gap:9px;
   align-items:center;
-  font-size:13px
+  font-size:0.8125rem
 }
 .album-row progress {
   width:100%;
