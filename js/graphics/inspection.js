@@ -1,11 +1,11 @@
-import { renderSoftwareMesh } from './inspection-software.js?v=0.55.1';
-import { buildFindShape } from './find-shapes.js?v=0.55.1';
-import { renderMesh } from './inspection-gl.js?v=0.55.1';
-import { paintUkrainianCoin, isUkrainianCoin, coinEdgeType } from './ukrainian-coins.js?v=0.55.1';
-import { conditionProfile, metalPalette, paintWear, artRandom } from './condition.js?v=0.55.1';
-import { coinDesign, coinEdgeSpec } from '../../data/coin-art.js?v=0.55.1';
-import { coinReliefImage } from './coin-reference.js?v=0.55.1';
-import { makeReliefMap, relightFace, lightTerms } from './inspection-light.js?v=0.55.1';
+import { renderSoftwareMesh } from './inspection-software.js?v=0.55.2';
+import { buildFindShape } from './find-shapes.js?v=0.55.2';
+import { renderMesh } from './inspection-gl.js?v=0.55.2';
+import { paintUkrainianCoin, isUkrainianCoin, coinEdgeType } from './ukrainian-coins.js?v=0.55.2';
+import { conditionProfile, metalPalette, paintWear, artRandom } from './condition.js?v=0.55.2';
+import { coinDesign, coinEdgeSpec } from '../../data/coin-art.js?v=0.55.2';
+import { coinReliefImage } from './coin-reference.js?v=0.55.2';
+import { makeReliefMap, relightFace, lightTerms } from './inspection-light.js?v=0.55.2';
 
 const TAU=Math.PI*2;
 const sub=(a,b)=>a.map((v,i)=>v-b[i]);

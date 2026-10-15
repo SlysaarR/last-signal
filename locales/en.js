@@ -1,5 +1,10 @@
 // English presentation text. Canonical catalogue values and save data stay unchanged.
 export const phrases = {
+  "Ще не відвідано:": "Not yet visited:",
+  "Напрямок для пошуку:": "Suggested route:",
+  "Місцевість випадкова — цей напрямок не гарантує потрібного місця.": "Locations are random — this route does not guarantee the place you need.",
+  "Де шукати місцевості": "Where to explore",
+  "Обрати напрямок →": "Choose a route →",
   "Бракує енергії для цієї розкопки. Можна пошукати легший сигнал або поїсти.": "Not enough energy for this dig. Try an easier signal or eat some food.",
   "Сили вичерпано. Повернення до табору безкоштовне.": "Out of energy. Returning to camp is free.",
   "Нагорода готова ·": "Reward ready \u00b7",
@@ -848,7 +853,7 @@ export const phrases = {
   "Повернутися до всього альбому": "Show the whole album",
   "Про колекцію": "About the collection",
   "Натисни предмет для огляду.": "Press an item to inspect it.",
-  "ПРОТОТИП 0.55.1 · БЕЗ РЕКЛАМИ ТА ПОКУПОК": "PROTOTYPE 0.55.1 · NO ADS OR PURCHASES",
+  "ПРОТОТИП 0.55.2 · БЕЗ РЕКЛАМИ ТА ПОКУПОК": "PROTOTYPE 0.55.2 · NO ADS OR PURCHASES",
   "Довідник шукача": "Searcher's handbook",
   "Закрити довідник": "Close handbook",
   "Короткий виїзд, уважний пошук і знахідка з історією. Твоя довга мета — зібрати альбом, пройти кар’єру та відкрити краще спорядження.": "A short trip, a careful search and a find with a story. Your long-term goal: build your album, complete your career and unlock better equipment.",
@@ -881,7 +886,7 @@ export const phrases = {
   "Прогрес зберігається автоматично в цьому браузері. У налаштуваннях є «Збереження та резервні копії»: завантаж JSON-файл після важливих знахідок. Цей файл можна відновити на іншому пристрої. Хмарної синхронізації немає.": "Progress saves automatically in this browser. Open Saves and backups in Settings and export a JSON file after important finds. Restore it on another device if needed. There is no cloud sync.",
   "Готовність до офлайну видно в налаштуваннях → «Офлайн». Там само можна зберегти й оновити гру, навіть із незавершеним виїздом або знахідкою.": "Offline readiness is shown in Settings → Offline. You can also save and update there, even with an unfinished trip or find.",
   "Якщо анімація заважає, у налаштуваннях відкрий «Вигляд і зручність» й обери мінімальні ефекти погоди. Зменшення руху в налаштуваннях пристрою також враховується.": "If animation is distracting, choose minimal weather effects in Settings → Display and comfort. Your device's reduced-motion setting is also respected.",
-  "Версія 0.55.1 · гра в розробці. Ціни, рідкість і стан предметів — ігрові показники. Випадкові знахідки не мають підтвердженої історичної атрибуції.": "Version 0.55.1 · in development. Prices, rarity and condition are game statistics. Random finds have no confirmed historical attribution.",
+  "Версія 0.55.2 · гра в розробці. Ціни, рідкість і стан предметів — ігрові показники. Випадкові знахідки не мають підтвердженої історичної атрибуції.": "Version 0.55.2 · in development. Prices, rarity and condition are game statistics. Random finds have no confirmed historical attribution.",
   "Оновлюємо гру": "Updating the game",
   "Прогрес збережено. Зачекай на перезапуск…": "Progress saved. Waiting for restart…",
   "Відновити прогрес?": "Restore progress?",

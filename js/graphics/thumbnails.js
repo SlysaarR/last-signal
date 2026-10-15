@@ -1,6 +1,6 @@
-import { types } from '../../data/items.js?v=0.55.1';
-import { createInspectionModel, drawInspection } from './inspection.js?v=0.55.1';
-import { createLazyThumbnails } from './lazy-thumbnails.js?v=0.55.1';
+import { types } from '../../data/items.js?v=0.55.2';
+import { createInspectionModel, drawInspection } from './inspection.js?v=0.55.2';
+import { createLazyThumbnails } from './lazy-thumbnails.js?v=0.55.2';
 const cache=new Map();
 function paint(canvas){
  const type=Number(canvas.dataset.artifact),condition=Number(canvas.dataset.condition),key=type+':'+condition;

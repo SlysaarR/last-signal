@@ -1,6 +1,6 @@
-import { t as localize } from './i18n.js?v=0.55.1';
+import { t as localize } from './i18n.js?v=0.55.2';
 // audio responsibilities for Last Signal.
-import { $ } from './dom.js?v=0.55.1';
+import { $ } from './dom.js?v=0.55.2';
 export let audio = null,
   sound = false,
   lastBeep = -Infinity;

@@ -1,9 +1,9 @@
-import { activeSite } from '../data/atlas.js?v=0.55.1';
-import { collectorMetrics } from '../data/career.js?v=0.55.1';
-import { goals, emptyProgress } from '../data/expeditions.js?v=0.55.1';
-import { types } from '../data/items.js?v=0.55.1';
-import { s, save } from './storage.js?v=0.55.1';
-import { recordOrderFind } from './orders.js?v=0.55.1';
+import { activeSite } from '../data/atlas.js?v=0.55.2';
+import { collectorMetrics } from '../data/career.js?v=0.55.2';
+import { goals, emptyProgress } from '../data/expeditions.js?v=0.55.2';
+import { types } from '../data/items.js?v=0.55.2';
+import { s, save } from './storage.js?v=0.55.2';
+import { recordOrderFind } from './orders.js?v=0.55.2';
 export function progress(){return s.progress||emptyProgress();}
 function writable(){return s.progress||(s.progress=emptyProgress());}
 export function goalMetrics(){
@@ -12,7 +12,7 @@ export function goalMetrics(){
 export function goalValue(goal){return goalMetrics()[goal.metric]||0;}
 export function claimGoal(id){
  const goal=goals.find(g=>g.id===id);
- if(!goal||!s.atCamp||s.pending||progress().claimed.includes(id)||goalValue(goal)<goal.target)return false;
+ if(!goal||!s.atCamp||s.pending||progress().claimed.includes(id)||goalValue(goal)<goal.target||s.coins+goal.reward>Number.MAX_SAFE_INTEGER)return false;
  writable().claimed.push(id);s.coins+=goal.reward;save();return true;
 }
 export function startLeg(travel,condition,environment=null){

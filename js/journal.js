@@ -1,13 +1,13 @@
-import { pageWindow, layoutRevision } from './layout.js?v=0.55.1';
-import { t as localize, translateHTML } from './i18n.js?v=0.55.1';
-import { forecastEnvironment, environmentName } from '../data/environment.js?v=0.55.1';
-import { siteName } from '../data/atlas.js?v=0.55.1';
-import { routes, goals, conditions, chosenRoute } from '../data/expeditions.js?v=0.55.1';
-import { locations } from '../data/locations.js?v=0.55.1';
-import { $ } from './dom.js?v=0.55.1';
-import { s,save } from './storage.js?v=0.55.1';
-import { progress,goalMetrics,claimGoal } from './progression.js?v=0.55.1';
-import { render,busy } from './ui.js?v=0.55.1';
+import { pageWindow, layoutRevision, resetPage, setPane } from './layout.js?v=0.55.2';
+import { t as localize, translateHTML } from './i18n.js?v=0.55.2';
+import { forecastEnvironment, environmentName } from '../data/environment.js?v=0.55.2';
+import { siteName } from '../data/atlas.js?v=0.55.2';
+import { routes, goals, conditions, chosenRoute, visitSuggestion } from '../data/expeditions.js?v=0.55.2';
+import { locations } from '../data/locations.js?v=0.55.2';
+import { $ } from './dom.js?v=0.55.2';
+import { s,save } from './storage.js?v=0.55.2';
+import { progress,goalMetrics,claimGoal } from './progression.js?v=0.55.2';
+import { render,busy,showTab } from './ui.js?v=0.55.2';
 let campKey='',journalKey='';
 export function journalGoals(metrics=goalMetrics()){
  const claimed=progress().claimed;
@@ -16,8 +16,17 @@ export function journalGoals(metrics=goalMetrics()){
 }
 function goalCard(g){
  const ready=g.value===g.target&&!g.done;
+ const guidance=g.metric==='places'&&!g.done&&g.value<g.target?visitSuggestion(s):null;
+ const help=guidance?`<details class="need-help"><summary>Де шукати місцевості</summary><p>${guidance.hint}</p><button class="quiet" data-visit-route ${s.atCamp&&!s.pending?'':'disabled'}>Обрати напрямок →</button></details>`:'';
  const action=g.done?'<span class="goal-status">✓ Нагороду отримано</span>':ready&&s.atCamp&&!s.pending?`<button class="primary" data-claim="${g.id}">Отримати ${g.reward} купонів</button>`:`<span class="goal-status">${ready?'Готово · забрати в таборі':'У процесі'}</span>`;
- return `<article class="goal-card ${g.done?'complete':ready?'ready':''}" data-goal="${g.id}"><div class="goal-head"><h3>${g.name}</h3><span>${g.done?'✓':g.reward+' куп.'}</span></div><p>${g.text}</p><div class="goal-meter"><progress aria-label="${g.name}" value="${g.value}" max="${g.target}"></progress><small>${g.value} / ${g.target}</small></div>${action}${g.done?'':`<button class="quiet" data-focus="goal:${g.id}">Стежити за цією ціллю</button>`}</article>`;
+ return `<article class="goal-card ${g.done?'complete':ready?'ready':''}" data-goal="${g.id}"><div class="goal-head"><h3>${g.name}</h3><span>${g.done?'✓':g.reward+' куп.'}</span></div><p>${g.text}</p><div class="goal-meter"><progress aria-label="${g.name}" value="${g.value}" max="${g.target}"></progress><small>${g.value} / ${g.target}</small></div>${help}${action}${g.done?'':`<button class="quiet" data-focus="goal:${g.id}">Стежити за цією ціллю</button>`}</article>`;
+}
+export function openVisitRoute(){
+ if(!s.atCamp||s.pending||busy())return;
+ const suggestion=visitSuggestion(s);if(!suggestion)return;
+ setPane('camp','ready');showTab('camp');
+ resetPage('routes',routes.findIndex(route=>route.id===suggestion.route.id));renderJournal('camp');
+ $('routeDialog').showModal();
 }
 export function renderJournal(scope='all'){
  const next=JSON.stringify([s.day,s.coins<25,s.progress,s.route,s.collection,s.best,s.atCamp,!!s.pending,layoutRevision()]);
@@ -46,5 +55,5 @@ export function renderJournal(scope='all'){
 }
 export function initJournal(){
  $('routeCards').addEventListener('click',e=>{const b=e.target.closest('[data-route]');if(!b||!s.atCamp||busy('routeDialog'))return;const r=routes.find(r=>r.id===b.dataset.route);if(!r||s.collection.length<r.need)return;$('routeDialog').close();s.route=r.id;if(s.atlas)s.atlas.selectedId=null;save();render();});
- $('goalCards').addEventListener('click',e=>{const b=e.target.closest('[data-claim]');if(!b||busy())return;if(claimGoal(b.dataset.claim)){$('journalNotice').textContent=localize('Нагороду отримано. Купони додано до балансу.');render();const next=$('goalCards').querySelector('[data-claim]')||$('goalSummary');next.focus?.({preventScroll:true});}});
+ $('goalCards').addEventListener('click',e=>{if(e.target.closest('[data-visit-route]')){openVisitRoute();return;}const b=e.target.closest('[data-claim]');if(!b||busy())return;if(claimGoal(b.dataset.claim)){$('journalNotice').textContent=localize('Нагороду отримано. Купони додано до балансу.');resetPage('goals');render();const next=$('goalCards').querySelector('[data-claim]')||$('goalSummary');next.focus?.({preventScroll:true});}});
 }

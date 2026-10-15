@@ -1,4 +1,4 @@
-import { phrases } from '../locales/en.js?v=0.55.1';
+import { phrases } from '../locales/en.js?v=0.55.2';
 export const LANGUAGE_KEY = 'last-signal-language';
 export let language = 'uk';
 const cyrillic = /[А-Яа-яІіЇїЄєҐґ]/;

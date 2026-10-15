@@ -1,5 +1,5 @@
-import { types } from './items.js?v=0.55.1';
-import { goals } from './expeditions.js?v=0.55.1';
+import { types } from './items.js?v=0.55.2';
+import { goals, visitSuggestion } from './expeditions.js?v=0.55.2';
 
 const small=['1 копійка','2 копійки','5 копійок','10 копійок','25 копійок','50 копійок'];
 const large=['1 гривня','2 гривні','5 гривень','10 гривень'];
@@ -43,7 +43,8 @@ export function careerView(state){
   const needs=chapter.needs.map(need=>{
    const g=need.goal&&goals.find(g=>g.id===need.goal),target=g?.target||need.target;
    const value=Math.min(target,g&&state.progress?.claimed.includes(g.id)?target:metrics[g?.metric||need.metric]||0);
-   return {...need,label:g?.name||need.label,hint:g?.text||need.hint,target,value,done:value>=target};
+   const guidance=g?.metric==='places'&&value<target?visitSuggestion(state):null;
+   return {...need,label:g?.name||need.label,hint:guidance?g.text+' '+guidance.hint:g?.text||need.hint,route:guidance?.route.id||null,target,value,done:value>=target};
   });
   return {...chapter,index,needs,done:claimed.includes(chapter.id),unlocked:index===claimed.length,ready:needs.every(n=>n.done)};
  });

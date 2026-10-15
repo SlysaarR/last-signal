@@ -1,4 +1,5 @@
-import { validEnvironment, groundTypes } from './environment.js?v=0.55.1';
+import { validEnvironment, groundTypes } from './environment.js?v=0.55.2';
+import { locations } from './locations.js?v=0.55.2';
 // Directions choose a landscape pool, never its luck or the items under the soil.
 export const routes = [
  {id:'wander',name:'Куди виведе дорога',cost:25,need:0,icon:'↗',text:'Усі 8 місцевостей. Найдешевша дорога, найбільше невідомого.',pool:[0,1,2,3,4,5,6,7]},
@@ -26,6 +27,17 @@ export const goals = [
  {id:'album80',name:'Тривала історія',text:'Збери 80 різних позицій.',metric:'album',target:80,reward:200}
 ];
 export function chosenRoute(state) { return routes.find(r=>r.id===state.route && state.collection.length>=r.need)||routes[0]; }
+// Read-only guidance based on published route weights, never the next RNG draw.
+export function visitSuggestion(state) {
+ const missing=locations.map((location,id)=>({location,id})).filter(({id})=>!state.progress?.visited.includes(id));
+ if(!missing.length)return null;
+ const ids=new Set(missing.map(({id})=>id));
+ const candidates=routes.filter(route=>state.collection.length>=route.need).map(route=>({route,
+  chance:route.pool.reduce((sum,id)=>sum+(ids.has(id)?locations[id].chance:0),0)/route.pool.reduce((sum,id)=>sum+locations[id].chance,0)
+ })).filter(row=>row.chance>0).sort((a,b)=>b.chance-a.chance||a.route.cost-b.route.cost);
+ const route=candidates[0].route;
+ return {route,hint:'Ще не відвідано: '+missing.map(({location})=>location.name).join(', ')+'. Напрямок для пошуку: «'+route.name+'» · '+route.cost+' купонів. Місцевість випадкова — цей напрямок не гарантує потрібного місця.'};
+}
 export function emptyProgress(){return {finds:0,kept:0,digs:0,empty:0,trips:0,visited:[],claimed:[],history:[],active:null};}
 export function validProgress(p,locationCount){
  const obj=x=>x && typeof x==='object' && !Array.isArray(x);
