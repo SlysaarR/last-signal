@@ -14,21 +14,21 @@ main {
   padding:16px 16px 96px;
   max-width:480px
 }
-header {
+main>header {
   gap:12px;
   margin:0 0 16px
 }
-header .eyebrow {
+main>header .eyebrow {
   font-size:0.75rem;
   letter-spacing:2.1px
 }
-header h1 {
+main>header h1 {
   font-size:1.4375rem;
   line-height:1.15;
   margin:4px 0 0;
   letter-spacing:-.7px
 }
-header .sub {
+main>header .sub {
   display:none
 }
 button {
@@ -152,12 +152,12 @@ body:has(#search:not([hidden])) main {
   flex-direction:column;
   gap:10px
 }
-body:has(#search:not([hidden])) header {
+body:has(#search:not([hidden])) main>header {
   margin:0;
   flex:none;
   height:40px
 }
-body:has(#search:not([hidden])) header h1 {
+body:has(#search:not([hidden])) main>header h1 {
   font-size:1.3125rem
 }
 body:has(#search:not([hidden])) .stats {
@@ -403,7 +403,7 @@ body:has(#search:not([hidden])) .stats {
   color:#d2e69b;
   font-size:0.75rem
 }
-body:has(#search:not([hidden])) footer {
+body:has(#search:not([hidden])) main>footer {
   display:none
 }
 @media(max-height:720px) {

@@ -1,13 +1,18 @@
-import { setPane } from './layout.js?v=0.55.0';
-import { $ } from './dom.js?v=0.55.0';
-import { s, save, KEY } from './storage.js?v=0.55.0';
-import { busy, showTab } from './ui.js?v=0.55.0';
-import { currentScreen } from './interface.js?v=0.55.0';
-import { openExcavation } from './excavation.js?v=0.55.0';
-import { openPacking } from './packing.js?v=0.55.0';
-import { t as localize, language, changeLanguage } from './i18n.js?v=0.55.0';
+import { setPane } from './layout.js?v=0.55.1';
+import { $ } from './dom.js?v=0.55.1';
+import { s, save, KEY } from './storage.js?v=0.55.1';
+import { busy, showTab } from './ui.js?v=0.55.1';
+import { currentScreen } from './interface.js?v=0.55.1';
+import { openExcavation } from './excavation.js?v=0.55.1';
+import { openPacking } from './packing.js?v=0.55.1';
+import { t as localize, language, changeLanguage } from './i18n.js?v=0.55.1';
 
 let returnScreen = null, started = false;
+// A saved field trip/find can resume after an update. Requiring camp here
+// would trap a player whose old build cannot finish the pending dialog.
+export function canUpdateGame() {
+  return ['menu','settings'].includes(currentScreen()) && !document.querySelector('dialog[open]');
+}
 export function renderMenu() {
   $('continueGame').textContent = localize(started ? 'Продовжити' : 'Грати');
   $('menuStatus').textContent = localize(s.pending ? 'Є незавершена знахідка' : started ? 'Виїзд '+s.day+' · Колекція: '+s.collection.length : 'Твоя перша знахідка попереду.');

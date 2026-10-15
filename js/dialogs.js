@@ -1,6 +1,6 @@
-import { t as localize } from './i18n.js?v=0.55.0';
+import { t as localize } from './i18n.js?v=0.55.1';
 // dialogs responsibilities for Last Signal.
-import { $ } from './dom.js?v=0.55.0';
+import { $ } from './dom.js?v=0.55.1';
 export let modalAction = null;
 export function modal(label, icon, title, text, button, action) {
   $('modalLabel').style.color = '#a9bd84';

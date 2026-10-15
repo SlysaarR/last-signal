@@ -9,11 +9,11 @@ main,body:has(#search:not([hidden])) main {
   padding: max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) calc(var(--bottom-clearance) + 24px) max(16px,env(safe-area-inset-left));
 }
 body:has(#search:not([hidden])) main { max-width:44rem; }
-header,body:has(#search:not([hidden])) header { height:auto; min-height:44px; gap:12px; flex-wrap:wrap; align-items:center; }
-header > div:first-child { flex:1 1 13rem; min-width:0; }
+main>header,body:has(#search:not([hidden])) main>header { height:auto; min-height:44px; gap:12px; flex-wrap:wrap; align-items:center; }
+main>header > div:first-child { flex:1 1 13rem; min-width:0; }
 .header-actions { flex-direction:row; flex-wrap:wrap; gap:8px; }
-header .eyebrow { letter-spacing:.12em; line-height:1.5; }
-header h1,body:has(#search:not([hidden])) header h1 { font-size:1.5rem; line-height:1.2; }
+main>header .eyebrow { letter-spacing:.12em; line-height:1.5; }
+main>header h1,body:has(#search:not([hidden])) main>header h1 { font-size:1.5rem; line-height:1.2; }
 nav { width:min(100%,68rem); }
 body:has(#search:not([hidden])) nav { width:min(100%,44rem); }
 nav button { font-size:.75rem; line-height:1.35; min-height:48px; padding:6px 2px; overflow-wrap:anywhere; }
@@ -96,7 +96,7 @@ dialog { width:calc(100% - 24px); max-width:32rem; max-height:calc(100dvh - 24px
 .review-heading { align-items:flex-start; }
 #reviewItems { max-height:42dvh; }
 .review-heading button { min-width:44px; }
-footer { color:#9bad96; line-height:1.6; }
+main>footer { color:#9bad96; line-height:1.6; }
 @media(min-width:48em) {
   :root { --bottom-clearance:0px; }
   nav,body:has(#search:not([hidden])) nav { position:static; transform:none; width:100%; border:1px solid #3b4b3a; border-radius:16px; padding:6px; margin:4px 0 18px; }

@@ -21,7 +21,7 @@ main {
   margin:auto;
   padding:20px 16px 28px
 }
-header {
+main>header {
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -240,7 +240,7 @@ dialog .primary {
   text-align:center;
   margin:12px
 }
-footer {
+main>footer {
   font-size:0.75rem;
   color:#617c70;
   text-align:center;

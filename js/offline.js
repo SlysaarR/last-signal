@@ -1,6 +1,6 @@
-import { t as localize } from './i18n.js?v=0.55.0';
+import { t as localize } from './i18n.js?v=0.55.1';
 // Installation and release switching are separate from the player's save format.
-const VERSION = '0.55.0';
+const VERSION = '0.55.1';
 export function initOffline({save, canUpdate}) {
   const $ = id => document.getElementById(id);
   const summary=$('offlineSummary'), status=$('offlineStatus'), check=$('offlineCheck');
@@ -20,7 +20,7 @@ export function initOffline({save, canUpdate}) {
   function render() {
     const waiting=candidate();
     summary.textContent=localize(waiting ? 'Доступне оновлення' : ready ? 'Готово до гри офлайн' : busy ? 'Завантаження…' : 'Офлайн ще не готовий');
-    status.textContent=localize(notice || (waiting ? 'Нова версія готова. Онови гру в таборі — прогрес буде збережено перед перезапуском.' : ready ? (online() ? 'Гра й зображення завантажені. Можна грати без інтернету.' : 'Ти без інтернету. Офлайн-копія готова до гри.') : 'Потрібне повне завантаження. Під’єднай інтернет і натисни «Підготувати офлайн».'));
+    status.textContent=localize(notice || (waiting ? 'Нова версія готова. Онови гру з головного меню — виїзд і знахідка збережуться.' : ready ? (online() ? 'Гра й зображення завантажені. Можна грати без інтернету.' : 'Ти без інтернету. Офлайн-копія готова до гри.') : 'Потрібне повне завантаження. Під’єднай інтернет і натисни «Підготувати офлайн».'));
     update.hidden=!waiting; update.disabled=applying || busy;
     check.disabled=busy || applying || !online();
     check.textContent=localize(ready ? 'Перевірити оновлення' : 'Підготувати офлайн');
@@ -100,7 +100,7 @@ export function initOffline({save, canUpdate}) {
   check.onclick=()=>checkRelease(true);
   update.onclick=async()=>{
     const worker=candidate();if(!worker || busy || applying)return;
-    if(!canUpdate() || document.querySelector('dialog[open]')) {notice='Спочатку заверши розкопку та повернися до табору. Потім можна оновити гру.';render();return;}
+    if(!canUpdate() || document.querySelector('dialog[open]')) {notice='Оновлення доступне з налаштувань головного меню, коли закриті інші вікна.';render();return;}
     if(!save()) {notice='Не вдалося зберегти прогрес. Оновлення зупинено. Збережи резервну копію у файл нижче.';render();return;}
     applying=true;notice='Прогрес збережено. Оновлюємо гру…';dialog.showModal();render();
     try {

@@ -1,13 +1,13 @@
-import { translateHTML, t as localize } from './i18n.js?v=0.55.0';
-import { foods } from '../data/balance.js?v=0.55.0';
-import { forecastEnvironment, currentEnvironment, environmentKey, environmentName, groundTypes } from '../data/environment.js?v=0.55.0';
-import { selectedSite } from '../data/atlas.js?v=0.55.0';
-import { chosenRoute, conditions } from '../data/expeditions.js?v=0.55.0';
-import { s, save } from './storage.js?v=0.55.0';
-import { $ } from './dom.js?v=0.55.0';
-import { digCostFor, emergencyAllowed, foodAmount, maxEnergy } from './rules.js?v=0.55.0';
-import { setWeatherAmbience } from './audio.js?v=0.55.0';
-import { busy, render } from './ui.js?v=0.55.0';
+import { translateHTML, t as localize } from './i18n.js?v=0.55.1';
+import { foods } from '../data/balance.js?v=0.55.1';
+import { forecastEnvironment, currentEnvironment, environmentKey, environmentName, groundTypes } from '../data/environment.js?v=0.55.1';
+import { selectedSite } from '../data/atlas.js?v=0.55.1';
+import { chosenRoute, conditions } from '../data/expeditions.js?v=0.55.1';
+import { s, save } from './storage.js?v=0.55.1';
+import { $ } from './dom.js?v=0.55.1';
+import { digCostFor, emergencyAllowed, foodAmount, maxEnergy } from './rules.js?v=0.55.1';
+import { setWeatherAmbience } from './audio.js?v=0.55.1';
+import { busy, render } from './ui.js?v=0.55.1';
 let pageActive=true,media=null;
 const prepKeys=new Map();
 export function departureConditions(){

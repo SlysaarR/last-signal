@@ -1,5 +1,5 @@
-import { types } from './items.js?v=0.55.0';
-import { goals } from './expeditions.js?v=0.55.0';
+import { types } from './items.js?v=0.55.1';
+import { goals } from './expeditions.js?v=0.55.1';
 
 const small=['1 копійка','2 копійки','5 копійок','10 копійок','25 копійок','50 копійок'];
 const large=['1 гривня','2 гривні','5 гривень','10 гривень'];

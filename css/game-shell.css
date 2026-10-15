@@ -3,9 +3,9 @@
 html,body{margin:0;width:100%;height:100%;background:#101923;color:var(--paper)}
 body{overflow:hidden;background:radial-gradient(ellipse at 85% 0,#22394b 0,transparent 55%),#101923}
 main,body:has(#search:not([hidden])) main,html:is([data-screen="menu"],[data-screen="settings"]) main{width:100%;max-width:1180px;height:100dvh;min-height:0;margin:auto;padding:max(8px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));display:grid;grid-template-rows:42px 34px minmax(0,1fr) 60px;gap:8px;overflow:hidden}
-main>header,body:has(#search:not([hidden])) header{grid-row:1;height:auto;min-height:0;margin:0;gap:8px;flex-wrap:nowrap}
-header>div:first-child{flex:1 1 auto}header .eyebrow,header .sub{display:none}
-header h1,body:has(#search:not([hidden])) header h1{font-size:1.05rem;letter-spacing:-.025em;margin:0;color:#f0dfc6}
+main>header,body:has(#search:not([hidden])) main>header{grid-row:1;height:auto;min-height:0;margin:0;gap:8px;flex-wrap:nowrap}
+main>header>div:first-child{flex:1 1 auto}main>header .eyebrow,main>header .sub{display:none}
+main>header h1,body:has(#search:not([hidden])) main>header h1{font-size:1.05rem;letter-spacing:-.025em;margin:0;color:#f0dfc6}
 .header-actions{gap:6px;flex-wrap:nowrap}.header-actions button{min-height:38px;padding:7px 12px;font-size:.8125rem}
 #openCoach{font-size:1rem;min-width:38px;padding:7px}
 main>.stats,body:has(#search:not([hidden])) .stats{grid-row:2;margin:0;padding:0;border:0;background:#0b131dbf;border-radius:9px;grid-template-columns:1fr 1fr 1fr;align-items:center}
