@@ -53,7 +53,9 @@ public class UpgradeTest {
                   s.bag=[{type:s.collection[0],condition:73}];
                   if(!acceptOrder('kop10'))throw Error('Order fixture');startGuide(s);
                   console.log('UPGRADE seed depart');if(!depart())throw Error('Departure fixture');document.getElementById('modalClose').click();
-                  s.energy=41.5;s.pending={type:30,condition:86,spent:7.5};
+                  // Use the procedural button: this is a persistence test. Coin-photo
+                  // readback on the emulator's software GPU is tracked separately.
+                  s.energy=41.5;s.pending={type:3,condition:86,spent:7.5};
                   console.log('UPGRADE seed excavation');excavation.openExcavation();excavation.brushAt(220,180);
                   if(!s.pending.cleanedCells?.length||s.pending.cleanedCells.length===256)throw Error('Partial find fixture');
                   console.log('UPGRADE seed save');createBackup(s);if(!save())throw Error('Seed save');
