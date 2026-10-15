@@ -1,5 +1,5 @@
-import { t as localize } from './i18n.js?v=0.54.1';
-import { $ } from './dom.js?v=0.54.1';
+import { t as localize } from './i18n.js?v=0.55.0';
+import { $ } from './dom.js?v=0.55.0';
 
 // Presentation only: panes and pages never enter the game save.
 export const panes = {
@@ -41,6 +41,10 @@ export function pageWindow(id,items,{size=1,key='',initial=0}={}) {
   $(id+'Page').textContent=localize('Сторінка '+(state.index+1)+' / '+pages);
   $(id+'Prev').disabled=state.index===0;$(id+'Next').disabled=state.index===pages-1;
   return items.slice(state.index*size,(state.index+1)*size);
+}
+export function resetPage(id,index=0) {
+  if(pageState[id])pageState[id].index=index;
+  revision++;
 }
 export function refreshLayout(){revision++;refresh();}
 export function initLayout(render,canOpen=()=>true,syncEffects=()=>{}) {

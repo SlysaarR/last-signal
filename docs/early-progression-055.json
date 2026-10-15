@@ -1,0 +1,243 @@
+{
+  "version": "0.55.0",
+  "scope": "Early economy: 12 seeded scenarios, 120 trips each",
+  "assumptions": [
+    "Actual current world generation, site distribution and weather. Only the cheapest route; no paid food.",
+    "Free rest before each trip. New sites each trip; old sites explicitly expendable, no revisit loot regeneration simulated.",
+    "88–97% signal coverage and 80% centring success before detector tier 3, then 95%, are unmeasured assumptions.",
+    "Geometric strip order; one attempt per target. Values considered only after excavation. Best album copies kept, duplicates sold.",
+    "Collector goals claimed once; no career/order payouts included. Cheapest next upgrade purchased with one fare reserved.",
+    "This does not measure real play time, complete the career or validate a human difficulty curve."
+  ],
+  "summary": {
+    "scenarios": 12,
+    "withUpgrade": 12,
+    "firstUpgradeTrips": {
+      "p10": 3,
+      "median": 4,
+      "p90": 5
+    },
+    "allTier2Median": 8,
+    "medianAlbum": 157,
+    "medianFreeTrips": 3,
+    "medianLossTrips": 24
+  },
+  "rows": [
+    {
+      "seed": 55001,
+      "trips": 120,
+      "firstUpgrade": 9,
+      "allTier2": 15,
+      "freeTrips": 4,
+      "lossTrips": 22,
+      "misses": 121,
+      "album": 156,
+      "gear": [
+        6,
+        6,
+        6
+      ],
+      "coins": 2136,
+      "sold": 18856,
+      "travel": 2900
+    },
+    {
+      "seed": 62920,
+      "trips": 120,
+      "firstUpgrade": 3,
+      "allTier2": 5,
+      "freeTrips": 2,
+      "lossTrips": 20,
+      "misses": 91,
+      "album": 167,
+      "gear": [
+        6,
+        6,
+        6
+      ],
+      "coins": 3582,
+      "sold": 20352,
+      "travel": 2950
+    },
+    {
+      "seed": 70839,
+      "trips": 120,
+      "firstUpgrade": 5,
+      "allTier2": 15,
+      "freeTrips": 3,
+      "lossTrips": 36,
+      "misses": 92,
+      "album": 160,
+      "gear": [
+        5,
+        6,
+        5
+      ],
+      "coins": 2048,
+      "sold": 13283,
+      "travel": 2925
+    },
+    {
+      "seed": 78758,
+      "trips": 120,
+      "firstUpgrade": 4,
+      "allTier2": 8,
+      "freeTrips": 4,
+      "lossTrips": 24,
+      "misses": 95,
+      "album": 151,
+      "gear": [
+        5,
+        6,
+        6
+      ],
+      "coins": 303,
+      "sold": 14113,
+      "travel": 2900
+    },
+    {
+      "seed": 86677,
+      "trips": 120,
+      "firstUpgrade": 4,
+      "allTier2": 25,
+      "freeTrips": 6,
+      "lossTrips": 32,
+      "misses": 98,
+      "album": 147,
+      "gear": [
+        6,
+        6,
+        6
+      ],
+      "coins": 2412,
+      "sold": 19172,
+      "travel": 2850
+    },
+    {
+      "seed": 94596,
+      "trips": 120,
+      "firstUpgrade": 4,
+      "allTier2": 8,
+      "freeTrips": 3,
+      "lossTrips": 18,
+      "misses": 73,
+      "album": 157,
+      "gear": [
+        5,
+        6,
+        6
+      ],
+      "coins": 2071,
+      "sold": 15816,
+      "travel": 2925
+    },
+    {
+      "seed": 102515,
+      "trips": 120,
+      "firstUpgrade": 4,
+      "allTier2": 8,
+      "freeTrips": 2,
+      "lossTrips": 30,
+      "misses": 78,
+      "album": 158,
+      "gear": [
+        5,
+        6,
+        6
+      ],
+      "coins": 1637,
+      "sold": 15407,
+      "travel": 2950
+    },
+    {
+      "seed": 110434,
+      "trips": 120,
+      "firstUpgrade": 4,
+      "allTier2": 13,
+      "freeTrips": 1,
+      "lossTrips": 28,
+      "misses": 109,
+      "album": 158,
+      "gear": [
+        5,
+        6,
+        6
+      ],
+      "coins": 1786,
+      "sold": 15671,
+      "travel": 2975
+    },
+    {
+      "seed": 118353,
+      "trips": 120,
+      "firstUpgrade": 3,
+      "allTier2": 3,
+      "freeTrips": 3,
+      "lossTrips": 17,
+      "misses": 76,
+      "album": 149,
+      "gear": [
+        6,
+        6,
+        6
+      ],
+      "coins": 1308,
+      "sold": 18053,
+      "travel": 2925
+    },
+    {
+      "seed": 126272,
+      "trips": 120,
+      "firstUpgrade": 6,
+      "allTier2": 6,
+      "freeTrips": 4,
+      "lossTrips": 34,
+      "misses": 102,
+      "album": 157,
+      "gear": [
+        5,
+        6,
+        5
+      ],
+      "coins": 2003,
+      "sold": 13123,
+      "travel": 2900
+    },
+    {
+      "seed": 134191,
+      "trips": 120,
+      "firstUpgrade": 4,
+      "allTier2": 7,
+      "freeTrips": 3,
+      "lossTrips": 24,
+      "misses": 87,
+      "album": 159,
+      "gear": [
+        6,
+        6,
+        6
+      ],
+      "coins": 3636,
+      "sold": 20381,
+      "travel": 2925
+    },
+    {
+      "seed": 142110,
+      "trips": 120,
+      "firstUpgrade": 4,
+      "allTier2": 5,
+      "freeTrips": 2,
+      "lossTrips": 24,
+      "misses": 78,
+      "album": 163,
+      "gear": [
+        6,
+        6,
+        6
+      ],
+      "coins": 1175,
+      "sold": 17945,
+      "travel": 2950
+    }
+  ]
+}

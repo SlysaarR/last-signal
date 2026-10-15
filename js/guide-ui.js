@@ -1,13 +1,14 @@
-import { setPane } from './layout.js?v=0.54.1';
-import { t as localize } from './i18n.js?v=0.54.1';
-import { currentScreen } from './interface.js?v=0.54.1';
-import { resumeGame } from './menu.js?v=0.54.1';
-import { firstStepsOffer, startGuide, guideCard } from '../data/guide.js?v=0.54.1';
-import { s, save } from './storage.js?v=0.54.1';
-import { $ } from './dom.js?v=0.54.1';
-import { busy, render, showTab } from './ui.js?v=0.54.1';
-import { confirmDeparture, confirmReturnHome } from './camp.js?v=0.54.1';
-import { syncWeatherEffects } from './environment-ui.js?v=0.54.1';
+import { openFinds } from './inventory.js?v=0.55.0';
+import { setPane } from './layout.js?v=0.55.0';
+import { t as localize } from './i18n.js?v=0.55.0';
+import { currentScreen } from './interface.js?v=0.55.0';
+import { resumeGame } from './menu.js?v=0.55.0';
+import { firstStepsOffer, startGuide, guideCard } from '../data/guide.js?v=0.55.0';
+import { s, save } from './storage.js?v=0.55.0';
+import { $ } from './dom.js?v=0.55.0';
+import { busy, render, showTab } from './ui.js?v=0.55.0';
+import { confirmDeparture, confirmReturnHome } from './camp.js?v=0.55.0';
+import { syncWeatherEffects } from './environment-ui.js?v=0.55.0';
 
 let lastCard = '';
 export function renderGuide() {
@@ -52,11 +53,11 @@ export function initGuide() {
     if (action === 'begin') {begin(); return;}
     if (action === 'depart') {showTab('camp'); confirmDeparture(); return;}
     if (action === 'home') {confirmReturnHome(); return;}
-    if (['search','inventory','journal'].includes(action)) {
-      if(action==='inventory')setPane('inventory','bag');
+    if(action==='inventory'){openFinds();return;}
+    if (['search','journal'].includes(action)) {
       if(action==='journal')setPane('journal','career');
       showTab(action);
-      const target = $(action === 'search' ? 'field' : action === 'inventory' ? 'inventorySummary' : 'careerTitle');
+      const target = $(action === 'search' ? 'field' : 'journalTitle');
       target.scrollIntoView?.({block:'start'}); target.focus?.({preventScroll:true});
     }
   };

@@ -1,20 +1,26 @@
-import { t as localize, translateHTML } from './i18n.js?v=0.54.1';
-import { advanceGuide } from '../data/guide.js?v=0.54.1';
-import { forecastEnvironment, groundTypes, currentEnvironment } from '../data/environment.js?v=0.54.1';
-import { departureConditions, renderPreparation, preparationText } from './environment-ui.js?v=0.54.1';
-import { openAtlas } from './atlas-ui.js?v=0.54.1';
-import { ensureAtlas, parkCurrent, restoreSite, rememberCurrent } from './atlas-state.js?v=0.54.1';
-import { activeSite, selectedSite, siteName, siteAccessible, canScout, MAX_SITES } from '../data/atlas.js?v=0.54.1';
-import { chosenRoute, conditions } from '../data/expeditions.js?v=0.54.1';
-import { startLeg,endLeg } from './progression.js?v=0.54.1';
+import { setPane, resetPage } from './layout.js?v=0.55.0';
+import { openFinds } from './inventory.js?v=0.55.0';
+import { careerSnapshot } from './career.js?v=0.55.0';
+import { activeOrder, orderReady } from './orders.js?v=0.55.0';
+import { goals } from '../data/expeditions.js?v=0.55.0';
+import { goalMetrics } from './progression.js?v=0.55.0';
+import { t as localize, translateHTML } from './i18n.js?v=0.55.0';
+import { advanceGuide } from '../data/guide.js?v=0.55.0';
+import { forecastEnvironment, groundTypes, currentEnvironment } from '../data/environment.js?v=0.55.0';
+import { departureConditions, renderPreparation, preparationText } from './environment-ui.js?v=0.55.0';
+import { openAtlas } from './atlas-ui.js?v=0.55.0';
+import { ensureAtlas, parkCurrent, restoreSite, rememberCurrent } from './atlas-state.js?v=0.55.0';
+import { activeSite, selectedSite, siteName, siteAccessible, canScout, MAX_SITES } from '../data/atlas.js?v=0.55.0';
+import { chosenRoute, conditions } from '../data/expeditions.js?v=0.55.0';
+import { startLeg,endLeg } from './progression.js?v=0.55.0';
 // camp responsibilities for Last Signal.
-import { modal } from './dialogs.js?v=0.54.1';
-import { $ } from './dom.js?v=0.54.1';
-import { bagCapacity, bagUsed, canLeave, emergencyAllowed, maxEnergy, priceFor, travelCost } from './rules.js?v=0.54.1';
-import { s, save } from './storage.js?v=0.54.1';
-import { busy, render, showTab } from './ui.js?v=0.54.1';
-import { currentLocation, generate, rollLocation } from './world.js?v=0.54.1';
-import { inventorySummary } from './inventory-plan.js?v=0.54.1';
+import { modal } from './dialogs.js?v=0.55.0';
+import { $ } from './dom.js?v=0.55.0';
+import { bagCapacity, bagUsed, canLeave, emergencyAllowed, maxEnergy, priceFor, travelCost } from './rules.js?v=0.55.0';
+import { s, save } from './storage.js?v=0.55.0';
+import { busy, render, showTab } from './ui.js?v=0.55.0';
+import { currentLocation, generate, rollLocation } from './world.js?v=0.55.0';
+import { inventorySummary } from './inventory-plan.js?v=0.55.0';
 export function returnHome() {
   if (s.atCamp || s.pending) return;
   s.lastTrip = {
@@ -36,6 +42,7 @@ export function returnHome() {
   delete s.site;
   delete s.fieldMarks;
   save();
+  setPane('camp','report');
   showTab('camp');
 }
 export function destinationName() {
@@ -107,7 +114,25 @@ export function renderCamp() {
   $('departureNote').textContent=localize(!s.atCamp?'Повернення безкоштовне. Ділянка та мітки залишаться на карті.':departureBlock() || (target?'Повернення на знайому ділянку. ':emergencyAllowed()?'Безкоштовна розвідка бідного узбіччя. ':chosenRoute(s).name+'. ')+'Після дороги залишиться '+(s.coins-travelCost())+' купонів. Дорога не відновлює енергію.');
   $('campMapSummary').textContent=localize(target?siteName(target):(s.atlas?.sites.length || (s.atCamp?0:1))+' / '+MAX_SITES+' ділянок');
   const trip = s.lastTrip;
-  $('tripSummary').innerHTML = translateHTML(trip ? `<div class="trip-grid"><div><span>Оглянуто за виїзд</span><strong>${trip.found}</strong></div><div><span>Предметів у рюкзаку</span><strong>${trip.brought}</strong></div><div><span>Вартість рюкзака</span><strong>${trip.value}<small> купонів</small></strong></div><div><span>Витрати на виїзд</span><strong>${trip.travel + trip.food}<small> купонів</small></strong></div></div><p class="camp-note">Дорога: ${trip.travel} · з’їдена їжа: ${trip.food} купонів. Вартість рюкзака включає всі принесені предмети, зокрема взяті з дому. Купони нараховуються після продажу.</p>` : '<p class="camp-note">Тут з’являться знахідки й витрати після першого повернення з поля.</p>');
+  $('tripReportMark').hidden=!trip;
+  $('tripReportTitle').textContent=localize(trip?'Виїзд завершено':'Перший виїзд попереду');
+  $('tripSummary').innerHTML=translateHTML(trip?`<div class="trip-grid"><div><span>Оглянуто</span><strong>${trip.found}</strong></div><div><span>Принесено</span><strong>${trip.brought}</strong></div><div><span>Оцінка рюкзака</span><strong>${trip.value}<small> куп.</small></strong></div><div><span>Витрати</span><strong>${trip.travel+trip.food}<small> куп.</small></strong></div></div><details class="report-details"><summary>Як рахуються підсумки</summary><p>Дорога: ${trip.travel} · з’їдена їжа: ${trip.food} купонів. Оцінка включає всі принесені предмети, зокрема взяті з дому. Це ще не заробіток: купони нараховуються після продажу.</p></details>`:'<p class="camp-note">Підготуйся й вирушай на пошук. Після повернення тут буде підсумок.</p>');
+  const remaining=s.bag.length||s.stash.length;
+  $('reportSort').hidden=!s.atCamp||!remaining;
+  $('reportSort').textContent=localize('Розібрати знахідки · '+remaining);
+  const reward=readyTripReward();
+  $('reportReward').hidden=!s.atCamp||!reward;
+  if(reward)$('reportReward').textContent=localize('Нагорода готова · '+reward.amount+' куп. →');
+  $('reportPrepare').hidden=!s.atCamp;
+
+}
+// Read-only shortcut. Claiming always remains an explicit action in the journal.
+export function readyTripReward() {
+  const chapter=careerSnapshot().current;
+  if(chapter?.ready)return {pane:'career',amount:chapter.reward,index:chapter.index};
+  if(orderReady())return {pane:'orders',amount:activeOrder().reward};
+  const metrics=goalMetrics(),goal=goals.find(g=>!s.progress?.claimed.includes(g.id)&&(metrics[g.metric]||0)>=g.target);
+  return goal?{pane:'goals',amount:goal.reward}:null;
 }
 export function confirmDeparture() {
   if(!canLeave()||busy())return;
@@ -124,6 +149,14 @@ export function confirmReturnHome() {
   modal('ПОВЕРНУТИСЯ ДОДОМУ?', '🏠', 'Завершити виїзд', 'Повернення безкоштовне. Здобич у рюкзаку збережеться. Ділянка, ями та мітки залишаться на карті для наступного виїзду.', 'До табору', returnHome);
 }
 export function initCamp() {
+  $('fieldExit').onclick=confirmReturnHome;
+  $('reportSort').onclick=openFinds;
+  $('reportPrepare').onclick=()=>{if(busy()||!s.atCamp)return;setPane('camp','ready');showTab('camp');};
+  $('reportReward').onclick=()=>{
+    if(busy()||!s.atCamp)return;
+    const reward=readyTripReward();if(!reward)return;
+    setPane('journal',reward.pane);resetPage(reward.pane,reward.index||0);showTab('journal');
+  };
   $('restHome').onclick = () => {
     if (!s.atCamp || busy()) return;
     s.energy = maxEnergy();

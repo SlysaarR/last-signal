@@ -1,9 +1,9 @@
-import { t as localize, translateHTML } from './i18n.js?v=0.54.1';
-import { siteDistance, createSiteLayout, siteGuide } from '../data/site-layout.js?v=0.54.1';
-import { currentLocation } from './world.js?v=0.54.1';
-import { s,save } from './storage.js?v=0.54.1';
-import { $ } from './dom.js?v=0.54.1';
-import { busy,render } from './ui.js?v=0.54.1';
+import { t as localize, translateHTML } from './i18n.js?v=0.55.0';
+import { siteDistance, createSiteLayout, siteGuide } from '../data/site-layout.js?v=0.55.0';
+import { currentLocation } from './world.js?v=0.55.0';
+import { s,save } from './storage.js?v=0.55.0';
+import { $ } from './dom.js?v=0.55.0';
+import { busy,render } from './ui.js?v=0.55.0';
 export const MAX_FIELD_MARKS=8;
 export function nearbyMark() {
   return (s.fieldMarks||[]).findIndex(p=>siteDistance(p,s)<=.035);

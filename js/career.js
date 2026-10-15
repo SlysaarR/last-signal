@@ -1,7 +1,7 @@
-import { chapters, careerView, validFocus } from '../data/career.js?v=0.54.1';
-import { goals } from '../data/expeditions.js?v=0.54.1';
-import { activeOrder, orderReady } from './orders.js?v=0.54.1';
-import { s, save } from './storage.js?v=0.54.1';
+import { chapters, careerView, validFocus } from '../data/career.js?v=0.55.0';
+import { goals } from '../data/expeditions.js?v=0.55.0';
+import { activeOrder, orderReady } from './orders.js?v=0.55.0';
+import { s, save } from './storage.js?v=0.55.0';
 function writable(){return s.career||(s.career={version:1,claimed:[],focus:null,field:{deep:0,returns:0}});}
 let cacheKey='',cache;
 export function careerSnapshot(){

@@ -208,3 +208,16 @@ main>.stats,body:has(#search:not([hidden])) .stats{grid-template-columns:repeat(
  #excavate[open],#packDialog[open],#coinDetail[open]{display:block;height:auto;overflow:auto}
  .find-dialog-body{overflow:visible;margin-block:8px}
 }
+
+/* A returned trip ends with its finds and a clear next action. */
+#campPane-report{gap:10px;justify-content:flex-start}
+#campPane-report .trip-report{padding:14px;margin:0;background:linear-gradient(145deg,#263f51,#1b3042);border-color:#72908d}
+.report-heading{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.report-heading h3{font-size:1.125rem;line-height:1.25;margin:0;color:#f0debd}
+.report-mark{display:grid;place-items:center;flex:none;width:36px;height:36px;border:1px solid #8ec6ba;border-radius:50%;color:#c0e7db;background:#31584f;font-size:1.125rem}
+.trip-report .trip-grid{margin:0;gap:8px}.trip-report .trip-grid>div{padding:10px;border-color:#527081}.trip-report .trip-grid span{font-size:.75rem;min-height:0}.trip-report .trip-grid strong{font-size:1.4rem}.trip-report .trip-grid small{font-size:.75rem}
+.report-details{margin-top:10px;border-top:1px solid #496a7d}.report-details summary{font-size:.75rem;min-height:36px;padding:10px 0 0;color:#a9c9d8}.report-details p{font-size:.75rem;line-height:1.45;color:#b1c8d7;margin:8px 0 0}
+.report-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}.report-actions #reportSort{grid-column:1/-1}.report-actions #reportReward[hidden]~#reportPrepare{grid-column:1/-1}.report-actions button{width:100%;min-height:44px;font-size:.875rem;padding:9px 12px}
+#search>.actions #dig,#search>.actions #fieldExit{grid-column:1;grid-row:1}
+#search>.actions #foodQuick{grid-column:2;grid-row:1}
+@media(min-width:960px){#campPane-report .trip-report{padding:20px}.trip-report .trip-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.report-actions{grid-template-columns:1fr 1fr}.report-actions #reportSort{grid-column:1/-1}}

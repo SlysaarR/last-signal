@@ -1,13 +1,13 @@
-import { pageWindow, layoutRevision } from './layout.js?v=0.54.1';
-import { t as localize, translateHTML } from './i18n.js?v=0.54.1';
-import { forecastEnvironment, environmentName } from '../data/environment.js?v=0.54.1';
-import { siteName } from '../data/atlas.js?v=0.54.1';
-import { routes, goals, conditions, chosenRoute } from '../data/expeditions.js?v=0.54.1';
-import { locations } from '../data/locations.js?v=0.54.1';
-import { $ } from './dom.js?v=0.54.1';
-import { s,save } from './storage.js?v=0.54.1';
-import { progress,goalMetrics,claimGoal } from './progression.js?v=0.54.1';
-import { render,busy } from './ui.js?v=0.54.1';
+import { pageWindow, layoutRevision } from './layout.js?v=0.55.0';
+import { t as localize, translateHTML } from './i18n.js?v=0.55.0';
+import { forecastEnvironment, environmentName } from '../data/environment.js?v=0.55.0';
+import { siteName } from '../data/atlas.js?v=0.55.0';
+import { routes, goals, conditions, chosenRoute } from '../data/expeditions.js?v=0.55.0';
+import { locations } from '../data/locations.js?v=0.55.0';
+import { $ } from './dom.js?v=0.55.0';
+import { s,save } from './storage.js?v=0.55.0';
+import { progress,goalMetrics,claimGoal } from './progression.js?v=0.55.0';
+import { render,busy } from './ui.js?v=0.55.0';
 let campKey='',journalKey='';
 export function journalGoals(metrics=goalMetrics()){
  const claimed=progress().claimed;

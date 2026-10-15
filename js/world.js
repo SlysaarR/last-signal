@@ -1,10 +1,10 @@
 // world responsibilities for Last Signal.
-import { rarities, signalRanges, surveyCols, surveyRows } from '../data/balance.js?v=0.54.1';
-import { types } from '../data/items.js?v=0.54.1';
-import { legacyLocation, locations } from '../data/locations.js?v=0.54.1';
-import { rollCondition } from './rules.js?v=0.54.1';
-import { s, save } from './storage.js?v=0.54.1';
-import { SITE_VERSION, seedForSite, createSiteLayout, placeSiteObjects } from '../data/site-layout.js?v=0.54.1';
+import { rarities, signalRanges, surveyCols, surveyRows } from '../data/balance.js?v=0.55.0';
+import { types } from '../data/items.js?v=0.55.0';
+import { legacyLocation, locations } from '../data/locations.js?v=0.55.0';
+import { rollCondition } from './rules.js?v=0.55.0';
+import { s, save } from './storage.js?v=0.55.0';
+import { SITE_VERSION, seedForSite, createSiteLayout, placeSiteObjects } from '../data/site-layout.js?v=0.55.0';
 export function rollLocation(route = null) {
   const pool = route ? route.pool : [0,1,2,3,4];
   let roll = Math.random() * pool.reduce((sum,i)=>sum+locations[i].chance,0);

@@ -9,26 +9,26 @@
     <link rel="apple-touch-icon" href="./assets/app/icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Останній сигнал">
-    <link rel="stylesheet" href="./css/atlas.css?v=0.54.1">
-    <link rel="stylesheet" href="./css/career.css?v=0.54.1">
-    <link rel="stylesheet" href="./css/offline.css?v=0.54.1">
+    <link rel="stylesheet" href="./css/atlas.css?v=0.55.0">
+    <link rel="stylesheet" href="./css/career.css?v=0.55.0">
+    <link rel="stylesheet" href="./css/offline.css?v=0.55.0">
     <title>Останній сигнал</title>
-    <link rel="stylesheet" href="./css/base.css?v=0.54.1">
-    <link rel="stylesheet" href="./css/search.css?v=0.54.1">
-    <link rel="stylesheet" href="./css/excavation.css?v=0.54.1">
-    <link rel="stylesheet" href="./css/inventory.css?v=0.54.1">
-    <link rel="stylesheet" href="./css/workshop.css?v=0.54.1">
-    <link rel="stylesheet" href="./css/camp.css?v=0.54.1">
-    <link rel="stylesheet" href="./css/backup.css?v=0.54.1">
-    <link rel="stylesheet" href="./css/coin-art.css?v=0.54.1">
-    <link rel="stylesheet" href="./css/journal.css?v=0.54.1">
-    <link rel="stylesheet" href="./css/environment.css?v=0.54.1">
-    <link rel="stylesheet" href="./css/guide.css?v=0.54.1">
-    <link rel="stylesheet" href="./css/interface.css?v=0.54.1">
-    <link rel="stylesheet" href="./css/menu.css?v=0.54.1">
-    <script type="module" src="./js/main.js?v=0.54.1">
+    <link rel="stylesheet" href="./css/base.css?v=0.55.0">
+    <link rel="stylesheet" href="./css/search.css?v=0.55.0">
+    <link rel="stylesheet" href="./css/excavation.css?v=0.55.0">
+    <link rel="stylesheet" href="./css/inventory.css?v=0.55.0">
+    <link rel="stylesheet" href="./css/workshop.css?v=0.55.0">
+    <link rel="stylesheet" href="./css/camp.css?v=0.55.0">
+    <link rel="stylesheet" href="./css/backup.css?v=0.55.0">
+    <link rel="stylesheet" href="./css/coin-art.css?v=0.55.0">
+    <link rel="stylesheet" href="./css/journal.css?v=0.55.0">
+    <link rel="stylesheet" href="./css/environment.css?v=0.55.0">
+    <link rel="stylesheet" href="./css/guide.css?v=0.55.0">
+    <link rel="stylesheet" href="./css/interface.css?v=0.55.0">
+    <link rel="stylesheet" href="./css/menu.css?v=0.55.0">
+    <script type="module" src="./js/main.js?v=0.55.0">
     </script>
-  <link rel="stylesheet" href="./css/game-shell.css?v=0.54.1">
+  <link rel="stylesheet" href="./css/game-shell.css?v=0.55.0">
 </head>
   <body>
     <a class="skip-link" id="skipToScreen" href="#campTitle">До поточного розділу</a>
@@ -94,7 +94,7 @@
           <button class="quiet" id="openHelp" aria-haspopup="dialog" aria-controls="helpDialog">Як грати</button>
         </div>
         <p id="menuStatus" class="sub"></p>
-        <small class="menu-version">0.54.1</small>
+        <small class="menu-version">0.55.0</small>
       </section>
       <section id="settings" hidden aria-labelledby="settingsTitle">
         <h2 id="settingsTitle" tabindex="-1">Налаштування</h2>
@@ -201,9 +201,14 @@
 </div>
             </div>
 <div id="campPane-report" class="screen-pane" hidden>
-<div class="camp-summary">
-<h3>Минулий виїзд</h3>
+<div class="camp-summary trip-report">
+<div class="report-heading"><span class="report-mark" id="tripReportMark" aria-hidden="true">✓</span><h3 id="tripReportTitle">Виїзд завершено</h3></div>
 <div id="tripSummary"></div>
+</div>
+<div class="report-actions">
+<button class="primary" id="reportSort">Розібрати знахідки</button>
+<button class="secondary" id="reportReward" hidden>Переглянути нагороду</button>
+<button class="quiet" id="reportPrepare">Підготувати виїзд →</button>
 </div>
           </div></section>
       <section id="atlas" hidden aria-labelledby="atlasTitle">
@@ -417,6 +422,7 @@
           </div>
         <div class="actions">
           <button class="primary" id="dig">Копати</button>
+          <button class="primary" id="fieldExit" hidden>До табору</button>
           <button class="secondary" id="foodQuick" style="width:100%;margin-top:10px">Їжа</button>
         </div>
         <div class="log" id="log" aria-live="polite">Обстежуй ділянку — кількість сигналів невідома. Шукай найчіткіший сигнал.</div>
@@ -534,7 +540,7 @@
 </div>
 </div>
 </section>
-        <footer>ПРОТОТИП 0.54.1 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
+        <footer>ПРОТОТИП 0.55.0 · БЕЗ РЕКЛАМИ ТА ПОКУПОК</footer>
       </main>
       <dialog id="helpDialog" aria-labelledby="helpTitle">
         <div class="sheet-heading">
@@ -570,7 +576,7 @@
           <p>Офлайн готовий, коли про це повідомить панель «Гра на телефоні». Відкрий її в налаштуваннях головного меню; встановлюй оновлення у таборі кнопкою «Зберегти й оновити гру».</p>
           <p>Якщо анімація заважає, у налаштуваннях відкрий «Вигляд і зручність» й обери мінімальні ефекти погоди. Зменшення руху в налаштуваннях пристрою також враховується.</p>
         </details>
-        <p class="help-note">Версія 0.54.1 · гра в розробці. Ціни, рідкість і стан предметів — ігрові показники. Випадкові знахідки не мають підтвердженої історичної атрибуції.</p>
+        <p class="help-note">Версія 0.55.0 · гра в розробці. Ціни, рідкість і стан предметів — ігрові показники. Випадкові знахідки не мають підтвердженої історичної атрибуції.</p>
       </dialog>
       <dialog id="appUpdateDialog" aria-labelledby="appUpdateTitle"><h2 id="appUpdateTitle">Оновлюємо гру</h2>
 <p>Прогрес збережено. Зачекай на перезапуск…</p></dialog>
@@ -602,7 +608,7 @@
         <div class="search-status">
           <p class="sub" id="fieldBag">
           </p>
-          <span class="build-tag">v0.54.1</span>
+          <span class="build-tag">v0.55.0</span>
         </div>
         <div class="hint" id="hint">Сканування безкоштовне. Що ближче до предмета, то сильніший сигнал.</div>
         <p class="sub">⚡ Їжа відновлює до 50% запасу за виїзд · дорога за тарифом обраного місця</p>
