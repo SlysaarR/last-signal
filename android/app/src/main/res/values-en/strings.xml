@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Last Signal · Test</string>
+    <string name="render_error">The game renderer stopped. Your saved progress remains on this device.</string>
+    <string name="retry">Open again</string>
+    <string name="close">Close</string>
+    <string name="unsupported">A newer Android System WebView is required. Update it in Google Play, then open the game again.</string>
+    <string name="startup_error">The game could not load. Try opening it again. Your progress has not been deleted.</string>
+</resources>

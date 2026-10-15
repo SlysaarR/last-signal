@@ -1,10 +1,15 @@
-import { t as localize, dateLocale } from './i18n.js?v=0.55.3';
-import { $ } from './dom.js?v=0.55.3';
-import { createBackup, parseBackup, MAX_BACKUP_SIZE } from './backup-format.js?v=0.55.3';
-import { s, RECOVERY_KEY, installBackupState } from './storage.js?v=0.55.3';
+import { t as localize, dateLocale } from './i18n.js?v=0.55.4';
+import { androidBridge } from './platform.js?v=0.55.4';
+import { $ } from './dom.js?v=0.55.4';
+import { createBackup, parseBackup, MAX_BACKUP_SIZE } from './backup-format.js?v=0.55.4';
+import { s, RECOVERY_KEY, installBackupState } from './storage.js?v=0.55.4';
 let candidate = null, reading = 0;
 function message(text) { $('backupStatus').textContent = localize(text); }
 function download(text, prefix) {
+  if (androidBridge()) {
+    if (!androidBridge().exportBackup(text)) throw new Error(localize('Не вдалося відкрити збереження файлу. Спробуй ще раз.'));
+    return true;
+  }
   const url = URL.createObjectURL(new Blob([text], {type:'application/json'}));
   const a = document.createElement('a');
   a.href = url; a.download = prefix + '-' + new Date().toISOString().replace(/[:.]/g,'-') + '.json';
@@ -19,8 +24,12 @@ function preview(data) {
   $('backupDialog').showModal();
 }
 export function initBackup() {
+  window.addEventListener('last-signal-backup-export', e => {
+    if (!androidBridge()) return;
+    message(e.detail?.status === 'saved' ? 'Копію збережено у вибраний файл.' : e.detail?.status === 'cancelled' ? 'Збереження файлу скасовано. Прогрес гри не змінено.' : 'Не вдалося записати файл. Спробуй іншу папку.');
+  });
   $('backupExport').onclick = () => {
-    try { download(createBackup(s), 'last-signal'); message('Файл передано браузеру для завантаження. Перевір папку «Завантаження».'); }
+    try { const native=download(createBackup(s), 'last-signal'); message(native ? 'Обери, куди зберегти копію.' : 'Файл передано браузеру для завантаження. Перевір папку «Завантаження».'); }
     catch (e) { message('Не вдалося створити копію: ' + e.message); }
   };
   $('backupFile').onchange = async e => {

@@ -1,6 +1,6 @@
 // Bounded CPU rasterizer for textured metal meshes when WebGL is unavailable.
 // Keeps every triangle. One pixel upload replaces hundreds of Canvas clips/draws.
-import { lightTerms, relightFace } from './inspection-light.js?v=0.55.3';
+import { lightTerms, relightFace } from './inspection-light.js?v=0.55.4';
 
 export const MAX_SOFTWARE_PIXELS = 300000;
 export function softwareSize(width,height) {

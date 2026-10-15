@@ -1,14 +1,14 @@
-import { pageWindow, layoutRevision } from './layout.js?v=0.55.3';
-import { t as localize, translateHTML, dateLocale } from './i18n.js?v=0.55.3';
-import { drawDetectorPreview } from './graphics/detector-art.js?v=0.55.3';
-import { MAX_GEAR_LEVEL, creditFor, detectorMilestones, detectorLook } from '../data/gear.js?v=0.55.3';
-import { chosenRoute } from '../data/expeditions.js?v=0.55.3';
+import { pageWindow, layoutRevision } from './layout.js?v=0.55.4';
+import { t as localize, translateHTML, dateLocale } from './i18n.js?v=0.55.4';
+import { drawDetectorPreview } from './graphics/detector-art.js?v=0.55.4';
+import { MAX_GEAR_LEVEL, creditFor, detectorMilestones, detectorLook } from '../data/gear.js?v=0.55.4';
+import { chosenRoute } from '../data/expeditions.js?v=0.55.4';
 // shop responsibilities for Last Signal.
-import { foods } from '../data/balance.js?v=0.55.3';
-import { $ } from './dom.js?v=0.55.3';
-import { bagCapacity, bagUsed, detectorStats, foodAmount, foodFits, maxEnergy, shovelFactor, upgradeCost } from './rules.js?v=0.55.3';
-import { s, save } from './storage.js?v=0.55.3';
-import { busy, render } from './ui.js?v=0.55.3';
+import { foods } from '../data/balance.js?v=0.55.4';
+import { $ } from './dom.js?v=0.55.4';
+import { bagCapacity, bagUsed, detectorStats, foodAmount, foodFits, maxEnergy, shovelFactor, upgradeCost } from './rules.js?v=0.55.4';
+import { s, save } from './storage.js?v=0.55.4';
+import { busy, render } from './ui.js?v=0.55.4';
 export let shopRenderKey = '';
 export function purchaseBudgetNote(cost) {
   if(!s.atCamp||s.pending||cost>s.coins)return '';

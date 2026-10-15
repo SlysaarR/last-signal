@@ -1,8 +1,8 @@
-import { createInspectionModel, drawInspection } from './inspection.js?v=0.55.3';
+import { createInspectionModel, drawInspection } from './inspection.js?v=0.55.4';
 // Procedural find artwork. Coin wreath reference: https://museum.mincult.gov.ua/collections/moneta-25-kopiyok-1992-r-125364
-import { types } from '../../data/items.js?v=0.55.3';
-import { $ } from '../dom.js?v=0.55.3';
-import { s } from '../storage.js?v=0.55.3';
+import { types } from '../../data/items.js?v=0.55.4';
+import { $ } from '../dom.js?v=0.55.4';
+import { s } from '../storage.js?v=0.55.4';
 export function seededArt(seed) {
   let n = Math.abs(seed | 0) + 1;
   return () => {

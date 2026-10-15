@@ -1,0 +1,68 @@
+name: Android APK
+on:
+  push:
+    branches: [main]
+    paths: ['android/**', 'js/**', 'data/**', 'locales/**', 'css/**', 'assets/**', 'index.html', 'scripts/build-android-assets.mjs', '.github/workflows/android.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+      - name: Verify game and prepare exact offline package
+        run: |
+          npm run check
+          node scripts/build-android-assets.mjs
+      - name: Ensure Android SDK packages
+        run: sdkmanager "platforms;android-36" "build-tools;35.0.0"
+      - name: Build unsigned delivery APK and debug test APK
+        run: gradle -p android --no-daemon :app:assembleRelease :app:assembleDebug :app:assembleDebugAndroidTest :app:testDebugUnitTest :app:lintRelease
+      - name: Stage reproducible signing inputs
+        run: |
+          mkdir -p android-delivery
+          cp android/app/build/outputs/apk/release/app-release-unsigned.apk android-delivery/
+          cp "$ANDROID_HOME/build-tools/35.0.0/lib/apksigner.jar" android-delivery/
+          cp android/app/build/outputs/apk/release/output-metadata.json android-delivery/
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging android-delivery/app-release-unsigned.apk > android-delivery/apk-info.txt
+          sha256sum android-delivery/* > android-delivery/SHA256SUMS.txt
+          git rev-parse HEAD > android-delivery/SOURCE_COMMIT.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: last-signal-android-unsigned-${{ github.sha }}
+          path: android-delivery/
+          retention-days: 30
+          if-no-files-found: error
+      - name: Enable KVM for emulator test
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          disable-animations: true
+          script: gradle -p android --no-daemon :app:connectedDebugAndroidTest
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: last-signal-android-test-results-${{ github.sha }}
+          path: |
+            android/app/build/reports/
+            android/app/build/outputs/androidTest-results/
+          retention-days: 30

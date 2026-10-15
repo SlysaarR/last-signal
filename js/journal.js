@@ -1,13 +1,13 @@
-import { pageWindow, layoutRevision, resetPage, setPane } from './layout.js?v=0.55.3';
-import { t as localize, translateHTML } from './i18n.js?v=0.55.3';
-import { forecastEnvironment, environmentName } from '../data/environment.js?v=0.55.3';
-import { siteName } from '../data/atlas.js?v=0.55.3';
-import { routes, goals, conditions, chosenRoute, visitSuggestion } from '../data/expeditions.js?v=0.55.3';
-import { locations } from '../data/locations.js?v=0.55.3';
-import { $ } from './dom.js?v=0.55.3';
-import { s,save } from './storage.js?v=0.55.3';
-import { progress,goalMetrics,claimGoal } from './progression.js?v=0.55.3';
-import { render,busy,showTab } from './ui.js?v=0.55.3';
+import { pageWindow, layoutRevision, resetPage, setPane } from './layout.js?v=0.55.4';
+import { t as localize, translateHTML } from './i18n.js?v=0.55.4';
+import { forecastEnvironment, environmentName } from '../data/environment.js?v=0.55.4';
+import { siteName } from '../data/atlas.js?v=0.55.4';
+import { routes, goals, conditions, chosenRoute, visitSuggestion } from '../data/expeditions.js?v=0.55.4';
+import { locations } from '../data/locations.js?v=0.55.4';
+import { $ } from './dom.js?v=0.55.4';
+import { s,save } from './storage.js?v=0.55.4';
+import { progress,goalMetrics,claimGoal } from './progression.js?v=0.55.4';
+import { render,busy,showTab } from './ui.js?v=0.55.4';
 let campKey='',journalKey='';
 export function journalGoals(metrics=goalMetrics()){
  const claimed=progress().claimed;

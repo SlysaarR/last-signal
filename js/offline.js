@@ -1,10 +1,17 @@
-import { t as localize } from './i18n.js?v=0.55.3';
+import { t as localize } from './i18n.js?v=0.55.4';
+import { androidBridge } from './platform.js?v=0.55.4';
 // Installation and release switching are separate from the player's save format.
-const VERSION = '0.55.3';
+const VERSION = '0.55.4';
 export function initOffline({save, canUpdate}) {
   const $ = id => document.getElementById(id);
   const summary=$('offlineSummary'), status=$('offlineStatus'), check=$('offlineCheck');
   const update=$('appUpdate'), install=$('appInstall'), help=$('installHelp'), dialog=$('appUpdateDialog');
+  if (androidBridge()) {
+    summary.textContent=localize('Готово до гри офлайн');
+    status.textContent=localize('Усі файли гри вже в застосунку. Інтернет для гри не потрібен.');
+    help.textContent=localize('Оновлення встановлюються новим APK поверх цього застосунку. Прогрес зберігається. Перед видаленням гри збережи копію у файл.');
+    check.hidden=true; install.hidden=true; update.hidden=true; return;
+  }
   if (typeof navigator === 'undefined' || !('serviceWorker' in navigator) || !window.isSecureContext) {
     summary.textContent=localize('Офлайн недоступний');
     status.textContent=localize('Цей браузер не підтримує офлайн-режим. Грай з інтернетом або відкрий гру в іншому браузері.');

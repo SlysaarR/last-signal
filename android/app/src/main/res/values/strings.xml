@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Останній сигнал · Тест</string>
+    <string name="render_error">Не вдалося продовжити відображення гри. Збережений прогрес залишився на пристрої.</string>
+    <string name="retry">Відкрити знову</string>
+    <string name="close">Закрити</string>
+    <string name="unsupported">Потрібен новіший Android System WebView. Онови його через Google Play і відкрий гру знову.</string>
+    <string name="startup_error">Не вдалося завантажити гру. Спробуй відкрити її знову. Прогрес не видалено.</string>
+</resources>

@@ -1,0 +1,10 @@
+android/.gradle/
+android/**/build/
+android/local.properties
+android/app/src/main/assets/game/
+android/app/src/main/res/drawable-nodpi/
+*.jks
+*.keystore
+*.apk
+*.aab
+

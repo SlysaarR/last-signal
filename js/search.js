@@ -1,19 +1,19 @@
-import { t as localize } from './i18n.js?v=0.55.3';
-import { detectorSettings } from '../data/gear.js?v=0.55.3';
-import { recordReading } from './detector-controls.js?v=0.55.3';
-import { sampleSignal, nearestTarget } from './detector.js?v=0.55.3';
-import { recordDig } from './progression.js?v=0.55.3';
-import { findChallenge } from './career.js?v=0.55.3';
-import { toggleFieldMark } from './field-notes.js?v=0.55.3';
+import { t as localize } from './i18n.js?v=0.55.4';
+import { detectorSettings } from '../data/gear.js?v=0.55.4';
+import { recordReading } from './detector-controls.js?v=0.55.4';
+import { sampleSignal, nearestTarget } from './detector.js?v=0.55.4';
+import { recordDig } from './progression.js?v=0.55.4';
+import { findChallenge } from './career.js?v=0.55.4';
+import { toggleFieldMark } from './field-notes.js?v=0.55.4';
 // search responsibilities for Last Signal.
-import { depthLevels } from '../data/balance.js?v=0.55.3';
-import { beep } from './audio.js?v=0.55.3';
-import { $ } from './dom.js?v=0.55.3';
-import { openExcavation } from './excavation.js?v=0.55.3';
-import { canvas, draw } from './graphics/field.js?v=0.55.3';
-import { digCost, minDig } from './rules.js?v=0.55.3';
-import { s, save } from './storage.js?v=0.55.3';
-import { busy, render, renderDetector } from './ui.js?v=0.55.3';
+import { depthLevels } from '../data/balance.js?v=0.55.4';
+import { beep } from './audio.js?v=0.55.4';
+import { $ } from './dom.js?v=0.55.4';
+import { openExcavation } from './excavation.js?v=0.55.4';
+import { canvas, draw } from './graphics/field.js?v=0.55.4';
+import { digCost, minDig } from './rules.js?v=0.55.4';
+import { s, save } from './storage.js?v=0.55.4';
+import { busy, render, renderDetector } from './ui.js?v=0.55.4';
 let moveFrame = 0, pointerId = null, pointerAnchor = null;
 function renderMovement() {
   if (moveFrame) return;
