@@ -2,6 +2,7 @@ package com.slysaarr.lastsignal;
 
 import android.content.Context;
 import android.view.KeyEvent;
+import android.webkit.WebViewClient;
 import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -27,7 +28,8 @@ public class UpgradeTest {
     private void until(ActivityScenario<MainActivity> scene, String expression) throws Exception {
         long deadline=System.currentTimeMillis()+60000;
         while(System.currentTimeMillis()<deadline){if("true".equals(js(scene,expression)))return;Thread.sleep(100);}
-        fail("Timed out: "+expression+"; test error: "+js(scene,"window.upgradeError"));
+        fail("Timed out: "+expression+"; diagnostic: "+js(scene,
+            "JSON.stringify({url:location.href,ready:document.readyState,app:!!window.LastSignalApp,note:document.getElementById('saveNote')?.hidden,save:localStorage.getItem('last-signal-v1')?.slice(0,100),error:window.upgradeError})"));
     }
     private Context context(){return InstrumentationRegistry.getInstrumentation().getTargetContext();}
     private String save(ActivityScenario<MainActivity> scene) throws Exception {
@@ -59,7 +61,7 @@ public class UpgradeTest {
                   console.log('UPGRADE seed excavation');excavation.openExcavation();excavation.brushAt(220,180);
                   if(!s.pending.cleanedCells?.length||s.pending.cleanedCells.length===256)throw Error('Partial find fixture');
                   console.log('UPGRADE seed save');createBackup(s);if(!save())throw Error('Seed save');
-                  localStorage.setItem('last-signal-language','en');localStorage.setItem('last-signal-text-size','130');
+                  localStorage.setItem('last-signal-language','en');localStorage.setItem('last-signal-text-size','largest');
                   console.log('UPGRADE seed ready');window.upgradeReady=true;
                 }catch(e){window.upgradeError=String(e)}})()
                 """);
@@ -77,7 +79,8 @@ public class UpgradeTest {
             assertEquals("\"0.55.5-test.2\"",js(scene,"LastSignalAndroid.version()"));
             assertEquals(expected,save(scene));
             assertEquals("\"en\"",js(scene,"localStorage.getItem('last-signal-language')"));
-            assertEquals("\"130\"",js(scene,"localStorage.getItem('last-signal-text-size')"));
+            assertEquals("\"largest\"",js(scene,"localStorage.getItem('last-signal-text-size')"));
+            assertEquals("\"largest\"",js(scene,"document.documentElement.dataset.textSize"));
             assertEquals("true",js(scene,"!document.getElementById('backupAutoRecovery').disabled"));
             js(scene,"document.getElementById('openSettings').click();document.querySelectorAll('[data-pane]').forEach(b=>{if(b.dataset.pane==='settings:backup')b.click()});document.getElementById('backupAutoRecovery').click()");
             assertEquals("true",js(scene,"document.getElementById('backupDialog').open"));
@@ -93,12 +96,23 @@ public class UpgradeTest {
             }
             assertEquals(expected,save(scene));
             // Exercise real automatic-backup recovery after a malformed primary save.
-            // A separate same-origin test document writes after all game unload
-            // handlers, so lifecycle autosaving cannot repair this fixture first.
-            scene.onActivity(a -> a.gameView().loadDataWithBaseURL(
-                "https://appassets.androidplatform.net/assets/game/",
-                "<script>localStorage.setItem('last-signal-v1','{broken');location.replace('https://appassets.androidplatform.net/assets/game/index.html')</script>",
-                "text/html","UTF-8",null));
+            // Seed storage in an inert same-origin test document after unloading
+            // the game. Restore the production asset/navigation client before
+            // loading the real game; this fixture never enters the release APK.
+            AtomicReference<WebViewClient> client=new AtomicReference<>();
+            scene.onActivity(a -> {
+                client.set(a.gameView().getWebViewClient());
+                a.gameView().setWebViewClient(new WebViewClient());
+                a.gameView().loadDataWithBaseURL(MainActivity.GAME_URL,
+                    "<html><body id='corrupt-fixture'></body></html>","text/html","UTF-8",null);
+            });
+            until(scene,"!!document.getElementById('corrupt-fixture')");
+            js(scene,"localStorage.setItem('last-signal-v1','{broken')");
+            assertEquals("{broken",save(scene));
+            scene.onActivity(a -> {
+                a.gameView().setWebViewClient(client.get());
+                a.gameView().loadUrl(MainActivity.GAME_URL);
+            });
             until(scene,"!!window.LastSignalApp && !document.getElementById('saveNote').hidden");
             assertEquals("{broken",save(scene));
             js(scene,"document.getElementById('openSettings').click();document.querySelectorAll('[data-pane]').forEach(b=>{if(b.dataset.pane==='settings:backup')b.click()});document.getElementById('backupAutoRecovery').click()");
