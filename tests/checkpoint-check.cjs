@@ -23,6 +23,16 @@ const ns=(r,n)=>r.modules.get(root+'/js/'+n+'.js').namespace;
  assert.match(r.elements.get('backupAutoStatus').textContent,/не оновлено/);assert.equal(r.elements.get('backupAutoRecovery').disabled,false);
  r.context.localStorage.setItem=write;assert(st.save({checkpoint:true}));assert.equal(cp.readCheckpoint().state.coins,456);
  const valid=r.store.get(cp.CHECKPOINT_KEY);st.s.coins=-1;st.save({checkpoint:true});assert.equal(r.store.get(cp.CHECKPOINT_KEY),valid,'invalid game state never replaces a validated copy');
+ // A growing primary has priority over the optional secondary storage slot.
+ const quota=()=>Object.assign(new Error('full'),{name:'QuotaExceededError'});
+ r.context.localStorage.removeItem=k=>r.store.delete(k);
+ r.context.localStorage.setItem=(k,v)=>{if(k===cp.CHECKPOINT_KEY||k===st.KEY&&r.store.has(cp.CHECKPOINT_KEY))throw quota();write(k,v);};
+ st.s.coins=789;assert(st.save({checkpoint:true}));assert.equal(JSON.parse(r.store.get(st.KEY)).state.coins,789);assert(!r.store.has(cp.CHECKPOINT_KEY));
+ assert.equal(r.elements.get('backupAutoRecovery').disabled,true);
+ // If freeing the optional slot is insufficient, retain both previous records.
+ r.store.set(cp.CHECKPOINT_KEY,valid);const previousPrimary=r.store.get(st.KEY);
+ r.context.localStorage.setItem=(k,v)=>{if(k===st.KEY)throw quota();write(k,v);};
+ st.s.coins=999;assert.equal(st.save(),false);assert.equal(r.store.get(st.KEY),previousPrimary);assert.equal(r.store.get(cp.CHECKPOINT_KEY),valid);
  const en=await newRun(null,false,e=>e.store.set('last-signal-language','en'));assert.match(en.elements.get('backupAutoStatus').textContent,/Automatic backup/);assert(!/[А-Яа-яІіЇїЄєҐґ]/.test(en.elements.get('backupAutoStatus').textContent));
  // A partially cleaned find is restored with exactly the same cost and brush marks.
  const dig=await newRun();ns(dig,'camp').depart();dig.elements.get('modal').close();

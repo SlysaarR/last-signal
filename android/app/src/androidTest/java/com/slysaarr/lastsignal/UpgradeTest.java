@@ -77,7 +77,7 @@ public class UpgradeTest {
             assertEquals("\"en\"",js(scene,"localStorage.getItem('last-signal-language')"));
             assertEquals("\"130\"",js(scene,"localStorage.getItem('last-signal-text-size')"));
             assertEquals("true",js(scene,"!document.getElementById('backupAutoRecovery').disabled"));
-            js(scene,"document.getElementById('openSettings').click();document.getElementById('backupAutoRecovery').click()");
+            js(scene,"document.getElementById('openSettings').click();document.querySelectorAll('[data-pane]').forEach(b=>{if(b.dataset.pane==='settings:backup')b.click()});document.getElementById('backupAutoRecovery').click()");
             assertEquals("true",js(scene,"document.getElementById('backupDialog').open"));
             js(scene,"document.getElementById('backupCancel').click()");assertEquals(expected,save(scene));
             InstrumentationRegistry.getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
@@ -95,7 +95,7 @@ public class UpgradeTest {
             js(scene,"window.addEventListener('pagehide',()=>localStorage.setItem('last-signal-v1','{broken'));window.location.reload()");
             until(scene,"!!window.LastSignalApp && !document.getElementById('saveNote').hidden");
             assertEquals("{broken",save(scene));
-            js(scene,"document.getElementById('openSettings').click();document.getElementById('backupAutoRecovery').click()");
+            js(scene,"document.getElementById('openSettings').click();document.querySelectorAll('[data-pane]').forEach(b=>{if(b.dataset.pane==='settings:backup')b.click()});document.getElementById('backupAutoRecovery').click()");
             assertEquals("true",js(scene,"document.getElementById('backupDialog').open"));
             assertEquals("{broken",save(scene));
             js(scene,"window.restoreMarker=true;document.getElementById('backupConfirm').click()");

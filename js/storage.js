@@ -1,5 +1,5 @@
 import { t as localize } from './i18n.js?v=0.55.5';
-import { captureCheckpoint } from './checkpoint.js?v=0.55.5';
+import { captureCheckpoint, retryWithoutCheckpoint } from './checkpoint.js?v=0.55.5';
 import { GEAR_VERSION, migrateGear } from '../data/gear.js?v=0.55.5';
 import { routes, validProgress } from '../data/expeditions.js?v=0.55.5';
 // Save loading, legacy migration and persistence. Keep KEY and the version-1 envelope compatible.
@@ -46,7 +46,8 @@ export function save(options = {}) {
       version: 1,
       state: s
     });
-    localStorage.setItem(KEY, rawSave);
+    try { localStorage.setItem(KEY, rawSave); }
+    catch (error) { if (!retryWithoutCheckpoint(error, KEY, rawSave)) throw error; }
     storage = true;
     captureCheckpoint(s, rawSave, options?.checkpoint === true);
   } catch (e) {
