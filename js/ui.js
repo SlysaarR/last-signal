@@ -1,32 +1,33 @@
-import { t as localize } from './i18n.js?v=0.53.0';
-import { selectScreen, focusScreen } from './interface.js?v=0.53.0';
-import { renderMenu } from './menu.js?v=0.53.0';
-import { renderGuide } from './guide-ui.js?v=0.53.0';
-import { syncWeatherEffects } from './environment-ui.js?v=0.53.0';
-import { currentEnvironment, environmentName } from '../data/environment.js?v=0.53.0';
-import { renderCareer, renderAlbumSets, renderMainObjective } from './career-ui.js?v=0.53.0';
-import { renderAtlas, openAtlas } from './atlas-ui.js?v=0.53.0';
-import { activeSite, siteName } from '../data/atlas.js?v=0.53.0';
-import { detectorFeatures, detectorSettings } from '../data/gear.js?v=0.53.0';
-import { initDetectorControls, renderDetectorControls } from './detector-controls.js?v=0.53.0';
-import { signalDescription } from './detector.js?v=0.53.0';
-import { renderOrders, renderOrderSummary } from './orders-ui.js?v=0.53.0';
-import { renderMarkControls } from './field-notes.js?v=0.53.0';
-import { renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.53.0';
-import { renderJournal } from './journal.js?v=0.53.0';
-import { conditions } from '../data/expeditions.js?v=0.53.0';
+import { setPane, currentPane } from './layout.js?v=0.54.0';
+import { t as localize } from './i18n.js?v=0.54.0';
+import { selectScreen, focusScreen } from './interface.js?v=0.54.0';
+import { renderMenu } from './menu.js?v=0.54.0';
+import { renderGuide } from './guide-ui.js?v=0.54.0';
+import { syncWeatherEffects } from './environment-ui.js?v=0.54.0';
+import { currentEnvironment, environmentName } from '../data/environment.js?v=0.54.0';
+import { renderCareer, renderAlbumSets, renderMainObjective } from './career-ui.js?v=0.54.0';
+import { renderAtlas, openAtlas } from './atlas-ui.js?v=0.54.0';
+import { activeSite, siteName } from '../data/atlas.js?v=0.54.0';
+import { detectorFeatures, detectorSettings } from '../data/gear.js?v=0.54.0';
+import { initDetectorControls, renderDetectorControls } from './detector-controls.js?v=0.54.0';
+import { signalDescription } from './detector.js?v=0.54.0';
+import { renderOrders, renderOrderSummary } from './orders-ui.js?v=0.54.0';
+import { renderMarkControls } from './field-notes.js?v=0.54.0';
+import { renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.54.0';
+import { renderJournal } from './journal.js?v=0.54.0';
+import { conditions } from '../data/expeditions.js?v=0.54.0';
 // Shared navigation, detector readout and quick sheets. Rendering functions never award items.
-import { renderCamp } from './camp.js?v=0.53.0';
-import { foods } from '../data/balance.js?v=0.53.0';
-import { renderCollection } from './collection.js?v=0.53.0';
-import { $ } from './dom.js?v=0.53.0';
-import { draw } from './graphics/field.js?v=0.53.0';
-import { renderInventory } from './inventory.js?v=0.53.0';
-import { bagCapacity, bagUsed, canLeave, emergencyAllowed, foodAmount, foodAvailable, foodFits, maxEnergy, minDig, travelCost } from './rules.js?v=0.53.0';
-import { digInfo, signal } from './search.js?v=0.53.0';
-import { eatFood, renderShop } from './shop.js?v=0.53.0';
-import { s } from './storage.js?v=0.53.0';
-import { currentLocation } from './world.js?v=0.53.0';
+import { renderCamp } from './camp.js?v=0.54.0';
+import { foods } from '../data/balance.js?v=0.54.0';
+import { renderCollection } from './collection.js?v=0.54.0';
+import { $ } from './dom.js?v=0.54.0';
+import { draw } from './graphics/field.js?v=0.54.0';
+import { renderInventory } from './inventory.js?v=0.54.0';
+import { bagCapacity, bagUsed, canLeave, emergencyAllowed, foodAmount, foodAvailable, foodFits, maxEnergy, minDig, travelCost } from './rules.js?v=0.54.0';
+import { digInfo, signal } from './search.js?v=0.54.0';
+import { eatFood, renderShop } from './shop.js?v=0.54.0';
+import { s } from './storage.js?v=0.54.0';
+import { currentLocation } from './world.js?v=0.54.0';
 export function renderFieldChrome() {
   const choices = document.getElementById('quickFoodChoices');
   if (!choices) return;
@@ -62,7 +63,7 @@ export function renderFieldChrome() {
   });
 }
 export function busy(except=null) {
-  return !!s.pending || ['modal','excavate','packDialog','tripMenu','quickFood','coinDetail','backupDialog','inventoryReview','fieldNotes','appUpdateDialog','helpDialog'].some(id => id!==except&&$(id).open);
+  return !!s.pending || ['helpDialog', 'appUpdateDialog', 'backupDialog', 'tripMenu', 'fieldNotes', 'quickFood', 'packDialog', 'inventoryReview', 'modal', 'excavate', 'coinDetail', 'coachDialog', 'routeDialog', 'gearHelpDialog', 'albumHelpDialog', 'journalHelpDialog', 'visitedDialog', 'atlasInfoDialog', 'fieldToolsDialog', 'objectiveInfoDialog'].some(id => id!==except&&$(id).open);
 }
 export function showTab(tab, {focus = true} = {}) {
   if (tab === 'search' && s.atCamp) tab = 'camp';
@@ -73,6 +74,8 @@ export function showTab(tab, {focus = true} = {}) {
   if (focus) focusScreen(tab);
 }
 export function render() {
+  document.documentElement.dataset.atCamp=String(s.atCamp);
+  if(!s.atCamp&&['stash','pantry'].includes(currentPane('inventory')))setPane('inventory','bag');
   if (!$('menu').hidden || !$('settings').hidden) renderMenu();
   renderGuide();
   syncWeatherEffects();
@@ -103,7 +106,8 @@ export function render() {
   if (!$('search').hidden) {
     $('fieldBag').textContent = localize('Рюкзак: ' + bagUsed() + ' / ' + bagCapacity());
     const reading=signal();
-    renderDetector(reading);renderFieldChrome();renderOrderSummary('search');renderMainObjective('search');draw(reading);
+    renderDetector(reading);renderFieldChrome();renderOrderSummary('search');renderMainObjective('search');
+    $('openFieldTools').hidden=$('fieldPanel').hidden;draw(reading);
   }
 }
 // Moving the coil must not rebuild inventory cards, shop controls or album art.
@@ -118,7 +122,7 @@ export function renderDetector(n=signal()) {
   $('targetId').textContent = localize(s.level<2 ? 'Зі ступеня 2' : n.power<25 ? '—' : '≈ '+n.id);
   $('signalStability').textContent = localize(n.power<5 ? '—' : n.stability>=70 ? 'Стабільний' : n.stability>=40 ? 'Мінливий' : 'Нечіткий');
   $('signalStability').dataset.quality = n.power<5?'none':n.stability>=70?'clear':'mixed';
-  [...$('bars').children].forEach((b, i) => b.style.background = i < meter / 5 ? n.pinpoint ? '#d2e58e' : '#81ad84' : '#2b403a');
+  [...$('bars').children].forEach((b, i) => b.style.background = i < meter / 5 ? n.pinpoint ? '#b5792b' : '#327d8d' : '#9aafb9');
   const info = digInfo(n);
   $('dig').textContent = localize('Копати · ' + info.cost + ' сил');
   $('hint').textContent = localize(s.energy < minDig() ? 'Сили вичерпано. Час завершити виїзд.' : n.pinpoint ? 'Центр відгуку. Можна копати.' : n.power > 5 ? 'Проведи навхрест: шукай найсильніший відгук.' : 'Веди металошукачем і слухай сигнал.');
@@ -129,7 +133,11 @@ export function renderDetector(n=signal()) {
 }
 export function initUI() {
   initDetectorControls();
-  document.querySelectorAll('[data-open]').forEach(b => b.onclick = () => b.dataset.open==='atlas'?openAtlas():showTab(b.dataset.open));
+  document.querySelectorAll('[data-open]').forEach(b => b.onclick = () => {
+    const sheet=b.closest?.('dialog');if(busy(sheet?.id))return;sheet?.close();
+    if(b.dataset.openPane)setPane(b.dataset.open,b.dataset.openPane);
+    b.dataset.open==='atlas'?openAtlas():showTab(b.dataset.open);
+  });
   document.querySelectorAll('[data-tab]').forEach(btn => btn.onclick = () => showTab(btn.dataset.tab));
   document.getElementById('tripMenuButton').onclick = () => {
     if (!busy()) document.getElementById('tripMenu').showModal();

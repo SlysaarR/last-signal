@@ -1,19 +1,21 @@
-import { t as localize, translateHTML } from './i18n.js?v=0.53.0';
-import { advanceGuide } from '../data/guide.js?v=0.53.0';
-import { artifactMarkup, renderArtifactThumbnails } from './graphics/thumbnails.js?v=0.53.0';
-import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.53.0';
+import { pageCapacity, layoutRevision, setPane } from './layout.js?v=0.54.0';
+import { t as localize, translateHTML } from './i18n.js?v=0.54.0';
+import { advanceGuide } from '../data/guide.js?v=0.54.0';
+import { artifactMarkup, renderArtifactThumbnails } from './graphics/thumbnails.js?v=0.54.0';
+import { isUkrainianCoin, coinMarkup, renderCoinThumbnails } from './graphics/ukrainian-coins.js?v=0.54.0';
 // inventory responsibilities for Last Signal.
-import { foods } from '../data/balance.js?v=0.53.0';
-import { types } from '../data/items.js?v=0.53.0';
-import { modal } from './dialogs.js?v=0.53.0';
-import { $ } from './dom.js?v=0.53.0';
-import { bagCapacity, bagUsed, foodAmount, foodFits, maxEnergy, priceFor } from './rules.js?v=0.53.0';
-import { eatFood, transferFood } from './shop.js?v=0.53.0';
-import { s, save } from './storage.js?v=0.53.0';
-import { inventoryEntries, inventorySummary, sortedInventory, bulkPlan, samePlan } from './inventory-plan.js?v=0.53.0';
-import { busy, render } from './ui.js?v=0.53.0';
+import { foods } from '../data/balance.js?v=0.54.0';
+import { types } from '../data/items.js?v=0.54.0';
+import { modal } from './dialogs.js?v=0.54.0';
+import { $ } from './dom.js?v=0.54.0';
+import { bagCapacity, bagUsed, foodAmount, foodFits, maxEnergy, priceFor } from './rules.js?v=0.54.0';
+import { eatFood, transferFood } from './shop.js?v=0.54.0';
+import { s, save } from './storage.js?v=0.54.0';
+import { inventoryEntries, inventorySummary, sortedInventory, bulkPlan, samePlan } from './inventory-plan.js?v=0.54.0';
+import { busy, render } from './ui.js?v=0.54.0';
 export let inventoryRenderKey = '';
-export const INVENTORY_PAGE_SIZE=24,REVIEW_PAGE_SIZE=40;
+export const inventoryPageSize=()=>pageCapacity('inventory');
+export const REVIEW_PAGE_SIZE=3;
 let returnedItem = null, review = null;
 export const inventoryView={sort:'album',filter:'all',bagPage:0,stashPage:0};
 function pageControls(prefix,page,total,size) {
@@ -34,7 +36,7 @@ export function itemLabel(item) {
   return [types[item.type].name, types[item.type].variant, item.condition + '%', priceFor(item.type, item.condition) + ' купонів'].filter(Boolean).join(' · ');
 }
 export function itemRows(list, place, entries=inventoryEntries(list===s[place]?s:{...s,[place]:list}),pageEntries=null) {
-  const sorted=pageEntries||sortedInventory(entries.filter(e=>e.place===place),inventoryView.sort,inventoryView.filter).slice(inventoryView[place+'Page']*INVENTORY_PAGE_SIZE,(inventoryView[place+'Page']+1)*INVENTORY_PAGE_SIZE);
+  const sorted=pageEntries||sortedInventory(entries.filter(e=>e.place===place),inventoryView.sort,inventoryView.filter).slice(inventoryView[place+'Page']*inventoryPageSize(),(inventoryView[place+'Page']+1)*inventoryPageSize());
   return sorted.map(entry => {
     const {item,index:i,value,old:best,status,keeper}=entry,t=types[item.type];
     const canAlbum=status==='new'||status==='upgrade';
@@ -46,7 +48,7 @@ export function itemRows(list, place, entries=inventoryEntries(list===s[place]?s
   }).join('') || (list.length?'<div class="empty-state"><b>За цим фільтром знахідок немає</b><p>Обери «Усі знахідки», щоб побачити решту.</p></div>':`<div class="empty-state"><b>${place === 'bag' ? 'Місце для нових знахідок' : 'Сховище порожнє'}</b><p>${place === 'bag' ? 'Знахідки з виїзду з’являться тут. Їжа також займає місця в рюкзаку.' : 'Залишай тут предмети, які хочеш зберегти для наступних рішень.'}</p></div>`);
 }
 export function renderInventory() {
-  const key = JSON.stringify([s.backpack, s.atCamp, s.energy, s.level, s.coins, s.bag, s.stash, s.food, s.pantry, s.best, s.lastTrip, !!s.pending, inventoryView]);
+  const key = JSON.stringify([s.backpack, s.atCamp, s.energy, s.level, s.coins, s.bag, s.stash, s.food, s.pantry, s.best, s.lastTrip, !!s.pending, inventoryView, layoutRevision()]);
   if (key === inventoryRenderKey) return;
   inventoryRenderKey = key;
   $('bagStatus').textContent = localize(bagUsed() + ' / ' + bagCapacity() + ' місць · ступінь ' + s.backpack);
@@ -58,19 +60,20 @@ export function renderInventory() {
   $('inventoryFilterReset').hidden=inventoryView.filter==='all';
   $('inventoryReviewActions').hidden=!s.atCamp;
   $('inventoryFieldNote').hidden=s.atCamp;
-  $('inventorySummary').textContent=localize(`Для альбому: ${counts.new} нових · ${counts.upgrade} покращень. Дублікати: ${counts.duplicate} · металобрухт: ${counts.scrap}.`);
+  $('inventorySummary').textContent=localize(`Нових: ${counts.new} · кращих: ${counts.upgrade} · дублікатів: ${counts.duplicate}`);
   $('reviewAlbum').textContent=localize('Кращі до альбому · '+(counts.new+counts.upgrade));
   $('reviewAlbum').disabled=!counts.new&&!counts.upgrade||!!s.pending;
   $('reviewSale').disabled=!counts.duplicate&&!counts.scrap||!!s.pending;
   for(const place of ['bag','stash']) {
     const all=entries.filter(e=>e.place===place),filtered=sortedInventory(all,inventoryView.sort,inventoryView.filter),total=filtered.length;
-    const page=inventoryView[place+'Page']=clampPage(inventoryView[place+'Page'],total,INVENTORY_PAGE_SIZE),start=page*INVENTORY_PAGE_SIZE;
-    const visible=filtered.slice(start,start+INVENTORY_PAGE_SIZE);
-    $(place==='bag'?'bagShown':'stashShown').textContent=localize(total?`Показано ${start+1}–${start+visible.length} / ${total} за фільтром · усього ${all.length}`:`Показано 0 / ${all.length} знахідок`);
-    pageControls(place,page,total,INVENTORY_PAGE_SIZE);
+    const page=inventoryView[place+'Page']=clampPage(inventoryView[place+'Page'],total,inventoryPageSize()),start=page*inventoryPageSize();
+    const visible=filtered.slice(start,start+inventoryPageSize());
+    $(place==='bag'?'bagShown':'stashShown').textContent=localize(total?`${start+1}–${start+visible.length} / ${total}`:`Показано 0 / ${all.length} знахідок`);
+    pageControls(place,page,total,inventoryPageSize());
     $(place==='bag'?'bagItems':'warehouseItems').innerHTML=translateHTML(place==='stash'&&!s.atCamp?'':itemRows(s[place],place,entries,visible));
   }
   $('warehousePanel').hidden = !s.atCamp;
+  $('pantryItems').hidden=!s.atCamp; $('pantryHeading').hidden=!s.atCamp;
   renderCoinThumbnails();renderArtifactThumbnails();
   $('bagFood').innerHTML = translateHTML(foods.flatMap((f, i) => s.food[i] ? '<div class="card">' + f.name + ' × ' + s.food[i] + ' <button class="secondary" data-foodaction="' + (s.atCamp ? 'unpack' : 'eat') + '" data-index="' + i + '" ' + (!s.food[i] || !s.atCamp && !foodFits(i) ? 'disabled' : '') + '>' + (s.atCamp ? 'До сховища' : 'З’їсти · +' + foodAmount(i)) + '</button>' + (!s.atCamp ? ' <button class="quiet" data-foodaction="discard" data-index="' + i + '" ' + (!s.food[i] ? 'disabled' : '') + '>Викинути</button>' : '') + '</div>' : []).join('') || '<p class="camp-note">Їжі в рюкзаку немає.</p>');
   $('pantryItems').innerHTML = translateHTML(foods.flatMap((f, i) => s.pantry[i] ? '<div class="card">' + f.name + ' × ' + s.pantry[i] + ' <button class="secondary" data-foodaction="pack" data-index="' + i + '" ' + (!s.pantry[i] || bagUsed() >= bagCapacity() ? 'disabled' : '') + '>У рюкзак</button></div>' : []).join('') || '<p class="camp-note">Домашні запаси порожні. Провізію можна купити в майстерні.</p>');
@@ -225,8 +228,8 @@ export function initInventory() {
     if (index < 0) return;
     inventoryView.filter='all';
     const ordered=sortedInventory(inventoryEntries().filter(e=>e.place==='stash'),inventoryView.sort,'all');
-    inventoryView.stashPage=Math.floor(ordered.findIndex(e=>e.item===returnedItem)/INVENTORY_PAGE_SIZE);
-    renderInventory();
+    inventoryView.stashPage=Math.floor(ordered.findIndex(e=>e.item===returnedItem)/inventoryPageSize());
+    setPane('inventory','stash');renderInventory();
     const card = $('warehouseItems').querySelector(`[data-item-place="stash"][data-item-index="${index}"]`);
     card?.scrollIntoView?.({block:'center', behavior:'smooth'});
     card?.setAttribute('tabindex', '-1');

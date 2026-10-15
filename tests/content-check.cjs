@@ -13,7 +13,7 @@ const {newRun,root,assert}=require('./harness.cjs');
  assert(!ns('progression').claimGoal('perfect'));
  s.atCamp=true;const money=s.coins;assert(ns('progression').claimGoal('perfect'));journal.renderJournal();
  assert.equal(s.coins,money+140);assert.equal(journal.journalGoals().at(-1).id,'perfect');
- assert(!r.elements.get('goalCards').innerHTML.includes('data-goal="perfect"'));assert(r.elements.get('completedGoalCards').innerHTML.includes('data-goal="perfect"'));
+ assert(!r.elements.get('goalCards').innerHTML.includes('data-goal="perfect"'));ns('layout').pageState.goals.index=journal.journalGoals().length-1;ns('layout').refreshLayout();journal.renderJournal();assert(r.elements.get('goalCards').innerHTML.includes('data-goal="perfect"'));assert(!r.elements.get('goalCards').innerHTML.includes('data-claim='));
  assert(!ns('progression').claimGoal('perfect'));assert.equal(s.coins,money+140);
  const reload=await newRun(r.store.get('last-signal-v1'));assert.equal(reload.modules.get(root+'/js/journal.js').namespace.journalGoals().at(-1).id,'perfect');
  const inv=ns('inventory');assert(!inv.itemRows([{type:12,condition:27}],'bag').includes('data-itemaction="album"'));

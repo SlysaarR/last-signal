@@ -1,4 +1,5 @@
-import { t as localize } from './i18n.js?v=0.53.0';
+import { refreshLayout } from './layout.js?v=0.54.0';
+import { t as localize } from './i18n.js?v=0.54.0';
 // Device-local presentation settings; never part of the game save or backup.
 export const TEXT_SIZE_KEY = 'last-signal-text-size';
 const textSizes = new Set(['normal', 'large', 'largest']);
@@ -23,6 +24,7 @@ export function setTextSize(value, persist = true) {
   get('textSizeNote').textContent = localize(saved
     ? 'Розмір запам’ятовується на цьому пристрої. Масштаб браузера також працює.'
     : 'Розмір змінено. Браузер не дозволяє зберегти налаштування — після закриття його доведеться вибрати знову.');
+  if(persist)refreshLayout();
   return size;
 }
 

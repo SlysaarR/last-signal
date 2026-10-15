@@ -1,11 +1,12 @@
-import { t as localize, translateHTML } from './i18n.js?v=0.53.0';
-import { orderOffers } from '../data/orders.js?v=0.53.0';
-import { detectorFeatures } from '../data/gear.js?v=0.53.0';
-import { $ } from './dom.js?v=0.53.0';
-import { s } from './storage.js?v=0.53.0';
-import { activeOrder, orderReady, acceptOrder, cancelOrder, claimOrder } from './orders.js?v=0.53.0';
-import { modal } from './dialogs.js?v=0.53.0';
-import { busy, render } from './ui.js?v=0.53.0';
+import { pageWindow, layoutRevision } from './layout.js?v=0.54.0';
+import { t as localize, translateHTML } from './i18n.js?v=0.54.0';
+import { orderOffers } from '../data/orders.js?v=0.54.0';
+import { detectorFeatures } from '../data/gear.js?v=0.54.0';
+import { $ } from './dom.js?v=0.54.0';
+import { s } from './storage.js?v=0.54.0';
+import { activeOrder, orderReady, acceptOrder, cancelOrder, claimOrder } from './orders.js?v=0.54.0';
+import { modal } from './dialogs.js?v=0.54.0';
+import { busy, render } from './ui.js?v=0.54.0';
 
 function progressText(order) {
   return order.needs.map((need,i)=>`${need.label}: ${s.orders.active.counts[i]} / ${need.count}`).join(' · ');
@@ -30,11 +31,11 @@ export function renderOrderSummary(place) {
 }
 let key='';
 export function renderOrders() {
-  const next=JSON.stringify([s.orders,s.atCamp,!!s.pending]);if(key===next)return;key=next;
+  const next=JSON.stringify([s.orders,s.atCamp,!!s.pending,layoutRevision()]);if(key===next)return;key=next;
   const order=activeOrder(),ready=orderReady(),canAct=s.atCamp&&!s.pending;
   $('orderCompleted').textContent=localize('Виконано замовлень: '+(s.orders?.completed||0));
   $('orderSummary').textContent=localize(order?(ready?'Замовлення виконано. '+(canAct?'Нагороду можна забрати нижче.':'Повернися до табору по нагороду.'):'Активне замовлення · без обмеження часу'):(canAct?'Обери одне замовлення. Після виконання з’явиться наступна трійка.':'Нове замовлення можна взяти після повернення до табору.'));
-  $('orderCards').innerHTML=translateHTML((order?[order]:orderOffers(s.orders?.completed||0)).map(offer=>{
+  $('orderCards').innerHTML=translateHTML(pageWindow('orders',order?[order]:orderOffers(s.orders?.completed||0),{key:(order?.id||'offers')+':'+(s.orders?.completed||0)}).map(offer=>{
     const meters=offer.needs.map((need,i)=>`<div class="order-need"><span>${need.label}</span><div class="goal-meter"><progress aria-label="${need.label}" value="${order?s.orders.active.counts[i]:0}" max="${need.count}"></progress><small>${order?s.orders.active.counts[i]:0} / ${need.count}</small></div></div>`).join('');
     const action=order?(ready?`<button class="primary" data-order-claim ${canAct?'':'disabled'}>Отримати ${offer.reward} купонів</button>`:`<button class="quiet" data-order-cancel ${canAct?'':'disabled'}>Скасувати замовлення</button>`):`<button class="secondary" data-order-accept="${offer.id}" ${canAct?'':'disabled'}>Взяти замовлення</button>`;
     return `<article class="goal-card order-card ${ready?'ready':''}"><div class="goal-head"><h3>${offer.name}</h3><span>+${offer.reward} куп.</span></div><p>${offer.text}</p>${meters}${action}</article>`;

@@ -21,11 +21,11 @@ const {newRun,root,assert}=require('./harness.cjs');
  // Catch-up occurs on navigation, not in the field. Keep visual fixture small.
  s.stash=stash.slice(0,5);s.atCamp=true;
  ui.showTab('inventory');assert(el('warehouseItems').innerHTML.includes('data-item-place="stash"'));
- const inventoryHTML=el('warehouseItems').innerHTML;
+ const inventoryHTML=el('warehouseItems').innerHTML,shown=el('stashShown').textContent;
  ui.showTab('search'); // Camp redirects correctly.
  assert(!el('camp').hidden);s.atCamp=false;ui.showTab('search');
  s.stash.push({type:3,condition:100});s.best[3]=80;ui.render();assert.equal(el('warehouseItems').innerHTML,inventoryHTML);
- s.atCamp=true;ui.showTab('inventory');assert.notEqual(el('warehouseItems').innerHTML,inventoryHTML,'hidden changes catch up');
+ s.atCamp=true;ui.showTab('inventory');assert.notEqual(el('stashShown').textContent,shown,'hidden count changes catch up even if the first card stays the same');let reachable=false;for(let page=0;page<6;page++){reachable ||= el('warehouseItems').innerHTML.includes('data-item-index="5"');if(!el('stashNext').disabled)el('stashNext').onclick();}assert(reachable,'new off-page stock remains reachable');
  ui.showTab('collection');assert(el('items').innerHTML.length>0);
  ui.showTab('gear');assert(el('detectorInfo').innerHTML.length>0);
  ui.showTab('journal');assert(el('goalCards').innerHTML.length>0);assert(el('orderCards').innerHTML.length>0);

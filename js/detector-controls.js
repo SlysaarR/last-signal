@@ -1,9 +1,9 @@
-import { t as localize } from './i18n.js?v=0.53.0';
-import { detectorFeatures, detectorSettings, detectorLook } from '../data/gear.js?v=0.53.0';
-import { $ } from './dom.js?v=0.53.0';
-import { s, save } from './storage.js?v=0.53.0';
-import { busy, renderDetector } from './ui.js?v=0.53.0';
-import { draw } from './graphics/field.js?v=0.53.0';
+import { t as localize } from './i18n.js?v=0.54.0';
+import { detectorFeatures, detectorSettings, detectorLook } from '../data/gear.js?v=0.54.0';
+import { $ } from './dom.js?v=0.54.0';
+import { s, save } from './storage.js?v=0.54.0';
+import { busy, renderDetector } from './ui.js?v=0.54.0';
+import { draw } from './graphics/field.js?v=0.54.0';
 let trail=[],trailScope=null;
 export function recordReading(reading,scope) {
   if(scope!==trailScope){trail=[];trailScope=scope;}
@@ -13,11 +13,11 @@ export function recordReading(reading,scope) {
 export function currentTrail(scope) { return scope===trailScope?[...trail]:[]; }
 export function setDetectorMode(mode) {
   const f=detectorFeatures(s.level);
-  if(s.atCamp||busy()||!['search','pinpoint','deep'].includes(mode)||mode==='pinpoint'&&!f.pinpoint||mode==='deep'&&!f.deep)return false;
+  if(s.atCamp||busy('fieldToolsDialog')||!['search','pinpoint','deep'].includes(mode)||mode==='pinpoint'&&!f.pinpoint||mode==='deep'&&!f.deep)return false;
   s.detectorSettings={...detectorSettings(s),mode};save();renderDetector();draw();return true;
 }
 export function toggleIronQuiet() {
-  if(s.atCamp||busy()||!detectorFeatures(s.level).ironQuiet)return false;
+  if(s.atCamp||busy('fieldToolsDialog')||!detectorFeatures(s.level).ironQuiet)return false;
   const settings=detectorSettings(s);s.detectorSettings={...settings,ironQuiet:!settings.ironQuiet};save();renderDetector();return true;
 }
 export function renderDetectorControls(reading) {

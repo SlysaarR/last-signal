@@ -1,24 +1,25 @@
-import { t as localize, translateHTML } from './i18n.js?v=0.53.0';
-import { renderPreparation } from './environment-ui.js?v=0.53.0';
-import { environmentName } from '../data/environment.js?v=0.53.0';
-import { MAX_SITES, activeSite, selectedSite, siteName, siteLocation, siteRoute, siteAccessible, canScout } from '../data/atlas.js?v=0.53.0';
-import { routes, conditions, chosenRoute } from '../data/expeditions.js?v=0.53.0';
-import { surveyCols, surveyRows } from '../data/balance.js?v=0.53.0';
-import { ensureAtlas, selectSite, forgetSite } from './atlas-state.js?v=0.53.0';
-import { s, save } from './storage.js?v=0.53.0';
-import { $ } from './dom.js?v=0.53.0';
-import { busy, render, showTab } from './ui.js?v=0.53.0';
-import { modal } from './dialogs.js?v=0.53.0';
-import { canLeave, travelCost, emergencyAllowed } from './rules.js?v=0.53.0';
-import { confirmDeparture, departureBlock } from './camp.js?v=0.53.0';
+import { pageWindow, setPane } from './layout.js?v=0.54.0';
+import { t as localize, translateHTML } from './i18n.js?v=0.54.0';
+import { renderPreparation } from './environment-ui.js?v=0.54.0';
+import { environmentName } from '../data/environment.js?v=0.54.0';
+import { MAX_SITES, activeSite, selectedSite, siteName, siteLocation, siteRoute, siteAccessible, canScout } from '../data/atlas.js?v=0.54.0';
+import { routes, conditions, chosenRoute } from '../data/expeditions.js?v=0.54.0';
+import { surveyCols, surveyRows } from '../data/balance.js?v=0.54.0';
+import { ensureAtlas, selectSite, forgetSite } from './atlas-state.js?v=0.54.0';
+import { s, save } from './storage.js?v=0.54.0';
+import { $ } from './dom.js?v=0.54.0';
+import { busy, render, showTab } from './ui.js?v=0.54.0';
+import { modal } from './dialogs.js?v=0.54.0';
+import { canLeave, travelCost, emergencyAllowed } from './rules.js?v=0.54.0';
+import { confirmDeparture, departureBlock } from './camp.js?v=0.54.0';
 const pins=[[19,20],[73,15],[85,49],[69,81],[20,80],[13,48]];
 export function openAtlas() {
   if(busy())return;
-  ensureAtlas();save();showTab('atlas');
+  ensureAtlas();save();setPane('atlas','map');showTab('atlas');
 }
 function pick(id) {
   if(busy()||!selectSite(id))return;
-  save();render();$('atlasSelected').focus?.({preventScroll:false});
+  save();setPane('atlas','map');render();$('atlasSelected').focus?.({preventScroll:false});
 }
 function requestForget(id) {
   if(!s.atCamp||busy())return;
@@ -45,12 +46,12 @@ export function renderAtlas() {
   $('atlasTravel').textContent=localize(here?'Продовжити пошук':target?'Повернутися на ділянку':'Вирушити на розвідку');
   $('atlasTravel').disabled=!here&&!canLeave();
   $('atlasTravelNote').textContent=localize(here?'Мітки позначають твої спостереження, а не підтверджену здобич.':departureBlock() || 'Після оплати залишиться '+(s.coins-travelCost())+' купонів. Дорога не відновлює сили'+(!s.atCamp?' і не скидає ліміт їжі.':'.'));
-  $('atlasSites').innerHTML=translateHTML(sites.map(site=>{
+  $('atlasSites').innerHTML=translateHTML(pageWindow('sites',sites).map(site=>{
     const field=site===current?s:site.field,loc=siteLocation(site),isCurrent=site===current;
     const explored=Math.floor((field.survey?.length||0)/(surveyCols*surveyRows)*100),marks=field.fieldMarks?.length||0;
     const locked=!siteAccessible(s,site),fare=site.emergency&&s.atCamp&&s.coins<25?0:siteRoute(site).cost;
     return `<article class="atlas-card ${site===target?'selected':''}"><div class="atlas-card-head"><span class="atlas-number">${site.id}</span><div><h3>${siteName(site)}</h3><small>${loc.name}${isCurrent?' · ти тут':''}</small></div><span aria-hidden="true">${loc.icon}</span></div><p>${site.emergency?'Бідне узбіччя з великою кількістю сміття.':loc.hint}</p><div class="atlas-facts"><span>${site.environment?environmentName(site.environment):conditions[site.condition].name}</span><span>Дорога: ${fare} куп.</span><span>Пройдено: ${explored}%</span><span>Міток: ${marks} / 8</span></div><p class="atlas-history">Відвідувань: ${site.visits} · останній виїзд № ${site.lastDay}${site.productive?' · результативна ділянка':''}</p><div class="atlas-card-actions"><button class="${site===target?'primary':'secondary'}" data-atlas-pick="${site.id}" aria-pressed="${site===target}" ${locked?'disabled':''}>${locked?'Потрібно '+siteRoute(site).need+' позицій в альбомі':site===target?'Обрано':isCurrent?'Поточне місце':'Обрати ділянку'}</button><button class="quiet" data-atlas-forget="${site.id}" ${!s.atCamp||isCurrent?'disabled':''} aria-label="Прибрати з карти: ${siteName(site)}">Прибрати</button></div></article>`;
-  }).join('')||'<div class="empty-state"><b>Твоя карта поки порожня</b><p>Обери напрямок розвідки нижче. Після прибуття ділянка збережеться тут.</p></div>');
+  }).join('')||'<div class="empty-state"><b>Твоя карта поки порожня</b><p>Обери вкладку «Розвідка». Нове місце збережеться на карті.</p></div>');
   $('atlasScout').textContent=localize(!target?'Обрано розвідку нового місця':'Обрати розвідку нового місця');
   $('atlasScout').setAttribute('aria-pressed',String(!target));
   $('atlasScout').disabled=!canScout(s);

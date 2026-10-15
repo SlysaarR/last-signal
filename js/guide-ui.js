@@ -1,12 +1,13 @@
-import { t as localize } from './i18n.js?v=0.53.0';
-import { currentScreen } from './interface.js?v=0.53.0';
-import { resumeGame } from './menu.js?v=0.53.0';
-import { firstStepsOffer, startGuide, guideCard } from '../data/guide.js?v=0.53.0';
-import { s, save } from './storage.js?v=0.53.0';
-import { $ } from './dom.js?v=0.53.0';
-import { busy, render, showTab } from './ui.js?v=0.53.0';
-import { confirmDeparture, confirmReturnHome } from './camp.js?v=0.53.0';
-import { syncWeatherEffects } from './environment-ui.js?v=0.53.0';
+import { setPane } from './layout.js?v=0.54.0';
+import { t as localize } from './i18n.js?v=0.54.0';
+import { currentScreen } from './interface.js?v=0.54.0';
+import { resumeGame } from './menu.js?v=0.54.0';
+import { firstStepsOffer, startGuide, guideCard } from '../data/guide.js?v=0.54.0';
+import { s, save } from './storage.js?v=0.54.0';
+import { $ } from './dom.js?v=0.54.0';
+import { busy, render, showTab } from './ui.js?v=0.54.0';
+import { confirmDeparture, confirmReturnHome } from './camp.js?v=0.54.0';
+import { syncWeatherEffects } from './environment-ui.js?v=0.54.0';
 
 let lastCard = '';
 export function renderGuide() {
@@ -14,6 +15,7 @@ export function renderGuide() {
   if (key === lastCard) return;
   lastCard = key;
   $('guideCard').hidden = !card;
+  $('openCoach').hidden = !card;
   if (!card) return;
   $('guideCount').textContent = localize(card.count);
   $('guideTitle').textContent = localize(card.title);
@@ -28,6 +30,7 @@ function begin() {
   else s.guide.enabled = true;
   save();
   if (['menu','settings'].includes(currentScreen())) resumeGame(); else render();
+  if(!$('coachDialog').open)$('coachDialog').showModal();
   $('guideTitle').focus?.({preventScroll:true});
   $('guideCard').scrollIntoView?.({block:'nearest'});
 }
@@ -40,20 +43,26 @@ export function openGuide() {
 }
 export function initGuide() {
   $('openHelp').onclick = openGuide;
+  $('openCoach').onclick=()=>{if(busy())return;$('coachDialog').showModal();syncWeatherEffects();};
+  $('coachDialog').addEventListener('close',syncWeatherEffects);
   $('guideAction').onclick = () => {
-    if (busy()) return;
+    if (busy('coachDialog')) return;
+    $('coachDialog').close();
     const action = guideCard(s)?.action;
     if (action === 'begin') {begin(); return;}
     if (action === 'depart') {showTab('camp'); confirmDeparture(); return;}
     if (action === 'home') {confirmReturnHome(); return;}
     if (['search','inventory','journal'].includes(action)) {
+      if(action==='inventory')setPane('inventory','bag');
+      if(action==='journal')setPane('journal','career');
       showTab(action);
       const target = $(action === 'search' ? 'field' : action === 'inventory' ? 'inventorySummary' : 'careerTitle');
       target.scrollIntoView?.({block:'start'}); target.focus?.({preventScroll:true});
     }
   };
   $('guideDismiss').onclick = () => {
-    if (busy()) return;
+    if (busy('coachDialog')) return;
+    $('coachDialog').close();
     if (!s.guide) startGuide(s);
     s.guide.enabled = false; save(); render();
     $('openMenu').focus?.({preventScroll:true});

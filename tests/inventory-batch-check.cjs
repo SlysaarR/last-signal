@@ -20,7 +20,7 @@ const {newRun,root,assert}=require('./harness.cjs');
   inv.inventoryView.sort=sort;inv.inventoryView.filter=filter;inv.renderInventory();assert.equal(state(),unchanged,'views never reorder or mutate saved objects');
  }
  inv.inventoryView.sort='condition';inv.inventoryView.filter='all';inv.renderInventory();
- assert(el('bagItems').innerHTML.indexOf('data-item-index="4"')<el('bagItems').innerHTML.indexOf('data-item-index="0"'),'best condition sorts first without changing original index');
+ assert(el('bagItems').innerHTML.includes('data-item-index="4"'),'best condition is the first visible card with its original index');el('bagNext').onclick();assert(el('bagItems').innerHTML.includes('data-item-index="0"'),'next page retains the second item index');el('bagPrev').onclick();
  const moved=s.bag[0];inv.inventoryAction('move','bag',0);assert.strictEqual(s.stash.at(-1),moved,'an action uses the original index after sorting');
  fixture();
  inv.inventoryAction('sell','stash',0);assert(el('modal').open,'single sale of album upgrade needs an explicit choice');assert.equal(s.stash[0].condition,90);
@@ -35,7 +35,7 @@ const {newRun,root,assert}=require('./harness.cjs');
  el('reviewItems').listeners.change[0]({target:{dataset:{reviewKey:'bag:3'},checked:false}});
  el('reviewIncludeScrap').checked=false;el('reviewIncludeScrap').onchange();
  el('reviewIncludeScrap').checked=true;el('reviewIncludeScrap').onchange();
- assert(el('reviewItems').innerHTML.includes('data-review-key="bag:3" >'),'an excluded scrap item stays excluded across off/on toggles');
+ let excludedScrap=false;for(let page=0;page<4;page++){excludedScrap ||= el('reviewItems').innerHTML.includes('data-review-key="bag:3" >');if(el('reviewNext').disabled)break;el('reviewNext').onclick();}assert(excludedScrap,'an excluded scrap item stays excluded across off/on toggles and pages');
  el('reviewIncludeScrap').checked=false;el('reviewIncludeScrap').onchange();
  const selected=plan.bulkPlan('sale').filter(e=>e.key!=='bag:0'),saleValue=selected.reduce((sum,e)=>sum+e.value,0);
  inv.confirmInventoryReview();assert.equal(s.coins,100+saleValue);assert(s.bag.includes(untouched),'unchecked duplicate survives');

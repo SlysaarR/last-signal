@@ -1,6 +1,6 @@
-import { t as localize } from './i18n.js?v=0.53.0';
+import { t as localize } from './i18n.js?v=0.54.0';
 // Installation and release switching are separate from the player's save format.
-const VERSION = '0.53.0';
+const VERSION = '0.54.0';
 export function initOffline({save, canUpdate}) {
   const $ = id => document.getElementById(id);
   const summary=$('offlineSummary'), status=$('offlineStatus'), check=$('offlineCheck');

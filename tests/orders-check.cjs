@@ -16,7 +16,7 @@ const plain=value=>JSON.parse(JSON.stringify(value));
  const before=JSON.stringify(s),random=run.context.Math.random;
  run.context.Math.random=()=>{throw Error('Order views must not consume loot RNG');};
  ui.showTab('journal');ns('orders-ui').renderOrders();assert.equal(JSON.stringify(s),before);
- assert.equal((el('orderCards').innerHTML.match(/data-order-accept=/g)||[]).length,3);
+ const offerIds=[];for(let page=0;page<3;page++){assert.equal((el('orderCards').innerHTML.match(/data-order-accept=/g)||[]).length,1);offerIds.push(el('orderCards').innerHTML.match(/data-order-accept="([^"]+)"/)[1]);if(page<2)el('ordersNext').onclick();}assert.equal(new Set(offerIds).size,3);el('ordersPrev').onclick();el('ordersPrev').onclick();
  assert.equal(el('items').innerHTML,'','startup and journal do not build the hidden album');
  assert.equal(el('warehouseItems').innerHTML,'','startup does not build hidden inventory');
  assert(!orders.acceptOrder('bad'));assert(!orders.acceptOrder('kop25'),'unoffered orders cannot be accepted');
