@@ -91,8 +91,12 @@ public class UpgradeTest {
             }
             assertEquals(expected,save(scene));
             // Exercise real automatic-backup recovery after a malformed primary save.
-            // Inject corruption after the game's normal final save and before reload.
-            js(scene,"window.addEventListener('pagehide',()=>localStorage.setItem('last-signal-v1','{broken'));window.location.reload()");
+            // A separate same-origin test document writes after all game unload
+            // handlers, so lifecycle autosaving cannot repair this fixture first.
+            scene.onActivity(a -> a.gameView().loadDataWithBaseURL(
+                "https://appassets.androidplatform.net/assets/game/",
+                "<script>localStorage.setItem('last-signal-v1','{broken');location.replace('https://appassets.androidplatform.net/assets/game/index.html')</script>",
+                "text/html","UTF-8",null));
             until(scene,"!!window.LastSignalApp && !document.getElementById('saveNote').hidden");
             assertEquals("{broken",save(scene));
             js(scene,"document.getElementById('openSettings').click();document.querySelectorAll('[data-pane]').forEach(b=>{if(b.dataset.pane==='settings:backup')b.click()});document.getElementById('backupAutoRecovery').click()");
