@@ -1,7 +1,8 @@
-import { types } from '../data/items.js?v=0.52.0';
-import { createInspectionModel, drawInspection } from './graphics/inspection.js?v=0.52.0';
-import { onCoinImagesReady } from './graphics/coin-reference.js?v=0.52.0';
-import { inspectionLightNames } from './graphics/inspection-light.js?v=0.52.0';
+import { t as localize } from './i18n.js?v=0.53.0';
+import { types } from '../data/items.js?v=0.53.0';
+import { createInspectionModel, drawInspection } from './graphics/inspection.js?v=0.53.0';
+import { onCoinImagesReady } from './graphics/coin-reference.js?v=0.53.0';
+import { inspectionLightNames } from './graphics/inspection-light.js?v=0.53.0';
 const viewers=new WeakMap(),TAU=Math.PI*2;
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 export function clearInspection(canvas) {
@@ -15,11 +16,11 @@ export function setupInspection(canvas,button,type,condition,studio=true) {
   const pointers=new Map(),get=suffix=>document.getElementById(canvas.id+suffix);
   const controls={tools:get('Tools'),out:get('ZoomOut'),value:get('ZoomValue'),in:get('ZoomIn'),flip:get('Turn'),light:get('Light')};
   controls.tools.hidden=false;
-  button.hidden=true;button.textContent='↺';button.title='Початковий ракурс, масштаб і світло';
-  button.setAttribute('aria-label','Повернути початковий ракурс, масштаб і світло');
+  button.hidden=true;button.textContent=localize('↺');button.title=localize('Початковий ракурс, масштаб і світло');
+  button.setAttribute('aria-label',localize('Повернути початковий ракурс, масштаб і світло'));
   canvas.onclick=null;canvas.tabIndex=0;canvas.setAttribute('role','img');
   canvas.style.touchAction='none';canvas.style.cursor='grab';
-  const label=()=>canvas.setAttribute('aria-label',`${item.name} · стан ${condition} зі 100. Обертай одним пальцем або стрілками. Двома пальцями — масштаб і зсув. Плюс і мінус — масштаб; F — перевернути; L — світло; Home — початковий вигляд.`);
+  const label=()=>canvas.setAttribute('aria-label',localize(`${item.name} · стан ${condition} зі 100. Обертай одним пальцем або стрілками. Двома пальцями — масштаб і зсув. Плюс і мінус — масштаб; F — перевернути; L — світло; Home — початковий вигляд.`));
   const boundPan=()=>{pan=pan.map(v=>clamp(v,-.42*(zoom-1),.42*(zoom-1)));};
   const render=()=>{
     frame=0;if(disposed)return;
@@ -27,8 +28,8 @@ export function setupInspection(canvas,button,type,condition,studio=true) {
     drawInspection(canvas.getContext('2d'),model,yaw,pitch,studio,canvas.width,canvas.height,zoom,light,pan);
     button.hidden=Math.abs(Math.sin(yaw/2))+Math.abs(Math.sin(pitch/2))+Math.abs(zoom-1)+Math.hypot(...pan)+light<.001;
     canvas.dataset.yaw=String(yaw);canvas.dataset.pitch=String(pitch);canvas.dataset.zoom=String(zoom);canvas.dataset.light=String(light);canvas.dataset.pan=pan.join(',');
-    controls.value.textContent=Math.round(zoom*100)+'%';controls.out.disabled=zoom<=1;controls.in.disabled=zoom>=2.5;
-    controls.light.textContent='Світло '+['↖','↗','↑'][light];controls.light.setAttribute('aria-label','Світло '+inspectionLightNames[light]+'. Змінити напрямок');
+    controls.value.textContent=localize(Math.round(zoom*100)+'%');controls.out.disabled=zoom<=1;controls.in.disabled=zoom>=2.5;
+    controls.light.textContent=localize('Світло '+['↖','↗','↑'][light]);controls.light.setAttribute('aria-label',localize('Світло '+inspectionLightNames[light]+'. Змінити напрямок'));
   };
   const schedule=()=>{if(!disposed&&!frame)frame=requestAnimationFrame(render);};
   const stopImages=onCoinImagesReady(()=>{dirty=true;schedule();});

@@ -78,19 +78,19 @@ async function resource(url) {
   if (response) return response;
   if (entries.has(url)) {
     try { response = await network(url, entries.get(url)); await cache.put(url, response.clone()); return response; }
-    catch { return new Response('Офлайн-копія неповна. Під’єднай інтернет і перевір оновлення в таборі.', {status:503, headers:{'Content-Type':'text/plain; charset=utf-8'}}); }
+    catch { return new Response('Офлайн-копія неповна. Під’єднай інтернет і перевір оновлення в налаштуваннях. / Connect to the internet and check for updates in Settings.', {status:503, headers:{'Content-Type':'text/plain; charset=utf-8'}}); }
   }
   for (const name of (await caches.keys()).filter(name => owned(name) && name !== CACHE)) {
     response = await (await caches.open(name)).match(url); if (response) return response;
   }
-  return new Response('Ресурс цієї версії недоступний. Відкрий гру заново.', {status:503});
+  return new Response('Ресурс цієї версії недоступний. Відкрий гру заново. / This resource is unavailable. Reopen the game.', {status:503});
 }
 async function navigation() {
   const response = await resource(INDEX);
   if (response.ok) return response;
   // A partially evicted cache must show a recovery route, never a newer document
   // paired with this worker's old module graph. Do not touch the player's save.
-  return new Response(`<!doctype html><html lang="uk"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#111f20"><title>Останній сигнал — відновлення</title><style>body{background:#111f20;color:#e7ede2;font:16px/1.65 system-ui;margin:48px auto;padding:0 24px;max-width:420px}a{display:inline-block;color:#c2d99b;padding:12px 0}</style><h1>Потрібен інтернет</h1><p>Браузер видалив частину офлайн-копії або не завершив її завантаження. Збереження гри не очищалося.</p><p>Під’єднай інтернет і спробуй відкрити гру ще раз. Якщо сторінка повторюється, закрий усі вікна цієї гри та відкрий її знову, щоб завершити оновлення.</p><a href="./">Відкрити гру ще раз →</a></html>`, {status:503, headers:{'Content-Type':'text/html; charset=utf-8'}});
+  return new Response(`<!doctype html><html lang="uk"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#111f20"><title>Останній сигнал — відновлення</title><style>body{background:#111f20;color:#e7ede2;font:16px/1.65 system-ui;margin:48px auto;padding:0 24px;max-width:420px}a{display:inline-block;color:#c2d99b;padding:12px 0}</style><h1>Потрібен інтернет</h1><p>Браузер видалив частину офлайн-копії або не завершив її завантаження. Збереження гри не очищалося.</p><p>Під’єднай інтернет і спробуй відкрити гру ще раз. Якщо сторінка повторюється, закрий усі вікна цієї гри та відкрий її знову, щоб завершити оновлення.</p><a href="./">Відкрити гру ще раз →</a><section lang="en"><h2>Internet needed</h2><p>The browser removed part of the offline copy or did not finish downloading it. Your saved progress has not been cleared.</p><p>Connect to the internet and reopen the game. If this page returns, close all windows of this game, then open it again to finish updating.</p><a href="./">Reopen the game →</a></section></html>`, {status:503, headers:{'Content-Type':'text/html; charset=utf-8'}});
 }
 self.addEventListener('fetch', event => {
   const request = event.request, url = new URL(request.url);

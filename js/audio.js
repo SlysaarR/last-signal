@@ -1,5 +1,6 @@
+import { t as localize } from './i18n.js?v=0.53.0';
 // audio responsibilities for Last Signal.
-import { $ } from './dom.js?v=0.52.0';
+import { $ } from './dom.js?v=0.53.0';
 export let audio = null,
   sound = false,
   lastBeep = -Infinity;
@@ -38,8 +39,8 @@ export function setWeatherAmbience(kind){
 const foreground=()=>pageActive&&document.visibilityState!=='hidden';
 function renderSound() {
   const waiting=sound&&audio?.state!=='running';
-  $('sound').textContent=unavailable?'Звук недоступний':waiting?'Звук: пауза':'Звук: '+(sound?'так':'ні');
-  $('sound').setAttribute('aria-label',waiting?'Звук призупинено. Торкнися поля для відновлення або натисни, щоб вимкнути.':sound?'Вимкнути звук':'Увімкнути звук');
+  $('sound').textContent=localize(unavailable?'Звук недоступний':waiting?'Звук: пауза':'Звук: '+(sound?'так':'ні'));
+  $('sound').setAttribute('aria-label',localize(waiting?'Звук призупинено. Торкнися поля для відновлення або натисни, щоб вимкнути.':sound?'Вимкнути звук':'Увімкнути звук'));
   $('sound').setAttribute('aria-pressed',String(sound));
 }
 function stopVoices() {

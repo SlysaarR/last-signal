@@ -1,7 +1,7 @@
 const {newRun,root,golden,assert}=require('./harness.cjs');
 const mod=(run,name)=>run.modules.get(root+'/js/'+name+'.js').namespace;
 (async()=>{
-  const run=await newRun(),el=id=>run.elements.get(id),doc=run.context.document;
+  const run=await newRun(null,false,null,{start:false}),el=id=>run.elements.get(id),doc=run.context.document;
   const ui=mod(run,'ui'),presentation=mod(run,'interface');
   const saved=run.store.get('last-signal-v1'),state=JSON.stringify(run.state());
   assert.equal(doc.activeElement,null,'startup does not steal focus');

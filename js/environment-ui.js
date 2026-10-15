@@ -1,12 +1,13 @@
-import { foods } from '../data/balance.js?v=0.52.0';
-import { forecastEnvironment, currentEnvironment, environmentKey, environmentName, groundTypes } from '../data/environment.js?v=0.52.0';
-import { selectedSite } from '../data/atlas.js?v=0.52.0';
-import { chosenRoute, conditions } from '../data/expeditions.js?v=0.52.0';
-import { s, save } from './storage.js?v=0.52.0';
-import { $ } from './dom.js?v=0.52.0';
-import { digCostFor, emergencyAllowed, foodAmount, maxEnergy } from './rules.js?v=0.52.0';
-import { setWeatherAmbience } from './audio.js?v=0.52.0';
-import { busy, render } from './ui.js?v=0.52.0';
+import { translateHTML, t as localize } from './i18n.js?v=0.53.0';
+import { foods } from '../data/balance.js?v=0.53.0';
+import { forecastEnvironment, currentEnvironment, environmentKey, environmentName, groundTypes } from '../data/environment.js?v=0.53.0';
+import { selectedSite } from '../data/atlas.js?v=0.53.0';
+import { chosenRoute, conditions } from '../data/expeditions.js?v=0.53.0';
+import { s, save } from './storage.js?v=0.53.0';
+import { $ } from './dom.js?v=0.53.0';
+import { digCostFor, emergencyAllowed, foodAmount, maxEnergy } from './rules.js?v=0.53.0';
+import { setWeatherAmbience } from './audio.js?v=0.53.0';
+import { busy, render } from './ui.js?v=0.53.0';
 let pageActive=true,media=null;
 const prepKeys=new Map();
 export function departureConditions(){
@@ -34,7 +35,7 @@ export function renderPreparation(id){
  const title=environment?environmentName(environment):conditions[condition].name,costs=[5,10,15].map(base=>digCostFor(base,destination));
  const tip=environment?(emergency?'Безкоштовне узбіччя: усі глибини копаються за звичною ціною.':groundTypes[environment.ground].tip):conditions[condition].text;
  const reserve=usableFoodEnergy(),estimate=Math.floor((s.energy+reserve)/costs[1]);
- $(id).innerHTML=`<div class="eyebrow">${known?'УМОВИ ЗНАЙОМОЇ ДІЛЯНКИ':'ПРОГНОЗ НА НАСТУПНУ РОЗВІДКУ'}</div><h3>${title}</h3><p>${tip}</p><div class="condition-costs">${['Неглибоко','Середньо','Глибоко'].map((label,i)=>`<div><span>${label}</span><b>${costs[i]}<small> сил</small></b></div>`).join('')}</div><p class="condition-budget">Твої сили й їжа: приблизно ${estimate} середніх розкопок${reserve?' · їжа дасть до '+reserve+' сил':' · без запасу їжі'}. Це запас на копання, не кількість знахідок.</p><small>${known?'Погода й ґрунт збережені з цією ділянкою.':'Умови закріпляться за новою ділянкою. Інший напрямок може мати інший прогноз.'}</small>`;
+ $(id).innerHTML=translateHTML(`<div class="eyebrow">${known?'УМОВИ ЗНАЙОМОЇ ДІЛЯНКИ':'ПРОГНОЗ НА НАСТУПНУ РОЗВІДКУ'}</div><h3>${title}</h3><div class="condition-costs">${['Неглибоко','Середньо','Глибоко'].map((label,i)=>`<div><span>${label}</span><b>${costs[i]}<small> сил</small></b></div>`).join('')}</div><details class="condition-help"><summary>Про умови</summary><p>${tip}</p><p class="condition-budget">Твої сили й їжа: приблизно ${estimate} середніх розкопок${reserve?' · їжа дасть до '+reserve+' сил':' · без запасу їжі'}. Це запас на копання, не кількість знахідок.</p><small>${known?'Погода й ґрунт збережені з цією ділянкою.':'Умови закріпляться за новою ділянкою. Інший напрямок може мати інший прогноз.'}</small></details>`);
 }
 export function effectLevel(){
  // Reduced-motion wins even over a manually chosen full profile.
@@ -49,13 +50,13 @@ export function syncWeatherEffects(){
  layer.hidden=!shown;layer.dataset.weather=env?.weather||'none';layer.dataset.level=level;layer.dataset.running=String(running);
  // Repeated UI renders reuse the same source; no audio context is created here.
  setWeatherAmbience(running?env.weather:null);
- if(!$('camp').hidden){$('weatherEffects').value=s.weatherEffects||'auto';$('weatherEffectsNote').textContent=level==='low'?'Зараз мінімальні ефекти: без анімації дощу. Умови пошуку ті самі.':'Зараз повні ефекти. Звук погоди працює разом із кнопкою звуку приладу.';}
+ if(!$('settings').hidden){$('weatherEffects').value=s.weatherEffects||'auto';$('weatherEffectsNote').textContent=localize(level==='low'?'Без анімації дощу. Умови пошуку ті самі.':'Повні ефекти погоди.');}
 }
 export function initEnvironment(){
  media=typeof matchMedia==='function'?matchMedia('(prefers-reduced-motion: reduce)'):null;
  media?.addEventListener?.('change',syncWeatherEffects);
  $('weatherEffects').onchange=e=>{
-   if(busy()||!['auto','full','low'].includes(e.target.value))return;
+   if(document.querySelector('dialog[open]')||!['auto','full','low'].includes(e.target.value)){syncWeatherEffects();return;}
    s.weatherEffects=e.target.value;save();render();
  };
  document.addEventListener('visibilitychange',syncWeatherEffects);

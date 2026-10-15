@@ -70,7 +70,8 @@ async function ui({activeVersion=release.version,waiting=false,available=true,re
  }
  const navigator=available?{serviceWorker:sw,onLine:true}:{};
  const context=vm.createContext({window,document,navigator,URL,MessageChannel:Channel,WeakSet,Date,console,setTimeout:fn=>{timers.set(++timerID,fn);return timerID;},clearTimeout:id=>timers.delete(id)});
- const mod=new vm.SourceTextModule(fs.readFileSync(root+'/js/offline.js','utf8'),{context});await mod.link(()=>{});await mod.evaluate();
+ const modules=new Map();const get=file=>{if(!modules.has(file))modules.set(file,new vm.SourceTextModule(fs.readFileSync(file,'utf8'),{context,identifier:file}));return modules.get(file);};
+ const mod=get(root+'/js/offline.js');await mod.link((specifier,ref)=>get(path.resolve(path.dirname(ref.identifier),specifier.split('?')[0])));await mod.evaluate();
  mod.namespace.initOffline({save:()=>{calls.push('save');return config.saveOK;},canUpdate:()=>config.canUpdate});
  await tick();await tick();return {elements,calls,timers,config,window,document,navigator,reg,sw,next,active,get reloads(){return reloads;}};
 }

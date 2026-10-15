@@ -1,12 +1,13 @@
-import { GEAR_VERSION, migrateGear } from '../data/gear.js?v=0.52.0';
-import { routes, validProgress } from '../data/expeditions.js?v=0.52.0';
+import { t as localize } from './i18n.js?v=0.53.0';
+import { GEAR_VERSION, migrateGear } from '../data/gear.js?v=0.53.0';
+import { routes, validProgress } from '../data/expeditions.js?v=0.53.0';
 // Save loading, legacy migration and persistence. Keep KEY and the version-1 envelope compatible.
-import { surveyCols, surveyRows } from '../data/balance.js?v=0.52.0';
-import { locations } from '../data/locations.js?v=0.52.0';
-import { $ } from './dom.js?v=0.52.0';
-import { bagCapacity, bagUsed, maxEnergy, rollCondition } from './rules.js?v=0.52.0';
-import { currentLocation, rollDepth, rollLocation } from './world.js?v=0.52.0';
-import { validateBackupState } from './backup-format.js?v=0.52.0';
+import { surveyCols, surveyRows } from '../data/balance.js?v=0.53.0';
+import { locations } from '../data/locations.js?v=0.53.0';
+import { $ } from './dom.js?v=0.53.0';
+import { bagCapacity, bagUsed, maxEnergy, rollCondition } from './rules.js?v=0.53.0';
+import { currentLocation, rollDepth, rollLocation } from './world.js?v=0.53.0';
+import { validateBackupState } from './backup-format.js?v=0.53.0';
 export const KEY = 'last-signal-v1';
 export function fresh() {
   return {
@@ -68,7 +69,7 @@ export function loadGame() {
     protectedSave = raw !== null;
     s = fresh();
     migrateState();
-    if (protectedSave) $('saveNote').textContent = 'Не вдалося прочитати збереження. Початкові дані залишено без змін. Тимчасова гра не записується — віднови справну JSON-копію в таборі.';
+    if (protectedSave) $('saveNote').textContent = localize('Не вдалося прочитати збереження. Початкові дані залишено без змін. Тимчасова гра не записується — віднови справну JSON-копію в налаштуваннях.');
   }
 }
 function migrateState() {

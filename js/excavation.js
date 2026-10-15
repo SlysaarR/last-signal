@@ -1,13 +1,14 @@
-import { setupInspection, clearInspection } from './coin-flip.js?v=0.52.0';
-import { onCoinImagesReady } from './graphics/coin-reference.js?v=0.52.0';
-import { brushMark, cleaningPercent, visitBrushSegment } from '../data/cleaning.js?v=0.52.0';
-import { createSoilBrush } from './graphics/soil-brush.js?v=0.52.0';
+import { t as localize } from './i18n.js?v=0.53.0';
+import { setupInspection, clearInspection } from './coin-flip.js?v=0.53.0';
+import { onCoinImagesReady } from './graphics/coin-reference.js?v=0.53.0';
+import { brushMark, cleaningPercent, visitBrushSegment } from '../data/cleaning.js?v=0.53.0';
+import { createSoilBrush } from './graphics/soil-brush.js?v=0.53.0';
 // Soil canvas, finger cleaning, dust and reveal progress.
-import { types } from '../data/items.js?v=0.52.0';
-import { $ } from './dom.js?v=0.52.0';
-import { drawArtifact, seededArt } from './graphics/artifacts.js?v=0.52.0';
-import { openPacking } from './packing.js?v=0.52.0';
-import { s, save } from './storage.js?v=0.52.0';
+import { types } from '../data/items.js?v=0.53.0';
+import { $ } from './dom.js?v=0.53.0';
+import { drawArtifact, seededArt } from './graphics/artifacts.js?v=0.53.0';
+import { openPacking } from './packing.js?v=0.53.0';
+import { s, save } from './storage.js?v=0.53.0';
 export const soil = $('soil'),
   dirt = soil.getContext('2d'),
   art = $('artifact').getContext('2d');
@@ -110,7 +111,7 @@ export function openExcavation() {
   $('artifact').onkeydown = null;
   $('artifact').tabIndex = -1;
   $('artifact').setAttribute('role', 'img');
-  $('artifact').setAttribute('aria-label', 'Предмет під шаром ґрунту');
+  $('artifact').setAttribute('aria-label', localize('Предмет під шаром ґрунту'));
   soil.onclick = null;
   drawArtifact(s.pending.type);
   swept = new Set(s.pending.cleanedCells || []);
@@ -121,15 +122,15 @@ export function openExcavation() {
   brushPointer = null;
   lastBrush = null;
   $('excavate').querySelector('.excavation').classList.remove('done');
-  $('excPercent').textContent = '0%';
-  $('excStage').textContent = 'РОЗКОПКА / ОЧИЩЕННЯ';
-  $('excTitle').textContent = 'Щось є під землею';
-  $('excHint').textContent = 'Проведи пальцем по центру, щоб обережно відкрити предмет.';
+  $('excPercent').textContent = localize('0%');
+  $('excStage').textContent = localize('РОЗКОПКА / ОЧИЩЕННЯ');
+  $('excTitle').textContent = localize('Щось є під землею');
+  $('excHint').textContent = localize('Проведи пальцем по центру, щоб обережно відкрити предмет.');
   $('excProgress').value = 0;
-  $('excStatus').textContent = 'Землю прибрано: 0%';
+  $('excStatus').textContent = localize('Землю прибрано: 0%');
   $('excSkip').hidden = false;
   $('excNext').disabled = true;
-  $('excNext').textContent = 'Спочатку прибери землю';
+  $('excNext').textContent = localize('Спочатку прибери землю');
   paintSoil();
   soilBrush.restore(dirt,s.pending.cleaning,[...swept]);
   updateCleaning();
@@ -186,18 +187,18 @@ function updateCleaning() {
   const progress = cleaningPercent(swept.size);
   if(progress===lastProgress)return;lastProgress=progress;
   $('excProgress').value = progress;
-  $('excPercent').textContent = progress + '%';
-  $('excStatus').textContent = progress < 35 ? 'Знімай верхній шар ґрунту.' : progress < 75 ? 'Вже видно обриси. Продовжуй очищення.' : 'Ще трохи — предмет майже відкрито.';
+  $('excPercent').textContent = localize(progress + '%');
+  $('excStatus').textContent = localize(progress < 35 ? 'Знімай верхній шар ґрунту.' : progress < 75 ? 'Вже видно обриси. Продовжуй очищення.' : 'Ще трохи — предмет майже відкрито.');
   if (progress === 100) {
     phaseDone = true;
     dirt.clearRect(0, 0, 600, 500);
     $('excavate').querySelector('.excavation').classList.add('done');
-    $('excStage').textContent = 'ПРЕДМЕТ ВІДКРИТО';
-    $('excTitle').textContent = types[s.pending.type].name;
-    $('excHint').textContent = 'Оглянь знахідку та виріши, чи взяти її із собою.';
+    $('excStage').textContent = localize('ПРЕДМЕТ ВІДКРИТО');
+    $('excTitle').textContent = localize(types[s.pending.type].name);
+    $('excHint').textContent = localize('Оглянь знахідку та виріши, чи взяти її із собою.');
     $('excNext').disabled = false;
-    $('excNext').textContent = 'Оглянути знахідку';
-    $('excStatus').textContent = 'Очищення завершено. Обертай знахідку пальцем.';
+    $('excNext').textContent = localize('Оглянути знахідку');
+    $('excStatus').textContent = localize('Очищення завершено. Обертай знахідку пальцем.');
     $('excSkip').hidden = true;
     setupInspection($('artifact'), $('excFlip'), s.pending.type, s.pending.condition, false);
     save();

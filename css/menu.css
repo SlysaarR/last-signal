@@ -1,0 +1,39 @@
+/* The start menu owns settings and help; play screens concentrate on play. */
+html[data-screen="menu"],html[data-screen="settings"] { --bottom-clearance:0px; }
+html:is([data-screen="menu"],[data-screen="settings"]) main { max-width:42rem; }
+html:is([data-screen="menu"],[data-screen="settings"]) main > :is(header,nav,.stats,#guideCard,footer) { display:none!important; }
+.main-menu { min-height:calc(100dvh - 64px); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:28px 0; }
+.menu-emblem { width:10rem; max-width:50%; color:#bdd78c; margin-bottom:12px; }
+.menu-emblem svg { width:100%; stroke:currentColor; stroke-width:1.5; }
+.menu-emblem circle:first-child { opacity:.25; }.menu-emblem circle:nth-child(2) { opacity:.5; }
+.main-menu h1 { font-size:clamp(2rem,7vw,3.25rem); line-height:1.12; margin:14px 0; letter-spacing:-.03em; }
+.menu-tagline { color:#b3c4aa; font-size:1rem; margin:0 0 28px; line-height:1.5; }
+.menu-actions { display:grid; gap:12px; width:min(100%,21rem); }
+.menu-actions button { min-height:54px; font-size:1rem; }
+#menuStatus { margin:24px 0 12px; line-height:1.5; }
+.menu-version { color:#8fa28b; font-size:.75rem; }
+#settingsTitle { margin:24px 0; }
+.settings-essential { border:1px solid #536148; border-radius:16px; padding:18px; background:#1c2d22; }
+.settings-essential label { font-size:.875rem; }
+.settings-essential select { font-size:1rem; }
+.settings-sound { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; padding-top:14px; border-top:1px solid #43553c; }
+.settings-sound button { min-width:9rem; }
+.settings-panels { display:grid; gap:12px; margin-top:16px; }
+.settings-panels > details { margin:0; }
+.compact-help,.album-about { margin:12px 0; font-size:.8125rem; color:#aebfa5; }
+.compact-help summary,.album-about summary { cursor:pointer; color:#c7d9b3; min-height:44px; }
+.compact-help p { margin:8px 0; line-height:1.6; }
+.album-about { grid-column:1/-1; margin:0; }
+.camp-order > .eyebrow { display:none; }
+.camp-order summary,.camp-summary summary { font-size:.9375rem; font-weight:600; cursor:pointer; color:#d5e2be; }
+.camp-order { padding:10px 16px; margin-block:14px; }
+.camp-order button { margin-top:10px; }
+.camp-summary { border:1px solid #3b4c34; border-radius:14px; padding:10px 16px; }
+#search .main-objective .compact-help { margin:0; }
+#search .main-objective .compact-help summary { padding:8px 0; }
+.conditions-card .condition-help { margin:0; }
+.conditions-card .condition-help summary { font-size:.8125rem; min-height:44px; cursor:pointer; }
+.conditions-card .condition-costs { margin-bottom:0; }
+.camp-followup > .main-objective { margin-bottom:14px; }
+@media(max-height:32em) { .main-menu { padding-block:12px; }.menu-emblem { width:6rem; margin-bottom:0; }.menu-tagline { margin-bottom:18px; } }
+html[lang="en"] .location::before { content:'CURRENT SITE'; }

@@ -1,4 +1,4 @@
-import { validEnvironment, groundTypes } from './environment.js?v=0.52.0';
+import { validEnvironment, groundTypes } from './environment.js?v=0.53.0';
 // Directions choose a landscape pool, never its luck or the items under the soil.
 export const routes = [
  {id:'wander',name:'Куди виведе дорога',cost:25,need:0,icon:'↗',text:'Усі 8 місцевостей. Найдешевша дорога, найбільше невідомого.',pool:[0,1,2,3,4,5,6,7]},

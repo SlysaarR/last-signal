@@ -1,8 +1,9 @@
-import { $ } from './dom.js?v=0.52.0';
-import { createBackup, parseBackup, MAX_BACKUP_SIZE } from './backup-format.js?v=0.52.0';
-import { s, RECOVERY_KEY, installBackupState } from './storage.js?v=0.52.0';
+import { t as localize, dateLocale } from './i18n.js?v=0.53.0';
+import { $ } from './dom.js?v=0.53.0';
+import { createBackup, parseBackup, MAX_BACKUP_SIZE } from './backup-format.js?v=0.53.0';
+import { s, RECOVERY_KEY, installBackupState } from './storage.js?v=0.53.0';
 let candidate = null, reading = 0;
-function message(text) { $('backupStatus').textContent = text; }
+function message(text) { $('backupStatus').textContent = localize(text); }
 function download(text, prefix) {
   const url = URL.createObjectURL(new Blob([text], {type:'application/json'}));
   const a = document.createElement('a');
@@ -13,7 +14,7 @@ function download(text, prefix) {
 function preview(data) {
   candidate = data;
   const next = data.state;
-  $('backupPreview').textContent = 'Дата копії: ' + new Date(data.createdAt).toLocaleString('uk-UA') + '\nДетектор / лопата / рюкзак: ' + [next.level,next.shovel,next.backpack].join(' / ') + '\nКупони: ' + next.coins + '\nКолекція: ' + next.collection.length + ' позицій\nВиїзд: ' + next.day + (next.atCamp ? ' · у таборі' : ' · у полі') + (next.pending ? '\nЄ незавершена знахідка — її буде відновлено.' : '') + '\n\nЗараз: ' + s.coins + ' купонів, ' + s.collection.length + ' позицій у колекції.\nВідновлення замінить поточний прогрес. Його копія залишиться в цьому браузері; також збережи її у файл.';
+  $('backupPreview').textContent = localize('Дата копії: ' + new Date(data.createdAt).toLocaleString(dateLocale()) + '\nДетектор / лопата / рюкзак: ' + [next.level,next.shovel,next.backpack].join(' / ') + '\nКупони: ' + next.coins + '\nКолекція: ' + next.collection.length + ' позицій\nВиїзд: ' + next.day + (next.atCamp ? ' · у таборі' : ' · у полі') + (next.pending ? '\nЄ незавершена знахідка — її буде відновлено.' : '') + '\n\nЗараз: ' + s.coins + ' купонів, ' + s.collection.length + ' позицій у колекції.\nВідновлення замінить поточний прогрес. Його копія залишиться в цьому браузері; також збережи її у файл.');
   $('backupConfirm').disabled = false;
   $('backupDialog').showModal();
 }
@@ -41,7 +42,7 @@ export function initBackup() {
       const next = parseBackup(JSON.stringify(candidate)).state;
       installBackupState(next, createBackup(s));
     } catch (error) {
-      $('backupPreview').textContent += '\n\nВідновлення не виконано. Не вдалося безпечно записати прогрес у браузері. Поточна гра не змінена. Збережи її у файл.';
+      $('backupPreview').textContent += localize('\n\nВідновлення не виконано. Не вдалося безпечно записати прогрес у браузері. Поточна гра не змінена. Збережи її у файл.');
       return;
     }
     candidate = null; $('backupConfirm').disabled = true;

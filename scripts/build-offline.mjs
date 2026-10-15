@@ -15,7 +15,7 @@ function add(ref,base='index.html') {
   const name=u.pathname.slice(1)+u.search;
   if(urls.has(name))return;urls.add(name);
   const content=read(u.pathname.slice(1)).toString();
-  if(u.pathname.endsWith('.js')) for(const m of content.matchAll(/(?:from\s*|import\s*)['"]([^'"]+)['"]/g)) add(m[1],name);
+  if(u.pathname.endsWith('.js')) for(const m of content.matchAll(/^\s*(?:import\s+(?:[^;\n]*?\s+from\s*)?|export\s+[^;\n]*?\s+from\s*)['"]([^'"]+)['"]/gm)) add(m[1],name);
   if(u.pathname.endsWith('.css')) for(const m of content.matchAll(/url\(['"]?([^'"\)]+)['"]?\)/g)) add(m[1],name);
 }
 for(const m of html.matchAll(/(?:src|href)="([^"#]+)"/g))add(m[1]);

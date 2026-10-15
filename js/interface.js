@@ -1,11 +1,15 @@
+import { t as localize } from './i18n.js?v=0.53.0';
 // Device-local presentation settings; never part of the game save or backup.
 export const TEXT_SIZE_KEY = 'last-signal-text-size';
 const textSizes = new Set(['normal', 'large', 'largest']);
 const screenTargets = {
+  menu: 'menuTitle', settings: 'settingsTitle',
   camp: 'campTitle', inventory: 'inventoryTitle', search: 'field',
   gear: 'gearTitle', collection: 'collectionTitle', journal: 'journalTitle', atlas: 'atlasTitle'
 };
 const get = id => document.getElementById(id);
+let selectedScreen = 'menu';
+export const currentScreen = () => selectedScreen;
 
 export function setTextSize(value, persist = true) {
   const size = textSizes.has(value) ? value : 'normal';
@@ -16,14 +20,16 @@ export function setTextSize(value, persist = true) {
     try { localStorage.setItem(TEXT_SIZE_KEY, size); }
     catch { saved = false; }
   }
-  get('textSizeNote').textContent = saved
+  get('textSizeNote').textContent = localize(saved
     ? 'Розмір запам’ятовується на цьому пристрої. Масштаб браузера також працює.'
-    : 'Розмір змінено. Браузер не дозволяє зберегти налаштування — після закриття його доведеться вибрати знову.';
+    : 'Розмір змінено. Браузер не дозволяє зберегти налаштування — після закриття його доведеться вибрати знову.');
   return size;
 }
 
 export function selectScreen(tab) {
   if (!Object.hasOwn(screenTargets, tab)) return false;
+  selectedScreen = tab;
+  document.documentElement.dataset.screen = tab;
   for (const id of Object.keys(screenTargets)) get(id).hidden = id !== tab;
   // Atlas and journal are camp subsections; location identifies their parent.
   const parent = tab === 'journal' || tab === 'atlas' ? 'camp' : tab;

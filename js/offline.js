@@ -1,12 +1,13 @@
+import { t as localize } from './i18n.js?v=0.53.0';
 // Installation and release switching are separate from the player's save format.
-const VERSION = '0.52.0';
+const VERSION = '0.53.0';
 export function initOffline({save, canUpdate}) {
   const $ = id => document.getElementById(id);
   const summary=$('offlineSummary'), status=$('offlineStatus'), check=$('offlineCheck');
   const update=$('appUpdate'), install=$('appInstall'), help=$('installHelp'), dialog=$('appUpdateDialog');
   if (typeof navigator === 'undefined' || !('serviceWorker' in navigator) || !window.isSecureContext) {
-    summary.textContent='Офлайн недоступний';
-    status.textContent='Цей браузер не підтримує офлайн-режим. Грай з інтернетом або відкрий гру в іншому браузері.';
+    summary.textContent=localize('Офлайн недоступний');
+    status.textContent=localize('Цей браузер не підтримує офлайн-режим. Грай з інтернетом або відкрий гру в іншому браузері.');
     check.hidden=true; install.hidden=true; update.hidden=true; return;
   }
   const sw=navigator.serviceWorker, base=new URL('./',document.baseURI);
@@ -18,13 +19,13 @@ export function initOffline({save, canUpdate}) {
   const candidate=()=>registration?.waiting || (ready && readyVersion!==VERSION ? registration?.active : null);
   function render() {
     const waiting=candidate();
-    summary.textContent=waiting ? 'Доступне оновлення' : ready ? 'Готово до гри офлайн' : busy ? 'Завантаження…' : 'Офлайн ще не готовий';
-    status.textContent=notice || (waiting ? 'Нова версія готова. Онови гру в таборі — прогрес буде збережено перед перезапуском.' : ready ? (online() ? 'Гра й зображення завантажені. Можна грати без інтернету.' : 'Ти без інтернету. Офлайн-копія готова до гри.') : 'Потрібне повне завантаження. Під’єднай інтернет і натисни «Підготувати офлайн».');
+    summary.textContent=localize(waiting ? 'Доступне оновлення' : ready ? 'Готово до гри офлайн' : busy ? 'Завантаження…' : 'Офлайн ще не готовий');
+    status.textContent=localize(notice || (waiting ? 'Нова версія готова. Онови гру в таборі — прогрес буде збережено перед перезапуском.' : ready ? (online() ? 'Гра й зображення завантажені. Можна грати без інтернету.' : 'Ти без інтернету. Офлайн-копія готова до гри.') : 'Потрібне повне завантаження. Під’єднай інтернет і натисни «Підготувати офлайн».'));
     update.hidden=!waiting; update.disabled=applying || busy;
     check.disabled=busy || applying || !online();
-    check.textContent=ready ? 'Перевірити оновлення' : 'Підготувати офлайн';
+    check.textContent=localize(ready ? 'Перевірити оновлення' : 'Підготувати офлайн');
     install.hidden=installed() || !installPrompt;
-    help.textContent=installed() ? 'Гра відкрита як застосунок.' : 'Щоб додати іконку гри, відкрий меню браузера → «Встановити застосунок» або «На головний екран». На iPhone: «Поширити» → «На головний екран». Перед переходом в інший браузер збережи прогрес у файл нижче.';
+    help.textContent=localize(installed() ? 'Гра відкрита як застосунок.' : 'Щоб додати іконку гри, відкрий меню браузера → «Встановити застосунок» або «На головний екран». На iPhone: «Поширити» → «На головний екран». Перед переходом в інший браузер збережи прогрес у файл нижче.');
   }
   function ask(worker,type,timeout=12000) {
     return new Promise((resolve,reject) => {
@@ -122,11 +123,11 @@ export function initOffline({save, canUpdate}) {
     if(busy){notice='Підготовка офлайну: '+e.data.done+' / '+e.data.total+' файлів. Можна продовжувати гру.';render();}
   });
   window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;render();});
-  window.addEventListener('appinstalled',()=>{installPrompt=null;render();help.textContent='Гру встановлено. Її іконка доступна на головному екрані.';});
+  window.addEventListener('appinstalled',()=>{installPrompt=null;render();help.textContent=localize('Гру встановлено. Її іконка доступна на головному екрані.');});
   standalone.addEventListener?.('change',render);
   install.onclick=async()=>{
     const prompt=installPrompt;if(!prompt)return;installPrompt=null;render();
-    try {await prompt.prompt();await prompt.userChoice;} catch {help.textContent='Спробуй встановити гру через меню браузера.';}
+    try {await prompt.prompt();await prompt.userChoice;} catch {help.textContent=localize('Спробуй встановити гру через меню браузера.');}
   };
   window.addEventListener('offline',render);
   window.addEventListener('online',()=>{notice='';render();void checkRelease();});

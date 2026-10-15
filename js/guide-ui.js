@@ -1,9 +1,12 @@
-import { firstStepsOffer, startGuide, guideCard } from '../data/guide.js?v=0.52.0';
-import { s, save } from './storage.js?v=0.52.0';
-import { $ } from './dom.js?v=0.52.0';
-import { busy, render, showTab } from './ui.js?v=0.52.0';
-import { confirmDeparture, confirmReturnHome } from './camp.js?v=0.52.0';
-import { syncWeatherEffects } from './environment-ui.js?v=0.52.0';
+import { t as localize } from './i18n.js?v=0.53.0';
+import { currentScreen } from './interface.js?v=0.53.0';
+import { resumeGame } from './menu.js?v=0.53.0';
+import { firstStepsOffer, startGuide, guideCard } from '../data/guide.js?v=0.53.0';
+import { s, save } from './storage.js?v=0.53.0';
+import { $ } from './dom.js?v=0.53.0';
+import { busy, render, showTab } from './ui.js?v=0.53.0';
+import { confirmDeparture, confirmReturnHome } from './camp.js?v=0.53.0';
+import { syncWeatherEffects } from './environment-ui.js?v=0.53.0';
 
 let lastCard = '';
 export function renderGuide() {
@@ -12,24 +15,26 @@ export function renderGuide() {
   lastCard = key;
   $('guideCard').hidden = !card;
   if (!card) return;
-  $('guideCount').textContent = card.count;
-  $('guideTitle').textContent = card.title;
-  $('guideText').textContent = card.text;
+  $('guideCount').textContent = localize(card.count);
+  $('guideTitle').textContent = localize(card.title);
+  $('guideText').textContent = localize(card.text);
   $('guideProgress').value = card.progress;
   $('guideAction').hidden = card.action === 'none';
-  $('guideAction').textContent = card.button;
-  $('guideDismiss').textContent = firstStepsOffer(s) ? 'Гратиму самостійно' : card.progress === 4 ? 'Завершити підказки' : 'Сховати підказки';
+  $('guideAction').textContent = localize(card.button);
+  $('guideDismiss').textContent = localize(firstStepsOffer(s) ? 'Гратиму самостійно' : card.progress === 4 ? 'Завершити підказки' : 'Сховати підказки');
 }
 function begin() {
   if (!s.guide || s.guide.stage === 4) startGuide(s);
   else s.guide.enabled = true;
-  save(); render();
+  save();
+  if (['menu','settings'].includes(currentScreen())) resumeGame(); else render();
   $('guideTitle').focus?.({preventScroll:true});
   $('guideCard').scrollIntoView?.({block:'nearest'});
 }
 export function openGuide() {
-  if (busy()) return;
-  $('guideToggle').textContent = s.guide?.enabled ? 'Сховати покрокові підказки' : s.guide?.stage === 4 ? 'Повторити покрокові підказки' : 'Увімкнути покрокові підказки';
+  if (document.querySelector('dialog[open]') || (s.pending && currentScreen() !== 'menu')) return;
+  $('guideToggle').disabled = !!s.pending;
+  $('guideToggle').textContent = localize(s.guide?.enabled ? 'Сховати покрокові підказки' : s.guide?.stage === 4 ? 'Повторити покрокові підказки' : 'Увімкнути покрокові підказки');
   $('helpDialog').showModal();
   syncWeatherEffects();
 }
@@ -51,7 +56,7 @@ export function initGuide() {
     if (busy()) return;
     if (!s.guide) startGuide(s);
     s.guide.enabled = false; save(); render();
-    $('openHelp').focus?.({preventScroll:true});
+    $('openMenu').focus?.({preventScroll:true});
   };
   $('guideToggle').onclick = () => {
     if (busy('helpDialog')) return;
